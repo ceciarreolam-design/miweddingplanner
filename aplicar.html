@@ -726,16 +726,58 @@
       }
     }
 
-    function submitForm() {
+    async function submitForm() {
       const terms = document.getElementById('terms');
       if (!terms.checked) {
         alert('Por favor acepta los términos y condiciones para continuar.');
         return;
       }
-      document.getElementById('step-4').classList.remove('active');
-      document.querySelectorAll('.prog-step').forEach(p => { p.classList.remove('active'); p.classList.add('done'); });
-      document.getElementById('step-success').classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      const btn = document.querySelector('.btn-submit');
+      btn.textContent = 'Enviando...';
+      btn.disabled = true;
+
+      const data = {
+        negocio: document.getElementById('business-name')?.value || '',
+        contacto: document.getElementById('contact-name')?.value || '',
+        email: document.getElementById('email')?.value || '',
+        telefono: document.getElementById('phone')?.value || '',
+        ciudad: document.getElementById('city')?.value || '',
+        experiencia: document.getElementById('experience')?.value || '',
+        website: document.getElementById('website')?.value || '',
+        instagram: document.getElementById('instagram')?.value || '',
+        facebook: document.getElementById('facebook')?.value || '',
+        descripcion: document.getElementById('description')?.value || '',
+        categoria: document.querySelector('input[name="category"]:checked')?.value || '',
+        precio: document.querySelector('input[name="price"]:checked')?.value || '',
+        eventos: document.getElementById('events')?.value || '',
+        capacidad: document.getElementById('capacity')?.value || '',
+        plan: document.querySelector('input[name="plan"]:checked')?.value || '',
+        reseñas: document.getElementById('reviews-link')?.value || '',
+      };
+
+      try {
+        const res = await fetch('https://formspree.io/f/mqewpwll', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          document.getElementById('step-4').classList.remove('active');
+          document.querySelectorAll('.prog-step').forEach(p => { p.classList.remove('active'); p.classList.add('done'); });
+          document.getElementById('step-success').classList.add('active');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          btn.textContent = 'Enviar solicitud →';
+          btn.disabled = false;
+          alert('Hubo un problema al enviar. Por favor intenta de nuevo.');
+        }
+      } catch(e) {
+        btn.textContent = 'Enviar solicitud →';
+        btn.disabled = false;
+        alert('Hubo un problema al enviar. Por favor intenta de nuevo.');
+      }
     }
   </script>
 
