@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Aplica para ser proveedor verificado en Mi Wedding Planner — La plataforma de bodas más exclusiva de México.">
+  <title>Aplica como proveedor — Mi Wedding Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --night:   #3E5766;
+      --pigeon:  #667C90;
+      --stone:   #A6B8C7;
+      --laurel:  #BDC4A9;
+      --cotton:  #E9E8EB;
+      --white:   #FFFFFF;
+      --ink:     #2A3A42;
+      --muted:   #6B7A82;
+      --soft-white: rgba(255,255,255,0.65);
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'Jost', system-ui, sans-serif;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); color: var(--ink); background: #F5F4F6; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+
+    /* NAV */
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 64px;
+      background: var(--white); border-bottom: 0.5px solid var(--cotton);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-family: var(--serif); font-size: 19px; color: var(--night); }
+    .nav-logo span { color: var(--pigeon); }
+    .nav-back { font-size: 13px; color: var(--pigeon); cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .nav-back:hover { color: var(--night); }
+
+    /* HERO */
+    .hero {
+      background: var(--night); padding: 48px 40px 40px; text-align: center;
+    }
+    .hero-eyebrow { font-size: 11px; letter-spacing: 0.16em; color: var(--soft-white); text-transform: uppercase; margin-bottom: 14px; font-weight: 300; }
+    .hero-title { font-family: var(--serif); font-size: 36px; font-weight: 400; color: var(--white); margin-bottom: 12px; line-height: 1.2; }
+    .hero-title span { color: var(--stone); font-style: italic; }
+    .hero-sub { font-size: 15px; font-weight: 300; color: var(--soft-white); max-width: 480px; margin: 0 auto; line-height: 1.7; }
+
+    /* PROGRESS */
+    .progress-wrap { background: var(--white); border-bottom: 0.5px solid var(--cotton); padding: 0 40px; }
+    .progress-steps { display: flex; max-width: 640px; margin: 0 auto; }
+    .prog-step {
+      flex: 1; text-align: center; padding: 18px 8px;
+      font-size: 12px; color: var(--muted); border-bottom: 2px solid transparent;
+      cursor: default; font-weight: 400; letter-spacing: 0.03em;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+    }
+    .prog-step.active { color: var(--pigeon); border-bottom-color: var(--pigeon); font-weight: 500; }
+    .prog-step.done { color: var(--laurel); border-bottom-color: var(--laurel); }
+    .prog-num {
+      width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 500;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--cotton); color: var(--muted);
+    }
+    .prog-step.active .prog-num { background: var(--pigeon); color: var(--white); }
+    .prog-step.done .prog-num { background: var(--laurel); color: var(--night); }
+
+    /* FORM WRAPPER */
+    .form-wrap { max-width: 680px; margin: 36px auto 60px; padding: 0 20px; }
+
+    /* STEP PANELS */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    /* CARDS */
+    .form-card {
+      background: var(--white); border: 0.5px solid var(--cotton);
+      border-radius: var(--radius-lg); padding: 32px; margin-bottom: 16px;
+    }
+    .card-title {
+      font-family: var(--serif); font-size: 20px; font-weight: 400;
+      color: var(--night); margin-bottom: 6px;
+    }
+    .card-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 24px; font-weight: 300; line-height: 1.6; }
+
+    /* FIELDS */
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+    .field-group { margin-bottom: 18px; }
+    label {
+      display: block; font-size: 12px; font-weight: 500;
+      color: var(--muted); margin-bottom: 7px; letter-spacing: 0.04em;
+    }
+    .required { color: var(--pigeon); margin-left: 2px; }
+    input[type=text], input[type=email], input[type=tel], input[type=url],
+    input[type=number], select, textarea {
+      width: 100%; border: 0.5px solid #D0CDD3; border-radius: var(--radius-md);
+      padding: 11px 14px; font-size: 14px; color: var(--ink);
+      background: var(--white); outline: none; font-family: var(--sans);
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--pigeon); }
+    textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+    select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%236B7A82' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+    .field-hint { font-size: 11px; color: var(--muted); margin-top: 5px; font-weight: 300; }
+
+    /* CATEGORY GRID */
+    .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }
+    .cat-opt {
+      border: 1px solid var(--cotton); border-radius: var(--radius-md);
+      padding: 16px 10px; text-align: center; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .cat-opt:hover { border-color: var(--stone); }
+    .cat-opt.selected { border-color: var(--pigeon); background: #F0F4F7; }
+    .cat-opt input[type=radio] { display: none; }
+    .cat-icon {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--cotton); margin: 0 auto 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cat-opt.selected .cat-icon { background: var(--stone); }
+    .cat-name { font-size: 12px; font-weight: 500; color: var(--night); }
+
+    /* UPLOAD */
+    .upload-box {
+      border: 1px dashed var(--stone); border-radius: var(--radius-lg);
+      padding: 32px 24px; text-align: center; cursor: pointer;
+      background: #FAFBFC; transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 18px;
+    }
+    .upload-box:hover { border-color: var(--pigeon); background: #F5F8FA; }
+    .upload-icon {
+      width: 44px; height: 44px; background: var(--cotton);
+      border-radius: 50%; margin: 0 auto 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .upload-title { font-size: 14px; font-weight: 500; color: var(--night); margin-bottom: 4px; }
+    .upload-sub { font-size: 12px; color: var(--muted); font-weight: 300; }
+    input[type=file] { display: none; }
+
+    /* PRICE RANGE */
+    .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+    .price-opt {
+      border: 1px solid var(--cotton); border-radius: var(--radius-md);
+      padding: 12px 14px; cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    }
+    .price-opt:hover { border-color: var(--stone); }
+    .price-opt.selected { border-color: var(--pigeon); background: #F0F4F7; }
+    .price-opt input[type=radio] { display: none; }
+    .price-label { font-size: 13px; font-weight: 500; color: var(--night); }
+    .price-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* CHECKBOXES */
+    .check-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+    .check-row input[type=checkbox] { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--pigeon); flex-shrink: 0; cursor: pointer; }
+    .check-label { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+    .check-label a { color: var(--pigeon); }
+
+    /* INFO BOX */
+    .info-box {
+      background: #F0F4F7; border-left: 3px solid var(--pigeon);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: 14px 16px; margin-bottom: 20px;
+      font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300;
+    }
+    .info-box strong { color: var(--night); font-weight: 500; }
+
+    /* SECTION DIVIDER */
+    .section-divider {
+      font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      border-bottom: 0.5px solid var(--cotton);
+      padding-bottom: 8px; margin-bottom: 18px;
+    }
+
+    /* BUTTONS */
+    .btn-row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+    .btn-back {
+      font-family: var(--sans); font-size: 13px; font-weight: 400;
+      background: transparent; color: var(--muted);
+      border: 0.5px solid var(--cotton); border-radius: var(--radius-md);
+      padding: 11px 24px; cursor: pointer; transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-back:hover { border-color: var(--stone); color: var(--night); }
+    .btn-next {
+      font-family: var(--sans); font-size: 14px; font-weight: 500;
+      background: var(--pigeon); color: var(--white);
+      border: none; border-radius: var(--radius-md);
+      padding: 12px 32px; cursor: pointer; transition: background 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .btn-next:hover { background: var(--night); }
+    .btn-submit {
+      font-family: var(--sans); font-size: 14px; font-weight: 500;
+      background: var(--night); color: var(--white);
+      border: none; border-radius: var(--radius-md);
+      padding: 12px 36px; cursor: pointer; transition: background 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .btn-submit:hover { background: var(--pigeon); }
+
+    /* SUCCESS SCREEN */
+    .success-card {
+      background: var(--white); border: 0.5px solid var(--cotton);
+      border-radius: var(--radius-lg); padding: 56px 40px;
+      text-align: center; margin-bottom: 16px;
+    }
+    .success-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--cotton); margin: 0 auto 24px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .success-title { font-family: var(--serif); font-size: 28px; font-weight: 400; color: var(--night); margin-bottom: 12px; }
+    .success-sub { font-size: 15px; font-weight: 300; color: var(--muted); max-width: 420px; margin: 0 auto 32px; line-height: 1.7; }
+    .success-details { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 32px; }
+    .success-detail { background: var(--cotton); border-radius: var(--radius-md); padding: 16px; }
+    .success-detail-num { font-family: var(--serif); font-size: 22px; color: var(--night); }
+    .success-detail-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .btn-home {
+      font-family: var(--sans); font-size: 14px; font-weight: 500;
+      background: var(--pigeon); color: var(--white);
+      border: none; border-radius: var(--radius-md);
+      padding: 12px 32px; cursor: pointer; transition: background 0.2s;
+    }
+    .btn-home:hover { background: var(--night); }
+
+    /* RESPONSIVE */
+    @media (max-width: 640px) {
+      .nav { padding: 0 20px; }
+      .hero { padding: 36px 20px 32px; }
+      .hero-title { font-size: 26px; }
+      .progress-wrap { padding: 0 20px; }
+      .prog-step { font-size: 11px; padding: 14px 4px; }
+      .form-wrap { padding: 0 16px; margin-top: 24px; }
+      .form-card { padding: 24px 20px; }
+      .field-row { grid-template-columns: 1fr; }
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+      .price-grid { grid-template-columns: 1fr; }
+      .success-details { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Mi Wedding <span>Planner</span></a>
+    <a href="index.html" class="nav-back">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="#667C90" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Volver al inicio
+    </a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="hero-eyebrow">Proveedores verificados</p>
+    <h1 class="hero-title">Únete a la plataforma<br><span>más exclusiva de México.</span></h1>
+    <p class="hero-sub">Revisamos cada solicitud manualmente. Solo aceptamos proveedores que cumplan con nuestros estándares de calidad.</p>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-steps">
+      <div class="prog-step active" id="prog-1">
+        <span class="prog-num">1</span> Tu negocio
+      </div>
+      <div class="prog-step" id="prog-2">
+        <span class="prog-num">2</span> Categoría
+      </div>
+      <div class="prog-step" id="prog-3">
+        <span class="prog-num">3</span> Portafolio
+      </div>
+      <div class="prog-step" id="prog-4">
+        <span class="prog-num">4</span> Confirmar
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-wrap">
+
+    <!-- STEP 1: Business info -->
+    <div class="step-panel active" id="step-1">
+      <div class="form-card">
+        <div class="card-title">Tu negocio</div>
+        <div class="card-subtitle">Cuéntanos sobre tu empresa. Esta información aparecerá en tu perfil público.</div>
+
+        <div class="info-box">
+          <strong>¿Por qué aplicar?</strong> Al ser verificado, tu perfil aparece ante miles de novias en México que buscan exactamente lo que tú ofreces. Sin comisiones por reserva — solo tu suscripción mensual.
+        </div>
+
+        <div class="section-divider">Información de contacto</div>
+
+        <div class="field-row">
+          <div class="field-group" style="margin-bottom:0;">
+            <label>Nombre del negocio <span class="required">*</span></label>
+            <input type="text" id="business-name" placeholder="Ej. Elena Bodas & Eventos">
+          </div>
+          <div class="field-group" style="margin-bottom:0;">
+            <label>Tu nombre completo <span class="required">*</span></label>
+            <input type="text" id="contact-name" placeholder="Nombre y apellido">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group" style="margin-bottom:0;">
+            <label>Correo electrónico <span class="required">*</span></label>
+            <input type="email" id="email" placeholder="hola@tunegocio.com">
+          </div>
+          <div class="field-group" style="margin-bottom:0;">
+            <label>Teléfono / WhatsApp <span class="required">*</span></label>
+            <input type="tel" id="phone" placeholder="+52 55 0000 0000">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group" style="margin-bottom:0;">
+            <label>Ciudad principal <span class="required">*</span></label>
+            <select id="city">
+              <option value="">Selecciona ciudad</option>
+              <option>Ciudad de México</option>
+              <option>Guadalajara</option>
+              <option>Monterrey</option>
+              <option>Cancún</option>
+              <option>Puebla</option>
+              <option>Oaxaca</option>
+              <option>Mérida</option>
+              <option>Los Cabos</option>
+              <option>Puerto Vallarta</option>
+              <option>San Miguel de Allende</option>
+              <option>Querétaro</option>
+              <option>Otra</option>
+            </select>
+          </div>
+          <div class="field-group" style="margin-bottom:0;">
+            <label>Años de experiencia <span class="required">*</span></label>
+            <select id="experience">
+              <option value="">Selecciona</option>
+              <option>Menos de 1 año</option>
+              <option>1 – 3 años</option>
+              <option>3 – 5 años</option>
+              <option>5 – 10 años</option>
+              <option>Más de 10 años</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-divider" style="margin-top:8px;">Presencia en línea</div>
+
+        <div class="field-group">
+          <label>Sitio web</label>
+          <input type="url" id="website" placeholder="https://tunegocio.com">
+        </div>
+
+        <div class="field-row">
+          <div class="field-group" style="margin-bottom:0;">
+            <label>Instagram</label>
+            <input type="text" id="instagram" placeholder="@tunegocio">
+          </div>
+          <div class="field-group" style="margin-bottom:0;">
+            <label>Facebook</label>
+            <input type="text" id="facebook" placeholder="facebook.com/tunegocio">
+          </div>
+        </div>
+
+        <div class="field-group" style="margin-top:18px;">
+          <label>Descripción de tu negocio <span class="required">*</span></label>
+          <textarea id="description" placeholder="Cuéntanos sobre tu negocio, tu estilo y lo que te hace especial. Esta será tu presentación ante las novias..."></textarea>
+          <div class="field-hint">Mínimo 100 caracteres. Sé específico — los perfiles detallados reciben 3x más contactos.</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <span></span>
+        <button class="btn-next" onclick="goToStep(2)">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Category -->
+    <div class="step-panel" id="step-2">
+      <div class="form-card">
+        <div class="card-title">Categoría y servicios</div>
+        <div class="card-subtitle">Selecciona la categoría que mejor describe tu negocio. Puedes añadir más servicios después de ser verificado.</div>
+
+        <div class="section-divider">¿Qué tipo de proveedor eres?</div>
+
+        <div class="cat-grid">
+          <label class="cat-opt" onclick="selectCat(this)">
+            <input type="radio" name="category" value="wedding-planner">
+            <div class="cat-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6" r="3.5" stroke="#3E5766" stroke-width="1.2"/><path d="M3 16c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cat-name">Wedding planner</div>
+          </label>
+          <label class="cat-opt" onclick="selectCat(this)">
+            <input type="radio" name="category" value="venue">
+            <div class="cat-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="7" width="14" height="9" rx="2" stroke="#3E5766" stroke-width="1.2"/><path d="M6 7V5a3 3 0 016 0v2" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cat-name">Sedes & haciendas</div>
+          </label>
+          <label class="cat-opt" onclick="selectCat(this)">
+            <input type="radio" name="category" value="photographer">
+            <div class="cat-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="5" stroke="#3E5766" stroke-width="1.2"/><circle cx="9" cy="9" r="2" stroke="#3E5766" stroke-width="1.2"/></svg>
+            </div>
+            <div class="cat-name">Fotografía & video</div>
+          </label>
+          <label class="cat-opt" onclick="selectCat(this)">
+            <input type="radio" name="category" value="catering">
+            <div class="cat-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 12s1.5-1.5 3-1.5 3.5 2 5.5 2 3-1.5 3-1.5V5s-1.5 1.5-3 1.5S8.5 5 6.5 5 3 6.5 3 6.5V12z" stroke="#3E5766" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="cat-name">Catering & banquetes</div>
+          </label>
+          <label class="cat-opt" onclick="selectCat(this)">
+            <input type="radio" name="category" value="florist">
+            <div class="cat-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2s-5 3-5 8a5 5 0 0010 0c0-5-5-8-5-8z" stroke="#3E5766" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="cat-name">Florista</div>
+          </label>
+          <label class="cat-opt" onclick="selectCat(this)">
+            <input type="radio" name="category" value="dj">
+            <div class="cat-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="5" stroke="#3E5766" stroke-width="1.2"/><circle cx="9" cy="9" r="2" stroke="#3E5766" stroke-width="1.2"/><path d="M14 4l1-1M4 4L3 3M14 14l1 1M4 14l-1 1" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cat-name">DJ's & música</div>
+          </label>
+          <label class="cat-opt" onclick="selectCat(this)">
+            <input type="radio" name="category" value="beauty">
+            <div class="cat-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3C7 3 5 5 5 7c0 2.5 2 4 4 5 2-1 4-2.5 4-5 0-2-2-4-4-4z" stroke="#3E5766" stroke-width="1.2" stroke-linejoin="round"/><path d="M9 12v3M7 15h4" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cat-name">Peinado & maquillaje</div>
+          </label>
+          <label class="cat-opt" onclick="selectCat(this)">
+            <input type="radio" name="category" value="other">
+            <div class="cat-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="#3E5766" stroke-width="1.2"/><path d="M9 6v3l2 2" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cat-name">Otro servicio</div>
+          </label>
+        </div>
+
+        <div class="section-divider">Rango de precios</div>
+        <div class="field-hint" style="margin-bottom:12px;">¿Cuál es tu precio inicial aproximado por evento?</div>
+
+        <div class="price-grid">
+          <label class="price-opt" onclick="selectPrice(this)">
+            <input type="radio" name="price" value="budget">
+            <div class="price-label">Hasta $20,000 MXN</div>
+            <div class="price-sub">Accesible</div>
+          </label>
+          <label class="price-opt" onclick="selectPrice(this)">
+            <input type="radio" name="price" value="mid">
+            <div class="price-label">$20,000 – $50,000 MXN</div>
+            <div class="price-sub">Intermedio</div>
+          </label>
+          <label class="price-opt" onclick="selectPrice(this)">
+            <input type="radio" name="price" value="premium">
+            <div class="price-label">$50,000 – $100,000 MXN</div>
+            <div class="price-sub">Premium</div>
+          </label>
+          <label class="price-opt" onclick="selectPrice(this)">
+            <input type="radio" name="price" value="luxury">
+            <div class="price-label">Más de $100,000 MXN</div>
+            <div class="price-sub">Lujo</div>
+          </label>
+        </div>
+
+        <div class="field-group">
+          <label>Número aproximado de eventos realizados <span class="required">*</span></label>
+          <select id="events">
+            <option value="">Selecciona</option>
+            <option>Menos de 10</option>
+            <option>10 – 30</option>
+            <option>30 – 60</option>
+            <option>60 – 100</option>
+            <option>Más de 100</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>¿En qué ciudades ofreces tus servicios?</label>
+          <input type="text" placeholder="Ej. CDMX, Guadalajara, Cuernavaca...">
+          <div class="field-hint">Puedes escribir varias ciudades separadas por coma.</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goToStep(1)">← Anterior</button>
+        <button class="btn-next" onclick="goToStep(3)">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Portfolio -->
+    <div class="step-panel" id="step-3">
+      <div class="form-card">
+        <div class="card-title">Tu portafolio</div>
+        <div class="card-subtitle">Las fotos son lo primero que ven las novias. Sube tu mejor trabajo — esto determina en gran parte si serás aprobado.</div>
+
+        <div class="section-divider">Fotos de tu trabajo</div>
+
+        <label for="photo-upload">
+          <div class="upload-box" id="upload-box">
+            <div class="upload-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13V5M6 9l4-4 4 4" stroke="#667C90" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 15h14" stroke="#667C90" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </div>
+            <div class="upload-title">Sube fotos de tu trabajo</div>
+            <div class="upload-sub">JPG o PNG · Máximo 10 fotos · 5MB cada una</div>
+            <div class="upload-sub" style="margin-top:4px;">Recomendamos fotos horizontales de alta resolución</div>
+          </div>
+        </label>
+        <input type="file" id="photo-upload" multiple accept="image/*" onchange="handleUpload(this)">
+        <div id="upload-preview" style="display:none; margin-bottom:18px;">
+          <div id="file-list" style="font-size:13px;color:var(--muted);"></div>
+        </div>
+
+        <div class="section-divider">Video o galería en línea</div>
+
+        <div class="field-group">
+          <label>Link a galería, video o portafolio</label>
+          <input type="url" placeholder="https://youtube.com/... o https://misgalerias.com/...">
+          <div class="field-hint">Opcional pero muy recomendado. Un video aumenta las solicitudes de contacto en un 60%.</div>
+        </div>
+
+        <div class="section-divider">Testimonios</div>
+
+        <div class="field-group">
+          <label>¿Tienes reseñas en Google, Bodas.com.mx u otra plataforma?</label>
+          <input type="url" id="reviews-link" placeholder="https://g.page/tunegocio/review">
+          <div class="field-hint">Opcional. Nos ayuda a verificar tu reputación más rápido.</div>
+        </div>
+
+        <div class="field-group">
+          <label>¿Algo más que quieras contarnos?</label>
+          <textarea placeholder="Premios, certificaciones, colaboraciones especiales, bodas de destino realizadas..."></textarea>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goToStep(2)">← Anterior</button>
+        <button class="btn-next" onclick="goToStep(4)">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Review & Submit -->
+    <div class="step-panel" id="step-4">
+      <div class="form-card">
+        <div class="card-title">Revisa y envía</div>
+        <div class="card-subtitle">Antes de enviar, confirma que toda la información es correcta. Nuestro equipo revisará tu solicitud en 3 a 5 días hábiles.</div>
+
+        <div class="info-box">
+          <strong>¿Qué pasa después?</strong> Recibirás un correo de confirmación inmediatamente. Si tu solicitud es aprobada, te contactaremos para activar tu perfil y elegir tu plan de suscripción. Si necesitamos más información, te escribiremos con los detalles.
+        </div>
+
+        <div class="section-divider">Plan de suscripción</div>
+
+        <div class="price-grid" style="margin-bottom:24px;">
+          <label class="price-opt selected" onclick="selectPlan(this)" style="border-color:var(--pigeon);background:#F0F4F7;">
+            <input type="radio" name="plan" value="basico" checked>
+            <div class="price-label">Básico</div>
+            <div class="price-sub">$499 MXN / mes</div>
+          </label>
+          <label class="price-opt" onclick="selectPlan(this)">
+            <input type="radio" name="plan" value="profesional">
+            <div class="price-label">Profesional ⭐</div>
+            <div class="price-sub">$799 MXN / mes</div>
+          </label>
+          <label class="price-opt" onclick="selectPlan(this)">
+            <input type="radio" name="plan" value="elite">
+            <div class="price-label">Elite</div>
+            <div class="price-sub">$1,499 MXN / mes</div>
+          </label>
+          <div style="background:var(--cotton);border-radius:var(--radius-md);padding:12px 14px;">
+            <div class="price-label" style="color:var(--muted);">Solo pagas si</div>
+            <div class="price-sub">eres aprobado ✓</div>
+          </div>
+        </div>
+
+        <div class="section-divider">Términos y condiciones</div>
+
+        <div class="check-row">
+          <input type="checkbox" id="terms" required>
+          <label class="check-label" for="terms">
+            Acepto los <a href="#">términos y condiciones</a> de Mi Wedding Planner y confirmo que toda la información proporcionada es verídica y actualizada.
+          </label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="quality">
+          <label class="check-label" for="quality">
+            Entiendo que Mi Wedding Planner es una plataforma exclusiva y que la aprobación no es garantizada. Me comprometo a mantener los estándares de calidad de la plataforma.
+          </label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="comms">
+          <label class="check-label" for="comms">
+            Acepto recibir comunicaciones sobre mi solicitud y novedades de la plataforma. Puedo cancelar en cualquier momento.
+          </label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goToStep(3)">← Anterior</button>
+        <button class="btn-submit" onclick="submitForm()">Enviar solicitud →</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="step-panel" id="step-success">
+      <div class="success-card">
+        <div class="success-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M6 16l7 7 13-13" stroke="#667C90" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 class="success-title">¡Solicitud enviada!</h2>
+        <p class="success-sub">Hemos recibido tu solicitud. Nuestro equipo la revisará cuidadosamente y te contactaremos pronto.</p>
+        <div class="success-details">
+          <div class="success-detail">
+            <div class="success-detail-num">3–5</div>
+            <div class="success-detail-label">Días hábiles de revisión</div>
+          </div>
+          <div class="success-detail">
+            <div class="success-detail-num">📧</div>
+            <div class="success-detail-label">Confirma tu correo</div>
+          </div>
+          <div class="success-detail">
+            <div class="success-detail-num">100%</div>
+            <div class="success-detail-label">Gratis hasta ser aprobado</div>
+          </div>
+        </div>
+        <a href="index.html"><button class="btn-home">Volver al inicio</button></a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentStep = 1;
+
+    function goToStep(step) {
+      document.getElementById('step-' + currentStep).classList.remove('active');
+      document.getElementById('prog-' + currentStep).classList.remove('active');
+      document.getElementById('prog-' + currentStep).classList.add('done');
+
+      currentStep = step;
+      document.getElementById('step-' + currentStep).classList.add('active');
+
+      for (let i = 1; i <= 4; i++) {
+        const prog = document.getElementById('prog-' + i);
+        prog.classList.remove('active', 'done');
+        if (i < step) prog.classList.add('done');
+        if (i === step) prog.classList.add('active');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function selectCat(el) {
+      document.querySelectorAll('.cat-opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function selectPrice(el) {
+      document.querySelectorAll('.price-opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function selectPlan(el) {
+      document.querySelectorAll('[name=plan]').closest
+        ? null
+        : document.querySelectorAll('.price-opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function handleUpload(input) {
+      const preview = document.getElementById('upload-preview');
+      const fileList = document.getElementById('file-list');
+      const box = document.getElementById('upload-box');
+
+      if (input.files.length > 0) {
+        preview.style.display = 'block';
+        fileList.innerHTML = Array.from(input.files)
+          .map(f => `<div style="padding:4px 0;border-bottom:0.5px solid var(--cotton);">✓ ${f.name}</div>`)
+          .join('');
+        box.style.borderColor = 'var(--pigeon)';
+        box.querySelector('.upload-title').textContent = input.files.length + ' foto(s) seleccionada(s)';
+      }
+    }
+
+    function submitForm() {
+      const terms = document.getElementById('terms');
+      if (!terms.checked) {
+        alert('Por favor acepta los términos y condiciones para continuar.');
+        return;
+      }
+      document.getElementById('step-4').classList.remove('active');
+      document.querySelectorAll('.prog-step').forEach(p => { p.classList.remove('active'); p.classList.add('done'); });
+      document.getElementById('step-success').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>
