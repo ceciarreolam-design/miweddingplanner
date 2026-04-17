@@ -543,27 +543,10 @@
 
         <div class="section-divider">Fotos de tu trabajo</div>
 
-        <label for="photo-upload">
-          <div class="upload-box" id="upload-box">
-            <div class="upload-icon">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 13V5M6 9l4-4 4 4" stroke="#667C90" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 15h14" stroke="#667C90" stroke-width="1.3" stroke-linecap="round"/></svg>
-            </div>
-            <div class="upload-title">Sube fotos de tu trabajo</div>
-            <div class="upload-sub">JPG o PNG · Máximo 10 fotos · 5MB cada una</div>
-            <div class="upload-sub" style="margin-top:4px;">Recomendamos fotos horizontales de alta resolución</div>
-          </div>
-        </label>
-        <input type="file" id="photo-upload" multiple accept="image/*" onchange="handleUpload(this)">
-        <div id="upload-preview" style="display:none; margin-bottom:18px;">
-          <div id="file-list" style="font-size:13px;color:var(--muted);"></div>
-        </div>
-
-        <div class="section-divider">Video o galería en línea</div>
-
         <div class="field-group">
-          <label>Link a galería, video o portafolio</label>
-          <input type="url" placeholder="https://youtube.com/... o https://misgalerias.com/...">
-          <div class="field-hint">Opcional pero muy recomendado. Un video aumenta las solicitudes de contacto en un 60%.</div>
+          <label>Link a tu Instagram o portafolio en línea <span class="required">*</span></label>
+          <input type="url" name="Portafolio" placeholder="https://instagram.com/tunegocio o https://tuwebsite.com/galeria">
+          <div class="field-hint">Comparte el link donde podamos ver tu trabajo. Puede ser Instagram, tu sitio web, Google Drive, Dropbox o cualquier galería en línea.</div>
         </div>
 
         <div class="section-divider">Testimonios</div>
