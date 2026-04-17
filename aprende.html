@@ -75,7 +75,8 @@
     .articles-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
     .article-card { border-radius:var(--radius-lg); overflow:hidden; cursor:pointer; border:0.5px solid var(--cotton); transition:border-color 0.2s, transform 0.2s; background:var(--white); }
     .article-card:hover { border-color:var(--stone); transform:translateY(-2px); }
-    .article-img { height:160px; background:var(--cotton); display:flex; align-items:center; justify-content:center; position:relative; }
+    .article-img { height:160px; background:var(--cotton); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+    .article-img img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
     .article-img-overlay { position:absolute; inset:0; background:linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.15)); }
     .article-tag { position:absolute; top:12px; left:12px; font-size:10px; font-weight:500; padding:4px 12px; border-radius:99px; letter-spacing:0.03em; }
     .tag-free { background:var(--laurel); color:var(--night); }
@@ -187,25 +188,25 @@
     </div>
     <div class="articles-grid">
 
-      <div class="article-card">
-        <div class="article-img" style="background:#D4DCE4;">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" opacity="0.4"><rect x="4" y="6" width="32" height="28" rx="3" stroke="#3E5766" stroke-width="1.5"/><path d="M12 18h16M12 24h10" stroke="#3E5766" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="article-card" onclick="window.location.href='articulo-presupuesto.html'">
+        <div class="article-img">
+          <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?w=600&q=80&auto=format&fit=crop" alt="Presupuesto de boda">
           <div class="article-img-overlay"></div>
           <span class="article-tag tag-free">Gratis</span>
         </div>
         <div class="article-body">
           <div class="article-title">Cómo hacer un presupuesto de boda realista en México</div>
-          <div class="article-desc">Los errores más comunes al planear el presupuesto y cómo evitarlos.</div>
+          <div class="article-desc">Los errores más comunes al planear el presupuesto y cómo evitarlos como pareja.</div>
           <div class="article-meta">
-            <div class="article-author"><div class="author-dot">MR</div> Mariana R.</div>
+            <div class="article-author"><div class="author-dot" style="font-size:8px;">MWP</div> Redacción MWP</div>
             <span>8 min</span>
           </div>
         </div>
       </div>
 
       <div class="article-card">
-        <div class="article-img" style="background:#C8D4DC;">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" opacity="0.4"><path d="M8 34V18l12-10 12 10v16" stroke="#3E5766" stroke-width="1.5" stroke-linejoin="round"/><rect x="15" y="24" width="6" height="10" stroke="#3E5766" stroke-width="1.5"/></svg>
+        <div class="article-img">
+          <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&q=80&auto=format&fit=crop" alt="Haciendas para boda CDMX">
           <div class="article-img-overlay"></div>
           <span class="article-tag tag-free">Gratis</span>
         </div>
@@ -213,15 +214,15 @@
           <div class="article-title">Las 10 haciendas más bonitas para bodas cerca de CDMX</div>
           <div class="article-desc">Una selección cuidadosa de las sedes más impresionantes del centro del país.</div>
           <div class="article-meta">
-            <div class="article-author"><div class="author-dot">SL</div> Sofía L.</div>
+            <div class="article-author"><div class="author-dot" style="font-size:8px;">MWP</div> Redacción MWP</div>
             <span>6 min</span>
           </div>
         </div>
       </div>
 
       <div class="article-card">
-        <div class="article-img" style="background:#BFC9A8;">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" opacity="0.4"><circle cx="20" cy="16" rx="8" stroke="#3E5766" stroke-width="1.5"/><path d="M8 34c0-6.63 5.37-12 12-12s12 5.37 12 12" stroke="#3E5766" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div class="article-img">
+          <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&q=80&auto=format&fit=crop" alt="Cuándo contratar wedding planner">
           <div class="article-img-overlay"></div>
           <span class="article-tag tag-free">Gratis</span>
         </div>
@@ -229,7 +230,7 @@
           <div class="article-title">¿Cuándo contratar a tu wedding planner?</div>
           <div class="article-desc">El momento ideal para empezar a planear y qué preguntar en la primera reunión.</div>
           <div class="article-meta">
-            <div class="article-author"><div class="author-dot">ER</div> Elena R.</div>
+            <div class="article-author"><div class="author-dot" style="font-size:8px;">MWP</div> Redacción MWP</div>
             <span>5 min</span>
           </div>
         </div>
@@ -265,7 +266,7 @@
           <div class="article-title">Checklist completo: 18 meses antes de tu boda</div>
           <div class="article-desc">Todo lo que debes hacer, mes a mes, para llegar al altar sin estrés.</div>
           <div class="article-meta">
-            <div class="article-author"><div class="author-dot">MR</div> Mariana R.</div>
+            <div class="article-author"><div class="author-dot" style="font-size:8px;">MWP</div> Redacción MWP</div>
             <span>15 min</span>
           </div>
         </div>
@@ -281,7 +282,7 @@
           <div class="article-title">Cómo negociar con proveedores y ahorrar hasta 30%</div>
           <div class="article-desc">Las estrategias que usan los wedding planners profesionales para obtener mejores precios.</div>
           <div class="article-meta">
-            <div class="article-author"><div class="author-dot">SL</div> Sofía L.</div>
+            <div class="article-author"><div class="author-dot" style="font-size:8px;">MWP</div> Redacción MWP</div>
             <span>10 min</span>
           </div>
         </div>
@@ -297,7 +298,7 @@
           <div class="article-title">El cronograma perfecto para el día de tu boda</div>
           <div class="article-desc">Minuto a minuto, cómo organizar el día más importante de tu vida sin contratiempos.</div>
           <div class="article-meta">
-            <div class="article-author"><div class="author-dot">ER</div> Elena R.</div>
+            <div class="article-author"><div class="author-dot" style="font-size:8px;">MWP</div> Redacción MWP</div>
             <span>12 min</span>
           </div>
         </div>
