@@ -282,6 +282,9 @@
   </div>
 
   <!-- FORM -->
+  <form id="vendor-form" action="https://formspree.io/f/mqewpwll" method="POST" style="display:contents;">
+  <input type="hidden" name="_subject" value="Nueva solicitud de proveedor — Mi Wedding Planner">
+  <input type="hidden" name="_next" value="https://www.miweddingplanner.com.mx/aplicar">
   <div class="form-wrap">
 
     <!-- STEP 1: Business info -->
@@ -299,29 +302,29 @@
         <div class="field-row">
           <div class="field-group" style="margin-bottom:0;">
             <label>Nombre del negocio <span class="required">*</span></label>
-            <input type="text" id="business-name" placeholder="Ej. Elena Bodas & Eventos">
+            <input type="text" id="business-name" name="Negocio" placeholder="Ej. Elena Bodas & Eventos">
           </div>
           <div class="field-group" style="margin-bottom:0;">
             <label>Tu nombre completo <span class="required">*</span></label>
-            <input type="text" id="contact-name" placeholder="Nombre y apellido">
+            <input type="text" id="contact-name" name="Contacto" placeholder="Nombre y apellido">
           </div>
         </div>
 
         <div class="field-row">
           <div class="field-group" style="margin-bottom:0;">
             <label>Correo electrónico <span class="required">*</span></label>
-            <input type="email" id="email" placeholder="hola@tunegocio.com">
+            <input type="email" id="email" name="Email" placeholder="hola@tunegocio.com">
           </div>
           <div class="field-group" style="margin-bottom:0;">
             <label>Teléfono / WhatsApp <span class="required">*</span></label>
-            <input type="tel" id="phone" placeholder="+52 55 0000 0000">
+            <input type="tel" id="phone" name="Telefono" placeholder="+52 55 0000 0000">
           </div>
         </div>
 
         <div class="field-row">
           <div class="field-group" style="margin-bottom:0;">
             <label>Ciudad principal <span class="required">*</span></label>
-            <select id="city">
+            <select id="city" name="Ciudad">
               <option value="">Selecciona ciudad</option>
               <option>Ciudad de México</option>
               <option>Guadalajara</option>
@@ -339,7 +342,7 @@
           </div>
           <div class="field-group" style="margin-bottom:0;">
             <label>Años de experiencia <span class="required">*</span></label>
-            <select id="experience">
+            <select id="experience" name="Experiencia">
               <option value="">Selecciona</option>
               <option>Menos de 1 año</option>
               <option>1 – 3 años</option>
@@ -354,23 +357,23 @@
 
         <div class="field-group">
           <label>Sitio web</label>
-          <input type="url" id="website" placeholder="https://tunegocio.com">
+          <input type="url" id="website" name="Website" placeholder="https://tunegocio.com">
         </div>
 
         <div class="field-row">
           <div class="field-group" style="margin-bottom:0;">
             <label>Instagram</label>
-            <input type="text" id="instagram" placeholder="@tunegocio">
+            <input type="text" id="instagram" name="Instagram" placeholder="@tunegocio">
           </div>
           <div class="field-group" style="margin-bottom:0;">
             <label>Facebook</label>
-            <input type="text" id="facebook" placeholder="facebook.com/tunegocio">
+            <input type="text" id="facebook" name="Facebook" placeholder="facebook.com/tunegocio">
           </div>
         </div>
 
         <div class="field-group" style="margin-top:18px;">
           <label>Descripción de tu negocio <span class="required">*</span></label>
-          <textarea id="description" placeholder="Cuéntanos sobre tu negocio, tu estilo y lo que te hace especial. Esta será tu presentación ante las novias..."></textarea>
+          <textarea id="description" name="Descripcion" placeholder="Cuéntanos sobre tu negocio, tu estilo y lo que te hace especial. Esta será tu presentación ante las novias..."></textarea>
           <div class="field-hint">Mínimo 100 caracteres. Sé específico — los perfiles detallados reciben 3x más contactos.</div>
         </div>
       </div>
@@ -481,7 +484,7 @@
 
         <div class="field-group">
           <label>Número aproximado de eventos realizados <span class="required">*</span></label>
-          <select id="events">
+          <select id="events" name="Eventos">
             <option value="">Selecciona</option>
             <option>Menos de 10</option>
             <option>10 – 30</option>
@@ -493,7 +496,7 @@
 
         <div class="field-group">
           <label>Capacidad de atención <span class="required">*</span></label>
-          <select id="capacity">
+          <select id="capacity" name="Capacidad">
             <option value="">Número de personas que puedes atender</option>
             <option>Menos de 50 personas</option>
             <option>50 – 100 personas</option>
@@ -567,7 +570,7 @@
 
         <div class="field-group">
           <label>¿Tienes reseñas en línea? Comparte el link</label>
-          <input type="url" id="reviews-link" placeholder="https://g.page/tunegocio/review">
+          <input type="url" id="reviews-link" name="Resenas" placeholder="https://g.page/tunegocio/review">
           <div class="field-hint">Opcional. Nos ayuda a verificar tu reputación más rápido.</div>
         </div>
 
@@ -737,24 +740,35 @@
       btn.textContent = 'Enviando...';
       btn.disabled = true;
 
-      const formData = new FormData();
-      formData.append('Negocio', document.getElementById('business-name')?.value || '');
-      formData.append('Contacto', document.getElementById('contact-name')?.value || '');
-      formData.append('Email', document.getElementById('email')?.value || '');
-      formData.append('Teléfono', document.getElementById('phone')?.value || '');
-      formData.append('Ciudad', document.getElementById('city')?.value || '');
-      formData.append('Experiencia', document.getElementById('experience')?.value || '');
-      formData.append('Website', document.getElementById('website')?.value || '');
-      formData.append('Instagram', document.getElementById('instagram')?.value || '');
-      formData.append('Facebook', document.getElementById('facebook')?.value || '');
-      formData.append('Descripción', document.getElementById('description')?.value || '');
-      formData.append('Categoría', document.querySelector('input[name="category"]:checked')?.value || '');
-      formData.append('Precio', document.querySelector('input[name="price"]:checked')?.value || '');
-      formData.append('Eventos realizados', document.getElementById('events')?.value || '');
-      formData.append('Capacidad', document.getElementById('capacity')?.value || '');
-      formData.append('Plan elegido', document.querySelector('input[name="plan"]:checked')?.value || '');
-      formData.append('Reseñas', document.getElementById('reviews-link')?.value || '');
-      formData.append('_subject', 'Nueva solicitud de proveedor — Mi Wedding Planner');
+      const form = document.getElementById('vendor-form');
+      const formData = new FormData(form);
+
+      // Also grab values from inputs that may not have been in the form scope
+      const fields = {
+        'Negocio': 'business-name',
+        'Contacto': 'contact-name',
+        'Email': 'email',
+        'Telefono': 'phone',
+        'Ciudad': 'city',
+        'Experiencia': 'experience',
+        'Website': 'website',
+        'Instagram': 'instagram',
+        'Facebook': 'facebook',
+        'Descripcion': 'description',
+        'Eventos': 'events',
+        'Capacidad': 'capacity',
+        'Resenas': 'reviews-link',
+      };
+      for (const [name, id] of Object.entries(fields)) {
+        const el = document.getElementById(id);
+        if (el) formData.set(name, el.value);
+      }
+      const cat = document.querySelector('input[name="category"]:checked');
+      if (cat) formData.set('Categoria', cat.value);
+      const price = document.querySelector('input[name="price"]:checked');
+      if (price) formData.set('Precio', price.value);
+      const plan = document.querySelector('input[name="plan"]:checked');
+      if (plan) formData.set('Plan', plan.value);
 
       try {
         const res = await fetch('https://formspree.io/f/mqewpwll', {
@@ -769,17 +783,17 @@
           document.getElementById('step-success').classList.add('active');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
-          const body = await res.json();
-          console.error(body);
+          const body = await res.json().catch(() => ({}));
+          console.error('Formspree error:', body);
           btn.textContent = 'Enviar solicitud →';
           btn.disabled = false;
-          alert('Hubo un problema al enviar. Por favor intenta de nuevo.');
+          alert('Error: ' + (body.error || 'Por favor intenta de nuevo.'));
         }
       } catch(e) {
         console.error(e);
         btn.textContent = 'Enviar solicitud →';
         btn.disabled = false;
-        alert('Hubo un problema al enviar. Por favor intenta de nuevo.');
+        alert('Hubo un problema de conexión. Por favor intenta de nuevo.');
       }
     }
   </script>
