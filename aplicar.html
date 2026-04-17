@@ -737,30 +737,30 @@
       btn.textContent = 'Enviando...';
       btn.disabled = true;
 
-      const data = {
-        negocio: document.getElementById('business-name')?.value || '',
-        contacto: document.getElementById('contact-name')?.value || '',
-        email: document.getElementById('email')?.value || '',
-        telefono: document.getElementById('phone')?.value || '',
-        ciudad: document.getElementById('city')?.value || '',
-        experiencia: document.getElementById('experience')?.value || '',
-        website: document.getElementById('website')?.value || '',
-        instagram: document.getElementById('instagram')?.value || '',
-        facebook: document.getElementById('facebook')?.value || '',
-        descripcion: document.getElementById('description')?.value || '',
-        categoria: document.querySelector('input[name="category"]:checked')?.value || '',
-        precio: document.querySelector('input[name="price"]:checked')?.value || '',
-        eventos: document.getElementById('events')?.value || '',
-        capacidad: document.getElementById('capacity')?.value || '',
-        plan: document.querySelector('input[name="plan"]:checked')?.value || '',
-        reseñas: document.getElementById('reviews-link')?.value || '',
-      };
+      const formData = new FormData();
+      formData.append('Negocio', document.getElementById('business-name')?.value || '');
+      formData.append('Contacto', document.getElementById('contact-name')?.value || '');
+      formData.append('Email', document.getElementById('email')?.value || '');
+      formData.append('Teléfono', document.getElementById('phone')?.value || '');
+      formData.append('Ciudad', document.getElementById('city')?.value || '');
+      formData.append('Experiencia', document.getElementById('experience')?.value || '');
+      formData.append('Website', document.getElementById('website')?.value || '');
+      formData.append('Instagram', document.getElementById('instagram')?.value || '');
+      formData.append('Facebook', document.getElementById('facebook')?.value || '');
+      formData.append('Descripción', document.getElementById('description')?.value || '');
+      formData.append('Categoría', document.querySelector('input[name="category"]:checked')?.value || '');
+      formData.append('Precio', document.querySelector('input[name="price"]:checked')?.value || '');
+      formData.append('Eventos realizados', document.getElementById('events')?.value || '');
+      formData.append('Capacidad', document.getElementById('capacity')?.value || '');
+      formData.append('Plan elegido', document.querySelector('input[name="plan"]:checked')?.value || '');
+      formData.append('Reseñas', document.getElementById('reviews-link')?.value || '');
+      formData.append('_subject', 'Nueva solicitud de proveedor — Mi Wedding Planner');
 
       try {
         const res = await fetch('https://formspree.io/f/mqewpwll', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify(data)
+          body: formData,
+          headers: { 'Accept': 'application/json' }
         });
 
         if (res.ok) {
@@ -769,11 +769,14 @@
           document.getElementById('step-success').classList.add('active');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
+          const body = await res.json();
+          console.error(body);
           btn.textContent = 'Enviar solicitud →';
           btn.disabled = false;
           alert('Hubo un problema al enviar. Por favor intenta de nuevo.');
         }
       } catch(e) {
+        console.error(e);
         btn.textContent = 'Enviar solicitud →';
         btn.disabled = false;
         alert('Hubo un problema al enviar. Por favor intenta de nuevo.');
