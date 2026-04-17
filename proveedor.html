@@ -145,10 +145,12 @@
     .sim-stars { font-size:10px; color:var(--pigeon); margin-top:4px; }
 
     /* CONTACT MODAL */
-    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:200; align-items:center; justify-content:center; }
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:200; align-items:flex-start; justify-content:center; overflow-y:auto; padding:40px 20px; }
     .modal-overlay.open { display:flex; }
-    .modal { background:var(--white); border-radius:var(--radius-lg); padding:32px; width:100%; max-width:480px; margin:20px; }
-    .modal-title { font-family:var(--serif); font-size:22px; color:var(--night); margin-bottom:6px; }
+    .modal { background:var(--white); border-radius:var(--radius-lg); padding:32px; width:100%; max-width:480px; margin:auto; position:relative; }
+    .modal-close { position:absolute; top:16px; right:16px; width:32px; height:32px; border-radius:50%; background:var(--cotton); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:16px; line-height:1; transition:background 0.15s, color 0.15s; }
+    .modal-close:hover { background:var(--stone); color:var(--white); }
+    .modal-title { font-family:var(--serif); font-size:22px; color:var(--night); margin-bottom:6px; padding-right:40px; }
     .modal-sub { font-size:13px; color:var(--muted); margin-bottom:24px; font-weight:300; }
     .modal label { display:block; font-size:12px; font-weight:500; color:var(--muted); margin-bottom:6px; letter-spacing:0.03em; }
     .modal input, .modal textarea, .modal select { width:100%; border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:11px 14px; font-size:14px; color:var(--ink); font-family:var(--sans); outline:none; margin-bottom:14px; transition:border-color 0.2s; }
@@ -427,6 +429,7 @@
   <!-- CONTACT MODAL -->
   <div class="modal-overlay" id="modal" onclick="closeModalOutside(event, 'modal')">
     <div class="modal">
+      <button class="modal-close" onclick="closeModal('modal')">×</button>
       <h2 class="modal-title">Contactar a Elena</h2>
       <p class="modal-sub">Te responderá en menos de 24 horas. Sin compromiso.</p>
       <label>Tu nombre</label>
@@ -447,6 +450,7 @@
   <!-- APPOINTMENT MODAL -->
   <div class="modal-overlay" id="modal-cita" onclick="closeModalOutside(event, 'modal-cita')">
     <div class="modal" style="max-width:520px;">
+      <button class="modal-close" onclick="closeModal('modal-cita')">×</button>
       <h2 class="modal-title">Agendar cita con Elena</h2>
       <p class="modal-sub">Elige una fecha y horario para tu primera consulta. Elena confirmará la cita por correo.</p>
 
@@ -510,6 +514,7 @@
   <!-- CONFIRMATION -->
   <div class="modal-overlay" id="modal-confirm" onclick="closeModalOutside(event, 'modal-confirm')">
     <div class="modal" style="text-align:center;max-width:400px;">
+      <button class="modal-close" onclick="closeModal('modal-confirm')">×</button>
       <div style="width:64px;height:64px;border-radius:50%;background:var(--cotton);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;">
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M5 14l6 6 12-12" stroke="#667C90" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
