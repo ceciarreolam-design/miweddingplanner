@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Planes y precios — Mi Wedding Planner. Suscripciones para novias y proveedores verificados en México.">
+  <title>Precios — Mi Wedding Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --night:  #3E5766;
+      --pigeon: #667C90;
+      --stone:  #A6B8C7;
+      --laurel: #BDC4A9;
+      --cotton: #E9E8EB;
+      --white:  #FFFFFF;
+      --ink:    #2A3A42;
+      --muted:  #6B7A82;
+      --soft-white: rgba(255,255,255,0.65);
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'Jost', system-ui, sans-serif;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); color: var(--ink); background: var(--white); -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+
+    /* NAV */
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 64px;
+      background: var(--white); border-bottom: 0.5px solid var(--cotton);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-family: var(--serif); font-size: 19px; color: var(--night); }
+    .nav-logo span { color: var(--pigeon); }
+    .nav-links { display: flex; gap: 28px; font-size: 13px; color: var(--muted); }
+    .nav-links a:hover { color: var(--night); }
+    .nav-links a.active { color: var(--night); font-weight: 500; }
+    .nav-cta { font-family: var(--sans); font-size: 13px; font-weight: 500; background: var(--night); color: var(--white); border: none; border-radius: var(--radius-md); padding: 10px 22px; cursor: pointer; transition: background 0.2s; }
+    .nav-cta:hover { background: var(--pigeon); }
+
+    /* HERO */
+    .hero { background: var(--night); padding: 64px 40px 56px; text-align: center; }
+    .hero-eyebrow { font-size: 11px; letter-spacing: 0.16em; color: var(--soft-white); text-transform: uppercase; margin-bottom: 16px; font-weight: 300; }
+    .hero-title { font-family: var(--serif); font-size: 42px; font-weight: 400; color: var(--white); margin-bottom: 14px; line-height: 1.2; }
+    .hero-title span { color: var(--stone); font-style: italic; }
+    .hero-sub { font-size: 16px; font-weight: 300; color: var(--soft-white); max-width: 480px; margin: 0 auto; line-height: 1.7; }
+
+    /* TOGGLE */
+    .toggle-wrap { display: flex; justify-content: center; padding: 40px 40px 0; }
+    .toggle { display: inline-flex; background: var(--cotton); border-radius: 99px; padding: 4px; }
+    .toggle-btn { font-family: var(--sans); font-size: 13px; font-weight: 400; padding: 9px 28px; border-radius: 99px; border: none; background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+    .toggle-btn.active { background: var(--white); color: var(--night); font-weight: 500; }
+
+    /* SECTIONS */
+    .section { padding: 48px 40px; }
+    .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 32px; }
+
+    /* PLAN CARDS */
+    .plans { display: grid; gap: 20px; max-width: 900px; margin: 0 auto; }
+    .plans-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .plans-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+
+    .plan-card { background: var(--white); border: 0.5px solid var(--cotton); border-radius: var(--radius-lg); padding: 32px 28px; position: relative; transition: transform 0.2s; }
+    .plan-card:hover { transform: translateY(-2px); }
+    .plan-card.featured { border: 2px solid var(--pigeon); }
+
+    .plan-badge { display: inline-block; font-size: 11px; font-weight: 500; letter-spacing: 0.05em; background: var(--pigeon); color: var(--white); border-radius: 99px; padding: 4px 12px; margin-bottom: 14px; }
+    .plan-badge.laurel { background: var(--laurel); color: var(--night); }
+
+    .plan-name { font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--night); margin-bottom: 6px; }
+    .plan-desc { font-size: 13px; font-weight: 300; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+
+    .plan-price { margin-bottom: 6px; }
+    .plan-price-num { font-size: 36px; font-weight: 500; color: var(--night); line-height: 1; }
+    .plan-price-num.free { font-family: var(--serif); }
+    .plan-price-unit { font-size: 14px; font-weight: 300; color: var(--muted); margin-left: 4px; }
+    .plan-price-alt { font-size: 12px; color: var(--muted); margin-bottom: 24px; font-weight: 300; margin-top: 4px; }
+
+    .plan-btn { width: 100%; font-family: var(--sans); font-size: 14px; font-weight: 500; border-radius: var(--radius-md); padding: 12px; cursor: pointer; margin-bottom: 24px; transition: all 0.2s; letter-spacing: 0.02em; }
+    .plan-btn-primary { background: var(--pigeon); color: var(--white); border: none; }
+    .plan-btn-primary:hover { background: var(--night); }
+    .plan-btn-dark { background: var(--night); color: var(--white); border: none; }
+    .plan-btn-dark:hover { background: var(--pigeon); }
+    .plan-btn-outline { background: transparent; color: var(--night); border: 0.5px solid var(--cotton); }
+    .plan-btn-outline:hover { border-color: var(--stone); }
+
+    .plan-divider { border: none; border-top: 0.5px solid var(--cotton); margin-bottom: 20px; }
+
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .feature-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--muted); line-height: 1.5; font-weight: 300; }
+    .feat-check { color: var(--pigeon); font-size: 14px; flex-shrink: 0; margin-top: 1px; font-weight: 500; }
+    .feat-x { color: var(--cotton); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .feat-text-dim { color: var(--cotton); }
+
+    /* COMPARISON TABLE */
+    .compare-wrap { max-width: 860px; margin: 0 auto; overflow-x: auto; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .compare-table th { font-family: var(--serif); font-size: 16px; font-weight: 400; color: var(--night); padding: 16px 20px; text-align: left; border-bottom: 0.5px solid var(--cotton); }
+    .compare-table th:first-child { font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .compare-table td { padding: 14px 20px; border-bottom: 0.5px solid var(--cotton); color: var(--muted); font-weight: 300; vertical-align: middle; }
+    .compare-table td:first-child { color: var(--night); font-weight: 400; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: #FAFAFA; }
+    .check-icon { color: var(--pigeon); font-weight: 500; }
+    .x-icon { color: var(--cotton); }
+
+    /* FAQ */
+    .faq-wrap { max-width: 640px; margin: 0 auto; }
+    .faq-title { font-family: var(--serif); font-size: 28px; font-weight: 400; color: var(--night); text-align: center; margin-bottom: 32px; }
+    .faq-item { border-bottom: 0.5px solid var(--cotton); }
+    .faq-q { font-size: 15px; font-weight: 500; color: var(--night); padding: 18px 0 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .faq-q::after { content: '+'; font-size: 20px; font-weight: 300; color: var(--pigeon); transition: transform 0.2s; }
+    .faq-q.open::after { transform: rotate(45deg); }
+    .faq-a { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.7; padding-bottom: 16px; display: none; }
+    .faq-a.open { display: block; }
+
+    /* CTA BAND */
+    .cta-band { background: var(--laurel); padding: 56px 40px; text-align: center; }
+    .cta-title { font-family: var(--serif); font-size: 30px; font-weight: 400; color: var(--night); margin-bottom: 10px; }
+    .cta-sub { font-size: 15px; font-weight: 300; color: var(--night); opacity: 0.75; margin-bottom: 28px; }
+    .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-dark { font-family: var(--sans); font-size: 14px; font-weight: 500; background: var(--night); color: var(--white); border: none; border-radius: var(--radius-md); padding: 13px 32px; cursor: pointer; transition: background 0.2s; }
+    .btn-dark:hover { background: var(--pigeon); }
+    .btn-outline-dark { font-family: var(--sans); font-size: 14px; font-weight: 400; background: transparent; color: var(--night); border: 1px solid var(--night); border-radius: var(--radius-md); padding: 13px 32px; cursor: pointer; transition: all 0.2s; }
+    .btn-outline-dark:hover { background: var(--night); color: var(--white); }
+
+    /* FOOTER */
+    .footer { padding: 28px 40px; border-top: 0.5px solid var(--cotton); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-logo { font-family: var(--serif); font-size: 16px; color: var(--night); }
+    .footer-links { display: flex; gap: 24px; font-size: 12px; color: var(--muted); }
+    .footer-copy { font-size: 12px; color: var(--muted); }
+
+    /* PANEL TOGGLE */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 48px 20px 40px; }
+      .hero-title { font-size: 30px; }
+      .section { padding: 40px 20px; }
+      .plans-2, .plans-3 { grid-template-columns: 1fr; }
+      .footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Mi Wedding <span>Planner</span></a>
+    <div class="nav-links">
+      <a href="index.html">Inicio</a>
+      <a href="#">Proveedores</a>
+      <a href="#">Aprende</a>
+      <a href="precios.html" class="active">Precios</a>
+    </div>
+    <button class="nav-cta" onclick="window.location.href='aplicar.html'">Únete</button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-eyebrow">Planes y precios</p>
+    <h1 class="hero-title">Invierte en tu boda<br><span>o en tu negocio.</span></h1>
+    <p class="hero-sub">Planes diseñados para novias y proveedores que exigen lo mejor. Sin comisiones ocultas, sin sorpresas.</p>
+  </section>
+
+  <!-- TOGGLE -->
+  <div class="toggle-wrap">
+    <div class="toggle">
+      <button class="toggle-btn active" onclick="showPanel('novias', this)">Para novias</button>
+      <button class="toggle-btn" onclick="showPanel('proveedores', this)">Para proveedores</button>
+    </div>
+  </div>
+
+  <!-- NOVIAS PANEL -->
+  <div id="panel-novias" class="panel active">
+    <section class="section">
+      <p class="section-label">Plan para novias</p>
+
+      <div style="max-width:480px;margin:0 auto 32px;text-align:center;background:var(--cotton);border-radius:var(--radius-lg);padding:16px 24px;">
+        <p style="font-size:13px;font-weight:300;color:var(--muted);line-height:1.7;">Puedes leer algunos artículos gratuitos en nuestro centro de aprendizaje sin registrarte. Para ver perfiles de proveedores, contactarlos y acceder a todas las funciones necesitas el plan Premium.</p>
+      </div>
+
+      <div class="plans" style="max-width:440px;margin:0 auto;">
+        <div class="plan-card featured">
+          <div class="plan-badge">Plan único</div>
+          <div class="plan-name">Premium</div>
+          <div class="plan-desc">Todo lo que necesitas desde el compromiso hasta el gran día. Acceso completo a la plataforma.</div>
+          <div class="plan-price">
+            <span class="plan-price-num">$199</span>
+            <span class="plan-price-unit">MXN / mes</span>
+          </div>
+          <div class="plan-price-alt">o $1,490 MXN pago único por tu periodo de compromiso</div>
+          <button class="plan-btn plan-btn-primary" onclick="window.location.href='aplicar.html'">Empezar ahora</button>
+          <hr class="plan-divider">
+          <ul class="feature-list">
+            <li class="feature-item"><span class="feat-check">✓</span> Búsqueda de proveedores verificados</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Favoritos ilimitados</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Mensajería directa con proveedores</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Panel de bodas personalizado</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Checklist inteligente con fechas</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Control de presupuesto</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Acceso a todos los artículos y cursos</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Soporte prioritario</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- PROVEEDORES PANEL -->
+  <div id="panel-proveedores" class="panel">
+    <section class="section">
+      <p class="section-label">Planes para proveedores</p>
+      <div class="plans plans-3">
+
+        <div class="plan-card">
+          <div class="plan-name">Básico</div>
+          <div class="plan-desc">Presencia digital verificada en la plataforma.</div>
+          <div class="plan-price">
+            <span class="plan-price-num">$499</span>
+            <span class="plan-price-unit">MXN / mes</span>
+          </div>
+          <div class="plan-price-alt">~$29 USD / mes · Cancela cuando quieras</div>
+          <button class="plan-btn plan-btn-outline" onclick="window.location.href='aplicar.html'">Solicitar acceso</button>
+          <hr class="plan-divider">
+          <ul class="feature-list">
+            <li class="feature-item"><span class="feat-check">✓</span> Perfil verificado con badge MWP</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Galería de fotos (hasta 10)</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Reseñas de novias verificadas</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Información de contacto visible</li>
+            <li class="feature-item"><span class="feat-x">✗</span> <span class="feat-text-dim">Posición destacada en búsquedas</span></li>
+            <li class="feature-item"><span class="feat-x">✗</span> <span class="feat-text-dim">Estadísticas de perfil</span></li>
+            <li class="feature-item"><span class="feat-x">✗</span> <span class="feat-text-dim">Calendario de disponibilidad</span></li>
+          </ul>
+        </div>
+
+        <div class="plan-card featured">
+          <div class="plan-badge">Recomendado</div>
+          <div class="plan-name">Profesional</div>
+          <div class="plan-desc">Mayor visibilidad y herramientas de negocio.</div>
+          <div class="plan-price">
+            <span class="plan-price-num">$799</span>
+            <span class="plan-price-unit">MXN / mes</span>
+          </div>
+          <div class="plan-price-alt">~$47 USD / mes · Cancela cuando quieras</div>
+          <button class="plan-btn plan-btn-primary" onclick="window.location.href='aplicar.html'">Solicitar acceso</button>
+          <hr class="plan-divider">
+          <ul class="feature-list">
+            <li class="feature-item"><span class="feat-check">✓</span> Todo lo del plan Básico</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Fotos ilimitadas en galería</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Posición destacada en búsquedas</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Estadísticas de visitas a tu perfil</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Calendario de disponibilidad</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Mensajería directa con novias</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Publicar artículos en el hub</li>
+          </ul>
+        </div>
+
+        <div class="plan-card">
+          <div class="plan-badge laurel">Elite</div>
+          <div class="plan-name">Elite</div>
+          <div class="plan-desc">Para líderes del mercado que quieren máxima exposición.</div>
+          <div class="plan-price">
+            <span class="plan-price-num">$1,499</span>
+            <span class="plan-price-unit">MXN / mes</span>
+          </div>
+          <div class="plan-price-alt">~$88 USD / mes · Cancela cuando quieras</div>
+          <button class="plan-btn plan-btn-dark" onclick="window.location.href='aplicar.html'">Solicitar acceso</button>
+          <hr class="plan-divider">
+          <ul class="feature-list">
+            <li class="feature-item"><span class="feat-check">✓</span> Todo lo del plan Profesional</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Primero en resultados de búsqueda</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Badge Elite exclusivo en perfil</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Reportes mensuales de rendimiento</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Soporte prioritario directo</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Aparición en homepage destacada</li>
+            <li class="feature-item"><span class="feat-check">✓</span> Asesoría de perfil personalizada</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- COMPARISON TABLE -->
+    <section class="section" style="background:var(--cotton);padding-top:0;">
+      <div style="max-width:900px;margin:0 auto;padding-top:40px;">
+        <p class="section-label">Comparación detallada</p>
+        <div class="compare-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Característica</th>
+                <th>Básico</th>
+                <th>Profesional</th>
+                <th>Elite</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Perfil verificado</td><td><span class="check-icon">✓</span></td><td><span class="check-icon">✓</span></td><td><span class="check-icon">✓</span></td></tr>
+              <tr><td>Fotos en galería</td><td>Hasta 10</td><td>Ilimitadas</td><td>Ilimitadas</td></tr>
+              <tr><td>Reseñas verificadas</td><td><span class="check-icon">✓</span></td><td><span class="check-icon">✓</span></td><td><span class="check-icon">✓</span></td></tr>
+              <tr><td>Posición en búsquedas</td><td>Estándar</td><td>Destacada</td><td>Primera</td></tr>
+              <tr><td>Estadísticas de perfil</td><td><span class="x-icon">—</span></td><td><span class="check-icon">✓</span></td><td><span class="check-icon">✓</span></td></tr>
+              <tr><td>Calendario de disponibilidad</td><td><span class="x-icon">—</span></td><td><span class="check-icon">✓</span></td><td><span class="check-icon">✓</span></td></tr>
+              <tr><td>Mensajería con novias</td><td><span class="x-icon">—</span></td><td><span class="check-icon">✓</span></td><td><span class="check-icon">✓</span></td></tr>
+              <tr><td>Publicar artículos</td><td><span class="x-icon">—</span></td><td><span class="check-icon">✓</span></td><td><span class="check-icon">✓</span></td></tr>
+              <tr><td>Aparición en homepage</td><td><span class="x-icon">—</span></td><td><span class="x-icon">—</span></td><td><span class="check-icon">✓</span></td></tr>
+              <tr><td>Badge Elite exclusivo</td><td><span class="x-icon">—</span></td><td><span class="x-icon">—</span></td><td><span class="check-icon">✓</span></td></tr>
+              <tr><td>Reportes mensuales</td><td><span class="x-icon">—</span></td><td><span class="x-icon">—</span></td><td><span class="check-icon">✓</span></td></tr>
+              <tr><td>Soporte prioritario</td><td><span class="x-icon">—</span></td><td><span class="x-icon">—</span></td><td><span class="check-icon">✓</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- FAQ -->
+  <section class="section" style="background:var(--white);">
+    <div class="faq-wrap">
+      <h2 class="faq-title">Preguntas frecuentes</h2>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">¿Puedo explorar la plataforma antes de suscribirme?</div>
+        <div class="faq-a">Sí, puedes leer algunos artículos gratuitos en nuestro centro de aprendizaje sin necesidad de registrarte. Sin embargo, los perfiles de proveedores, su información de contacto y todas las funciones de la plataforma requieren una suscripción Premium.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">¿Cuándo empiezo a pagar como proveedor?</div>
+        <div class="faq-a">Solo pagas si eres aprobado. El proceso de aplicación es completamente gratuito. Una vez aprobado, activas tu plan y tu perfil se publica de inmediato.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">¿Puedo cancelar mi suscripción?</div>
+        <div class="faq-a">Sí, puedes cancelar en cualquier momento sin penalizaciones. Tu perfil permanecerá visible hasta el fin del periodo pagado.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">¿Cuánto tarda el proceso de verificación?</div>
+        <div class="faq-a">Revisamos cada solicitud manualmente en 3 a 5 días hábiles. Te notificamos por correo con el resultado y los siguientes pasos.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">¿Mi información está segura?</div>
+        <div class="faq-a">Sí. Toda la información personal se maneja con los más altos estándares de seguridad. Nunca compartimos tus datos con terceros.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">¿Puedo cambiar de plan después?</div>
+        <div class="faq-a">Sí, puedes subir o bajar de plan en cualquier momento. El cambio aplica en tu siguiente ciclo de facturación.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-band">
+    <h2 class="cta-title">¿Lista para empezar?</h2>
+    <p class="cta-sub">Únete a la plataforma de bodas más exclusiva de México.</p>
+    <div class="cta-btns">
+      <button class="btn-dark" onclick="window.location.href='aplicar.html'">Soy novia</button>
+      <button class="btn-outline-dark" onclick="window.location.href='aplicar.html'">Soy proveedor</button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-logo">Mi Wedding Planner</div>
+    <div class="footer-links">
+      <a href="index.html">Inicio</a>
+      <a href="precios.html">Precios</a>
+      <a href="#">Contacto</a>
+      <a href="#">Privacidad</a>
+    </div>
+    <div class="footer-copy">© 2026 Mi Wedding Planner · México</div>
+  </footer>
+
+  <script>
+    function showPanel(name, btn) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('panel-' + name).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function toggleFaq(el) {
+      const answer = el.nextElementSibling;
+      const isOpen = answer.classList.contains('open');
+      document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+      document.querySelectorAll('.faq-q').forEach(q => q.classList.remove('open'));
+      if (!isOpen) {
+        answer.classList.add('open');
+        el.classList.add('open');
+      }
+    }
+  </script>
+
+</body>
+</html>
