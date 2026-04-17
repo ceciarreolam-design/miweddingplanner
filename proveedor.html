@@ -214,7 +214,7 @@
     </div>
     <div class="action-row">
       <button class="btn-primary" onclick="openModal()">Enviar mensaje</button>
-      <button class="btn-secondary" onclick="openModal()">Agendar cita</button>
+      <button class="btn-secondary" onclick="openCita()">Agendar cita</button>
       <button class="btn-fav" id="fav-btn" onclick="toggleFav()">♡</button>
     </div>
   </div>
@@ -359,7 +359,7 @@
         <div class="sidebar-title">¿Te interesa trabajar con Elena?</div>
         <p style="font-size:13px;color:var(--muted);margin-bottom:16px;font-weight:300;line-height:1.6;">Envíale un mensaje o agenda una cita para conocer su disponibilidad y paquetes.</p>
         <button class="btn-primary" style="width:100%;margin-bottom:10px;" onclick="openModal()">Enviar mensaje</button>
-        <button class="btn-secondary" style="width:100%;" onclick="openModal()">Agendar cita</button>
+        <button class="btn-secondary" style="width:100%;" onclick="openCita()">Agendar cita</button>
         <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px;font-weight:300;">Responde en menos de 24 horas · Sin compromiso</p>
       </div>
 
@@ -425,7 +425,7 @@
   </div>
 
   <!-- CONTACT MODAL -->
-  <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal-overlay" id="modal" onclick="closeModalOutside(event, 'modal')">
     <div class="modal">
       <h2 class="modal-title">Contactar a Elena</h2>
       <p class="modal-sub">Te responderá en menos de 24 horas. Sin compromiso.</p>
@@ -438,21 +438,124 @@
       <label>Mensaje</label>
       <textarea placeholder="Cuéntale sobre tu boda: número de invitados, sede que tienes en mente, estilo que buscas..."></textarea>
       <div class="modal-btns">
-        <button class="modal-cancel" onclick="closeModal()">Cancelar</button>
-        <button class="modal-send" onclick="closeModal()">Enviar mensaje →</button>
+        <button class="modal-cancel" onclick="closeModal('modal')">Cancelar</button>
+        <button class="modal-send" onclick="closeModal('modal')">Enviar mensaje →</button>
       </div>
     </div>
   </div>
 
+  <!-- APPOINTMENT MODAL -->
+  <div class="modal-overlay" id="modal-cita" onclick="closeModalOutside(event, 'modal-cita')">
+    <div class="modal" style="max-width:520px;">
+      <h2 class="modal-title">Agendar cita con Elena</h2>
+      <p class="modal-sub">Elige una fecha y horario para tu primera consulta. Elena confirmará la cita por correo.</p>
+
+      <label>Tu nombre <span style="color:var(--pigeon);">*</span></label>
+      <input type="text" placeholder="Tu nombre completo">
+
+      <label>Tu correo <span style="color:var(--pigeon);">*</span></label>
+      <input type="email" placeholder="hola@tucorreo.com">
+
+      <label>Tu WhatsApp</label>
+      <input type="tel" placeholder="+52 55 0000 0000">
+
+      <label>Tipo de cita <span style="color:var(--pigeon);">*</span></label>
+      <select>
+        <option value="">Selecciona</option>
+        <option>Consulta inicial (30 min) — Gratis</option>
+        <option>Reunión de planificación (1 hora)</option>
+        <option>Presentación de propuesta</option>
+        <option>Visita a sede juntas</option>
+      </select>
+
+      <label>Modalidad <span style="color:var(--pigeon);">*</span></label>
+      <div style="display:flex;gap:10px;margin-bottom:14px;">
+        <label style="flex:1;display:flex;align-items:center;gap:8px;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:11px 14px;cursor:pointer;font-size:13px;color:var(--muted);font-weight:300;" id="mode-video">
+          <input type="radio" name="mode" value="video" style="accent-color:var(--pigeon);" onchange="selectMode('video')"> Videollamada
+        </label>
+        <label style="flex:1;display:flex;align-items:center;gap:8px;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:11px 14px;cursor:pointer;font-size:13px;color:var(--muted);font-weight:300;" id="mode-presencial">
+          <input type="radio" name="mode" value="presencial" style="accent-color:var(--pigeon);" onchange="selectMode('presencial')"> Presencial
+        </label>
+      </div>
+
+      <label>Fecha preferida <span style="color:var(--pigeon);">*</span></label>
+      <input type="date" id="cita-date" style="margin-bottom:14px;">
+
+      <label>Horario preferido <span style="color:var(--pigeon);">*</span></label>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;" id="time-slots">
+        <button type="button" class="time-slot" onclick="selectTime(this)">10:00</button>
+        <button type="button" class="time-slot" onclick="selectTime(this)">11:00</button>
+        <button type="button" class="time-slot" onclick="selectTime(this)">12:00</button>
+        <button type="button" class="time-slot disabled">13:00</button>
+        <button type="button" class="time-slot" onclick="selectTime(this)">14:00</button>
+        <button type="button" class="time-slot" onclick="selectTime(this)">15:00</button>
+        <button type="button" class="time-slot disabled">16:00</button>
+        <button type="button" class="time-slot" onclick="selectTime(this)">17:00</button>
+      </div>
+
+      <label>Notas adicionales</label>
+      <textarea placeholder="Cuéntale brevemente sobre tu boda para que Elena pueda prepararse mejor..." style="min-height:70px;"></textarea>
+
+      <div style="background:var(--cotton);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;">
+        📅 Elena confirmará tu cita por correo en menos de 24 horas. Si el horario no está disponible, te sugerirá una alternativa.
+      </div>
+
+      <div class="modal-btns">
+        <button class="modal-cancel" onclick="closeModal('modal-cita')">Cancelar</button>
+        <button class="modal-send" onclick="sendCita()">Solicitar cita →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRMATION -->
+  <div class="modal-overlay" id="modal-confirm" onclick="closeModalOutside(event, 'modal-confirm')">
+    <div class="modal" style="text-align:center;max-width:400px;">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--cotton);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M5 14l6 6 12-12" stroke="#667C90" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2 class="modal-title">¡Solicitud enviada!</h2>
+      <p class="modal-sub">Elena revisará tu solicitud y te confirmará la cita por correo en menos de 24 horas.</p>
+      <button class="modal-send" style="width:100%;" onclick="closeModal('modal-confirm')">Entendido</button>
+    </div>
+  </div>
+
+  <style>
+    .time-slot { font-family:var(--sans); font-size:12px; padding:8px 4px; border-radius:var(--radius-md); border:0.5px solid var(--cotton); background:var(--white); color:var(--muted); cursor:pointer; transition:all 0.15s; }
+    .time-slot:hover:not(.disabled) { border-color:var(--pigeon); color:var(--night); }
+    .time-slot.selected { background:var(--pigeon); color:var(--white); border-color:var(--pigeon); }
+    .time-slot.disabled { background:#F5F4F6; color:var(--cotton); cursor:not-allowed; }
+  </style>
+
   <script>
     function openModal() { document.getElementById('modal').classList.add('open'); }
-    function closeModal() { document.getElementById('modal').classList.remove('open'); }
-    function closeModalOutside(e) { if (e.target === document.getElementById('modal')) closeModal(); }
+    function openCita() { document.getElementById('modal-cita').classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function closeModalOutside(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+
     function toggleFav() {
       const btn = document.getElementById('fav-btn');
       btn.textContent = btn.textContent === '♡' ? '♥' : '♡';
       btn.style.color = btn.textContent === '♥' ? '#667C90' : '';
     }
+
+    function selectTime(el) {
+      document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function selectMode(val) {
+      document.getElementById('mode-video').style.borderColor = val === 'video' ? 'var(--pigeon)' : 'var(--cotton)';
+      document.getElementById('mode-presencial').style.borderColor = val === 'presencial' ? 'var(--pigeon)' : 'var(--cotton)';
+    }
+
+    function sendCita() {
+      closeModal('modal-cita');
+      setTimeout(() => document.getElementById('modal-confirm').classList.add('open'), 200);
+    }
+
+    // Set min date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('cita-date').min = today;
   </script>
 
 </body>
