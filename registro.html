@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Crea tu cuenta en Mi Wedding Planner y empieza a planear la boda de tus sueños.">
+  <title>Crear cuenta — Mi Wedding Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --night:  #3E5766;
+      --pigeon: #667C90;
+      --stone:  #A6B8C7;
+      --laurel: #BDC4A9;
+      --cotton: #E9E8EB;
+      --white:  #FFFFFF;
+      --ink:    #2A3A42;
+      --muted:  #6B7A82;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'Jost', system-ui, sans-serif;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); color: var(--ink); background: var(--white); -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; }
+    a { text-decoration: none; color: inherit; }
+
+    /* LAYOUT */
+    .page { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+
+    /* LEFT PANEL */
+    .left { background: var(--night); padding: 48px; display: flex; flex-direction: column; justify-content: space-between; }
+    .left-logo { font-family: var(--serif); font-size: 20px; color: var(--white); }
+    .left-logo span { color: var(--stone); }
+    .left-content { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0; }
+    .left-title { font-family: var(--serif); font-size: 34px; color: var(--white); font-weight: 400; line-height: 1.2; margin-bottom: 16px; }
+    .left-title span { color: var(--stone); font-style: italic; }
+    .left-sub { font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 300; line-height: 1.8; margin-bottom: 36px; }
+    .left-features { display: flex; flex-direction: column; gap: 16px; }
+    .left-feat { display: flex; align-items: flex-start; gap: 14px; }
+    .feat-icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .feat-text strong { display: block; font-size: 13px; font-weight: 500; color: var(--white); margin-bottom: 2px; }
+    .feat-text span { font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 300; }
+    .left-footer { font-size: 12px; color: rgba(255,255,255,0.35); }
+
+    /* RIGHT PANEL */
+    .right { padding: 48px; display: flex; flex-direction: column; justify-content: center; }
+    .right-inner { max-width: 400px; margin: 0 auto; width: 100%; }
+
+    /* STEP INDICATOR */
+    .steps { display: flex; gap: 6px; margin-bottom: 32px; }
+    .step-dot { flex: 1; height: 3px; border-radius: 99px; background: var(--cotton); transition: background 0.3s; }
+    .step-dot.active { background: var(--pigeon); }
+    .step-dot.done { background: var(--laurel); }
+
+    /* FORM */
+    .form-title { font-family: var(--serif); font-size: 26px; color: var(--night); margin-bottom: 6px; font-weight: 400; }
+    .form-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; font-weight: 300; line-height: 1.6; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.03em; text-transform: uppercase; }
+    .field input, .field select { width: 100%; border: 0.5px solid var(--cotton); border-radius: var(--radius-md); padding: 12px 14px; font-size: 14px; color: var(--ink); font-family: var(--sans); outline: none; transition: border-color 0.2s; background: var(--white); }
+    .field input:focus, .field select:focus { border-color: var(--pigeon); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .btn-main { width: 100%; font-family: var(--sans); font-size: 14px; font-weight: 500; background: var(--pigeon); color: var(--white); border: none; border-radius: var(--radius-md); padding: 13px; cursor: pointer; transition: background 0.2s; margin-top: 4px; }
+    .btn-main:hover { background: var(--night); }
+    .btn-back { width: 100%; font-family: var(--sans); font-size: 14px; background: transparent; color: var(--muted); border: 0.5px solid var(--cotton); border-radius: var(--radius-md); padding: 12px; cursor: pointer; margin-top: 8px; transition: border-color 0.2s; }
+    .btn-back:hover { border-color: var(--stone); }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; font-size: 12px; color: var(--muted); }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 0.5px; background: var(--cotton); }
+    .login-link { text-align: center; font-size: 13px; color: var(--muted); margin-top: 16px; font-weight: 300; }
+    .login-link a { color: var(--pigeon); font-weight: 500; }
+    .login-link a:hover { color: var(--night); }
+
+    /* PLAN SELECTOR */
+    .plan-opts { display: flex; flex-direction: column; gap: 10px; margin-bottom: 6px; }
+    .plan-opt { border: 0.5px solid var(--cotton); border-radius: var(--radius-md); padding: 14px 16px; cursor: pointer; transition: border-color 0.2s; display: flex; align-items: center; gap: 14px; }
+    .plan-opt:hover { border-color: var(--stone); }
+    .plan-opt.selected { border: 1.5px solid var(--pigeon); background: #F4F7F9; }
+    .plan-opt input { accent-color: var(--pigeon); width: 16px; height: 16px; flex-shrink: 0; }
+    .plan-opt-name { font-size: 14px; font-weight: 500; color: var(--night); }
+    .plan-opt-price { font-size: 12px; color: var(--muted); font-weight: 300; margin-top: 1px; }
+    .plan-opt-badge { margin-left: auto; font-size: 10px; background: var(--laurel); color: var(--night); border-radius: 99px; padding: 3px 10px; font-weight: 500; flex-shrink: 0; }
+
+    /* SUCCESS */
+    .success-panel { text-align: center; }
+    .success-icon { width: 72px; height: 72px; border-radius: 50%; background: var(--cotton); margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; }
+    .success-title { font-family: var(--serif); font-size: 26px; color: var(--night); margin-bottom: 10px; }
+    .success-sub { font-size: 14px; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 28px; }
+    .success-btn { display: inline-block; font-family: var(--sans); font-size: 14px; font-weight: 500; background: var(--pigeon); color: var(--white); border: none; border-radius: var(--radius-md); padding: 13px 32px; cursor: pointer; transition: background 0.2s; }
+    .success-btn:hover { background: var(--night); }
+
+    /* STEP PANELS */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    @media (max-width: 768px) {
+      .page { grid-template-columns: 1fr; }
+      .left { display: none; }
+      .right { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- LEFT PANEL -->
+  <div class="left">
+    <div class="left-logo">Mi Wedding <span>Planner</span></div>
+    <div class="left-content">
+      <h2 class="left-title">Planea la boda<br>de tus <span>sueños</span></h2>
+      <p class="left-sub">Únete a miles de novias en México que planean su boda con los mejores proveedores verificados.</p>
+      <div class="left-features">
+        <div class="left-feat">
+          <div class="feat-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9l4 4 8-8" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="feat-text">
+            <strong>Proveedores verificados</strong>
+            <span>Solo los mejores de México, curados por expertos</span>
+          </div>
+        </div>
+        <div class="left-feat">
+          <div class="feat-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="14" height="12" rx="2" stroke="white" stroke-width="1.3"/><path d="M5 1v4M13 1v4M2 7h14" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div class="feat-text">
+            <strong>Panel de bodas personalizado</strong>
+            <span>Checklist, presupuesto y fechas en un solo lugar</span>
+          </div>
+        </div>
+        <div class="left-feat">
+          <div class="feat-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2l1.5 4.5H15l-3.8 2.7 1.5 4.5L9 11 5.3 13.7l1.5-4.5L3 6.5h4.5z" stroke="white" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="feat-text">
+            <strong>Artículos y guías exclusivas</strong>
+            <span>Todo lo que necesitas saber para planear sin estrés</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="left-footer">© 2026 Mi Wedding Planner · México</div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right">
+    <div class="right-inner">
+
+      <div class="steps">
+        <div class="step-dot active" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+        <div class="step-dot" id="dot-3"></div>
+      </div>
+
+      <!-- STEP 1: PERSONAL INFO -->
+      <div class="step-panel active" id="step-1">
+        <div class="form-title">Crea tu cuenta</div>
+        <div class="form-sub">Para novias que planean la boda de sus sueños.</div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Nombre</label>
+            <input type="text" placeholder="Tu nombre">
+          </div>
+          <div class="field">
+            <label>Apellido</label>
+            <input type="text" placeholder="Tu apellido">
+          </div>
+        </div>
+        <div class="field">
+          <label>Correo electrónico</label>
+          <input type="email" placeholder="hola@tucorreo.com">
+        </div>
+        <div class="field">
+          <label>Contraseña</label>
+          <input type="password" placeholder="Mínimo 8 caracteres">
+        </div>
+        <div class="field">
+          <label>¿Cuándo es tu boda?</label>
+          <input type="month" id="wedding-date">
+        </div>
+
+        <button class="btn-main" onclick="goStep(2)">Continuar →</button>
+        <div class="divider">o</div>
+        <div class="login-link">¿Ya tienes cuenta? <a href="#">Inicia sesión</a></div>
+      </div>
+
+      <!-- STEP 2: WEDDING DETAILS -->
+      <div class="step-panel" id="step-2">
+        <div class="form-title">Cuéntanos más</div>
+        <div class="form-sub">Personaliza tu experiencia según tu boda.</div>
+
+        <div class="field">
+          <label>Ciudad de la boda</label>
+          <select>
+            <option value="">Selecciona</option>
+            <option>Ciudad de México</option>
+            <option>Guadalajara</option>
+            <option>Monterrey</option>
+            <option>Cancún / Riviera Maya</option>
+            <option>Oaxaca</option>
+            <option>San Miguel de Allende</option>
+            <option>Valle de Bravo</option>
+            <option>Puebla</option>
+            <option>Cuernavaca</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Número de invitados estimado</label>
+          <select>
+            <option value="">Selecciona</option>
+            <option>Menos de 50 (íntima)</option>
+            <option>50 – 100</option>
+            <option>100 – 200</option>
+            <option>200 – 300</option>
+            <option>Más de 300</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Presupuesto aproximado</label>
+          <select>
+            <option value="">Selecciona</option>
+            <option>Menos de $100,000 MXN</option>
+            <option>$100,000 – $250,000 MXN</option>
+            <option>$250,000 – $500,000 MXN</option>
+            <option>$500,000 – $1,000,000 MXN</option>
+            <option>Más de $1,000,000 MXN</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>¿Qué necesitas contratar?</label>
+          <select>
+            <option value="">Lo más urgente</option>
+            <option>Sede / hacienda</option>
+            <option>Wedding planner</option>
+            <option>Fotógrafo / videógrafo</option>
+            <option>Catering</option>
+            <option>Todo (apenas empiezo)</option>
+          </select>
+        </div>
+
+        <button class="btn-main" onclick="goStep(3)">Continuar →</button>
+        <button class="btn-back" onclick="goStep(1)">← Regresar</button>
+      </div>
+
+      <!-- STEP 3: PLAN -->
+      <div class="step-panel" id="step-3">
+        <div class="form-title">Elige tu plan</div>
+        <div class="form-sub">Empieza Premium y cancela cuando quieras. Sin compromisos.</div>
+
+        <div class="plan-opts">
+          <label class="plan-opt selected" onclick="selectPlan(this)">
+            <input type="radio" name="plan" value="monthly" checked>
+            <div>
+              <div class="plan-opt-name">Premium mensual</div>
+              <div class="plan-opt-price">$199 MXN / mes · Cancela cuando quieras</div>
+            </div>
+          </label>
+          <label class="plan-opt" onclick="selectPlan(this)">
+            <input type="radio" name="plan" value="onetime">
+            <div>
+              <div class="plan-opt-name">Pago único</div>
+              <div class="plan-opt-price">$1,490 MXN · Acceso hasta el día de tu boda</div>
+            </div>
+            <span class="plan-opt-badge">Ahorra 37%</span>
+          </label>
+        </div>
+
+        <div style="background:var(--cotton);border-radius:var(--radius-md);padding:14px 16px;margin:16px 0;font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;">
+          🔒 Pago seguro. Puedes cancelar en cualquier momento desde tu perfil. No se realizarán cargos hasta confirmar tu cuenta.
+        </div>
+
+        <button class="btn-main" onclick="goStep(4)">Crear mi cuenta →</button>
+        <button class="btn-back" onclick="goStep(2)">← Regresar</button>
+      </div>
+
+      <!-- STEP 4: SUCCESS -->
+      <div class="step-panel" id="step-4">
+        <div class="success-panel">
+          <div class="success-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M6 16l7 7 13-13" stroke="#667C90" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="success-title">¡Bienvenida a MWP!</div>
+          <div class="success-sub">Tu cuenta fue creada exitosamente. Revisa tu correo para confirmar tu dirección y activar tu plan Premium.</div>
+          <button class="success-btn" onclick="window.location.href='proveedores.html'">Explorar proveedores →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function goStep(n) {
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('step-' + n).classList.add('active');
+    for (let i = 1; i <= 3; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.classList.remove('active', 'done');
+      if (i < n) dot.classList.add('done');
+      else if (i === n) dot.classList.add('active');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function selectPlan(el) {
+    document.querySelectorAll('.plan-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    el.querySelector('input').checked = true;
+  }
+</script>
+
+</body>
+</html>

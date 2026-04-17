@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Aprende todo sobre cómo planear tu boda en México — artículos, guías y consejos de expertos en Mi Wedding Planner.">
+  <title>Aprende — Mi Wedding Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --night:  #3E5766;
+      --pigeon: #667C90;
+      --stone:  #A6B8C7;
+      --laurel: #BDC4A9;
+      --cotton: #E9E8EB;
+      --white:  #FFFFFF;
+      --ink:    #2A3A42;
+      --muted:  #6B7A82;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'Jost', system-ui, sans-serif;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); color: var(--ink); background: var(--white); -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+
+    /* NAV */
+    .nav { display:flex; align-items:center; justify-content:space-between; padding:0 40px; height:64px; background:var(--white); border-bottom:0.5px solid var(--cotton); position:sticky; top:0; z-index:100; }
+    .nav-logo { font-family:var(--serif); font-size:19px; color:var(--night); }
+    .nav-logo span { color:var(--pigeon); }
+    .nav-links { display:flex; gap:28px; font-size:13px; color:var(--muted); }
+    .nav-links a:hover { color:var(--night); }
+    .nav-links a.active { color:var(--night); font-weight:500; }
+    .nav-cta { font-family:var(--sans); font-size:13px; font-weight:500; background:var(--night); color:var(--white); border:none; border-radius:var(--radius-md); padding:10px 22px; cursor:pointer; transition:background 0.2s; }
+    .nav-cta:hover { background:var(--pigeon); }
+
+    /* HERO */
+    .hero { background:var(--night); padding:60px 40px 52px; text-align:center; }
+    .hero-eyebrow { font-size:11px; letter-spacing:0.16em; color:rgba(255,255,255,0.55); text-transform:uppercase; margin-bottom:16px; font-weight:300; }
+    .hero-title { font-family:var(--serif); font-size:40px; color:var(--white); margin-bottom:12px; font-weight:400; line-height:1.2; }
+    .hero-title span { color:var(--stone); font-style:italic; }
+    .hero-sub { font-size:15px; color:rgba(255,255,255,0.65); font-weight:300; max-width:480px; margin:0 auto 28px; line-height:1.7; }
+    .search-box { display:flex; max-width:440px; margin:0 auto; background:var(--white); border-radius:var(--radius-md); overflow:hidden; }
+    .search-box input { flex:1; border:none; outline:none; font-family:var(--sans); font-size:14px; color:var(--ink); padding:13px 18px; }
+    .search-box button { font-family:var(--sans); font-size:13px; font-weight:500; background:var(--pigeon); color:var(--white); border:none; padding:13px 22px; cursor:pointer; transition:background 0.2s; }
+    .search-box button:hover { background:var(--night); }
+
+    /* TOPIC PILLS */
+    .topics { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; padding:28px 40px 0; }
+    .topic-pill { font-size:12px; padding:7px 18px; border-radius:99px; border:0.5px solid var(--cotton); color:var(--muted); cursor:pointer; transition:all 0.15s; background:var(--white); }
+    .topic-pill:hover { border-color:var(--stone); color:var(--night); }
+    .topic-pill.active { background:var(--night); color:var(--white); border-color:var(--night); }
+
+    /* FEATURED ARTICLE */
+    .featured-wrap { padding:40px 40px 0; max-width:1100px; margin:0 auto; }
+    .featured { background:var(--night); border-radius:var(--radius-lg); padding:48px; display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center; margin-bottom:48px; cursor:pointer; transition:opacity 0.2s; }
+    .featured:hover { opacity:0.95; }
+    .feat-eyebrow { font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--laurel); margin-bottom:12px; }
+    .feat-title { font-family:var(--serif); font-size:28px; color:var(--white); margin-bottom:14px; line-height:1.3; font-weight:400; }
+    .feat-desc { font-size:14px; color:rgba(255,255,255,0.65); line-height:1.7; font-weight:300; margin-bottom:20px; }
+    .feat-meta { display:flex; align-items:center; gap:16px; font-size:12px; color:rgba(255,255,255,0.45); }
+    .feat-badge { background:rgba(255,255,255,0.12); color:var(--white); font-size:10px; font-weight:500; padding:4px 12px; border-radius:99px; letter-spacing:0.03em; }
+    .feat-img { border-radius:var(--radius-md); height:220px; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; }
+
+    /* ARTICLES GRID */
+    .section { padding:0 40px 48px; max-width:1100px; margin:0 auto; }
+    .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .section-title { font-family:var(--serif); font-size:22px; color:var(--night); font-weight:400; }
+    .see-all { font-size:13px; color:var(--pigeon); cursor:pointer; transition:color 0.2s; }
+    .see-all:hover { color:var(--night); }
+    .articles-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+    .article-card { border-radius:var(--radius-lg); overflow:hidden; cursor:pointer; border:0.5px solid var(--cotton); transition:border-color 0.2s, transform 0.2s; background:var(--white); }
+    .article-card:hover { border-color:var(--stone); transform:translateY(-2px); }
+    .article-img { height:160px; background:var(--cotton); display:flex; align-items:center; justify-content:center; position:relative; }
+    .article-img-overlay { position:absolute; inset:0; background:linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.15)); }
+    .article-tag { position:absolute; top:12px; left:12px; font-size:10px; font-weight:500; padding:4px 12px; border-radius:99px; letter-spacing:0.03em; }
+    .tag-free { background:var(--laurel); color:var(--night); }
+    .tag-premium { background:var(--pigeon); color:var(--white); }
+    .article-body { padding:18px; }
+    .article-title { font-size:15px; font-weight:500; color:var(--night); margin-bottom:6px; line-height:1.4; }
+    .article-desc { font-size:13px; font-weight:300; color:var(--muted); line-height:1.6; margin-bottom:12px; }
+    .article-meta { display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--muted); }
+    .article-author { display:flex; align-items:center; gap:6px; }
+    .author-dot { width:22px; height:22px; border-radius:50%; background:var(--stone); display:flex; align-items:center; justify-content:center; font-size:9px; color:var(--white); font-weight:500; }
+
+    /* PREMIUM BANNER */
+    .premium-banner { background:var(--laurel); border-radius:var(--radius-lg); padding:32px 40px; display:flex; align-items:center; justify-content:space-between; gap:24px; margin:0 40px 48px; max-width:1020px; margin-left:auto; margin-right:auto; }
+    .pb-text .pb-title { font-family:var(--serif); font-size:22px; color:var(--night); margin-bottom:6px; }
+    .pb-text .pb-sub { font-size:13px; color:var(--night); opacity:0.7; font-weight:300; }
+    .pb-btn { font-family:var(--sans); font-size:13px; font-weight:500; background:var(--night); color:var(--white); border:none; border-radius:var(--radius-md); padding:12px 28px; cursor:pointer; white-space:nowrap; transition:background 0.2s; }
+    .pb-btn:hover { background:var(--pigeon); }
+
+    /* CATEGORIES */
+    .cats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .cat-card { border:0.5px solid var(--cotton); border-radius:var(--radius-lg); padding:22px 18px; text-align:center; cursor:pointer; transition:all 0.2s; background:var(--white); }
+    .cat-card:hover { border-color:var(--stone); transform:translateY(-2px); }
+    .cat-icon { width:48px; height:48px; border-radius:50%; background:var(--cotton); margin:0 auto 12px; display:flex; align-items:center; justify-content:center; }
+    .cat-name { font-size:13px; font-weight:500; color:var(--night); margin-bottom:4px; }
+    .cat-count { font-size:11px; color:var(--muted); font-weight:300; }
+
+    /* FOOTER */
+    .footer { padding:28px 40px; border-top:0.5px solid var(--cotton); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    .footer-logo { font-family:var(--serif); font-size:16px; color:var(--night); }
+    .footer-links { display:flex; gap:24px; font-size:12px; color:var(--muted); }
+    .footer-copy { font-size:12px; color:var(--muted); }
+
+    @media (max-width: 900px) {
+      .nav { padding:0 20px; }
+      .nav-links { display:none; }
+      .hero { padding:48px 20px 40px; }
+      .hero-title { font-size:28px; }
+      .featured-wrap, .section { padding-left:20px; padding-right:20px; }
+      .featured { grid-template-columns:1fr; padding:28px; gap:20px; }
+      .feat-img { height:140px; }
+      .articles-grid { grid-template-columns:1fr; }
+      .cats-grid { grid-template-columns:repeat(2,1fr); }
+      .premium-banner { flex-direction:column; text-align:center; margin:0 20px 40px; }
+      .topics { padding:20px 20px 0; }
+      .footer { flex-direction:column; text-align:center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Mi Wedding <span>Planner</span></a>
+    <div class="nav-links">
+      <a href="proveedores.html">Proveedores</a>
+      <a href="aprende.html" class="active">Aprende</a>
+      <a href="precios.html">Precios</a>
+    </div>
+    <button class="nav-cta" onclick="window.location.href='registro.html'">Únete</button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-eyebrow">Centro de aprendizaje</p>
+    <h1 class="hero-title">Todo lo que necesitas saber<br>para planear tu <span>boda perfecta</span></h1>
+    <p class="hero-sub">Artículos, guías y consejos de los mejores expertos en bodas de México. Algunos artículos son gratis — el resto con Premium.</p>
+    <div class="search-box">
+      <input type="text" placeholder="Busca un tema: presupuesto, flores, haciendas...">
+      <button>Buscar</button>
+    </div>
+  </section>
+
+  <!-- TOPIC PILLS -->
+  <div class="topics">
+    <button class="topic-pill active">Todos</button>
+    <button class="topic-pill">Planificación</button>
+    <button class="topic-pill">Presupuesto</button>
+    <button class="topic-pill">Sedes</button>
+    <button class="topic-pill">Moda nupcial</button>
+    <button class="topic-pill">Flores & decoración</button>
+    <button class="topic-pill">Fotografía</button>
+    <button class="topic-pill">Luna de miel</button>
+    <button class="topic-pill">Invitados</button>
+  </div>
+
+  <!-- FEATURED -->
+  <div class="featured-wrap">
+    <div class="featured">
+      <div>
+        <div class="feat-eyebrow">Artículo destacado</div>
+        <h2 class="feat-title">La guía definitiva para planear una boda en México en 2026</h2>
+        <p class="feat-desc">Desde el presupuesto hasta el último detalle, todo lo que necesitas saber para planear la boda de tus sueños sin estrés y sin sorpresas.</p>
+        <div class="feat-meta">
+          <span class="feat-badge">Gratis</span>
+          <span>Por Elena Ruiz · 12 min lectura</span>
+        </div>
+      </div>
+      <div class="feat-img">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" opacity="0.3"><rect x="8" y="10" width="48" height="44" rx="4" stroke="white" stroke-width="2"/><path d="M20 26h24M20 34h16" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARTICLES: GRATIS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Artículos gratuitos</div>
+      <span class="see-all">Ver todos →</span>
+    </div>
+    <div class="articles-grid">
+
+      <div class="article-card">
+        <div class="article-img" style="background:#D4DCE4;">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" opacity="0.4"><rect x="4" y="6" width="32" height="28" rx="3" stroke="#3E5766" stroke-width="1.5"/><path d="M12 18h16M12 24h10" stroke="#3E5766" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="article-img-overlay"></div>
+          <span class="article-tag tag-free">Gratis</span>
+        </div>
+        <div class="article-body">
+          <div class="article-title">Cómo hacer un presupuesto de boda realista en México</div>
+          <div class="article-desc">Los errores más comunes al planear el presupuesto y cómo evitarlos.</div>
+          <div class="article-meta">
+            <div class="article-author"><div class="author-dot">MR</div> Mariana R.</div>
+            <span>8 min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-card">
+        <div class="article-img" style="background:#C8D4DC;">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" opacity="0.4"><path d="M8 34V18l12-10 12 10v16" stroke="#3E5766" stroke-width="1.5" stroke-linejoin="round"/><rect x="15" y="24" width="6" height="10" stroke="#3E5766" stroke-width="1.5"/></svg>
+          <div class="article-img-overlay"></div>
+          <span class="article-tag tag-free">Gratis</span>
+        </div>
+        <div class="article-body">
+          <div class="article-title">Las 10 haciendas más bonitas para bodas cerca de CDMX</div>
+          <div class="article-desc">Una selección cuidadosa de las sedes más impresionantes del centro del país.</div>
+          <div class="article-meta">
+            <div class="article-author"><div class="author-dot">SL</div> Sofía L.</div>
+            <span>6 min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-card">
+        <div class="article-img" style="background:#BFC9A8;">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" opacity="0.4"><circle cx="20" cy="16" rx="8" stroke="#3E5766" stroke-width="1.5"/><path d="M8 34c0-6.63 5.37-12 12-12s12 5.37 12 12" stroke="#3E5766" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="article-img-overlay"></div>
+          <span class="article-tag tag-free">Gratis</span>
+        </div>
+        <div class="article-body">
+          <div class="article-title">¿Cuándo contratar a tu wedding planner?</div>
+          <div class="article-desc">El momento ideal para empezar a planear y qué preguntar en la primera reunión.</div>
+          <div class="article-meta">
+            <div class="article-author"><div class="author-dot">ER</div> Elena R.</div>
+            <span>5 min</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PREMIUM BANNER -->
+  <div class="premium-banner">
+    <div class="pb-text">
+      <div class="pb-title">Desbloquea más de 80 artículos y guías</div>
+      <div class="pb-sub">Checklist completo, guías de proveedores, plantillas de presupuesto y mucho más con Premium.</div>
+    </div>
+    <button class="pb-btn" onclick="window.location.href='precios.html'">Ver plan Premium →</button>
+  </div>
+
+  <!-- ARTICLES: PREMIUM -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Con Premium <span style="font-size:13px;color:var(--muted);font-weight:300;">· 80+ artículos</span></div>
+      <span class="see-all">Ver todos →</span>
+    </div>
+    <div class="articles-grid">
+
+      <div class="article-card" style="opacity:0.7;" onclick="window.location.href='precios.html'">
+        <div class="article-img" style="background:#D0DAE0;">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" opacity="0.4"><rect x="12" y="8" width="16" height="12" rx="2" stroke="#3E5766" stroke-width="1.5"/><rect x="6" y="20" width="28" height="14" rx="2" stroke="#3E5766" stroke-width="1.5"/><path d="M20 14v6" stroke="#3E5766" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="article-img-overlay"></div>
+          <span class="article-tag tag-premium">🔒 Premium</span>
+        </div>
+        <div class="article-body">
+          <div class="article-title">Checklist completo: 18 meses antes de tu boda</div>
+          <div class="article-desc">Todo lo que debes hacer, mes a mes, para llegar al altar sin estrés.</div>
+          <div class="article-meta">
+            <div class="article-author"><div class="author-dot">MR</div> Mariana R.</div>
+            <span>15 min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-card" style="opacity:0.7;" onclick="window.location.href='precios.html'">
+        <div class="article-img" style="background:#C4CEB8;">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" opacity="0.4"><path d="M8 20h24M20 8v24" stroke="#3E5766" stroke-width="1.5" stroke-linecap="round"/><circle cx="20" cy="20" r="12" stroke="#3E5766" stroke-width="1.5"/></svg>
+          <div class="article-img-overlay"></div>
+          <span class="article-tag tag-premium">🔒 Premium</span>
+        </div>
+        <div class="article-body">
+          <div class="article-title">Cómo negociar con proveedores y ahorrar hasta 30%</div>
+          <div class="article-desc">Las estrategias que usan los wedding planners profesionales para obtener mejores precios.</div>
+          <div class="article-meta">
+            <div class="article-author"><div class="author-dot">SL</div> Sofía L.</div>
+            <span>10 min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-card" style="opacity:0.7;" onclick="window.location.href='precios.html'">
+        <div class="article-img" style="background:#D4DCE4;">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" opacity="0.4"><circle cx="20" cy="20" r="10" stroke="#3E5766" stroke-width="1.5"/><path d="M20 14v6l4 4" stroke="#3E5766" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="article-img-overlay"></div>
+          <span class="article-tag tag-premium">🔒 Premium</span>
+        </div>
+        <div class="article-body">
+          <div class="article-title">El cronograma perfecto para el día de tu boda</div>
+          <div class="article-desc">Minuto a minuto, cómo organizar el día más importante de tu vida sin contratiempos.</div>
+          <div class="article-meta">
+            <div class="article-author"><div class="author-dot">ER</div> Elena R.</div>
+            <span>12 min</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Explora por tema</div>
+    </div>
+    <div class="cats-grid">
+      <div class="cat-card">
+        <div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="#667C90" stroke-width="1.2"/><path d="M8 2v4M16 2v4M3 10h18" stroke="#667C90" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+        <div class="cat-name">Planificación</div>
+        <div class="cat-count">24 artículos</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#667C90" stroke-width="1.2"/><path d="M12 7v5l3 3" stroke="#667C90" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+        <div class="cat-name">Presupuesto</div>
+        <div class="cat-count">18 artículos</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 21V10l9-7 9 7v11" stroke="#667C90" stroke-width="1.2" stroke-linejoin="round"/><rect x="9" y="14" width="4" height="7" stroke="#667C90" stroke-width="1.2"/></svg></div>
+        <div class="cat-name">Sedes</div>
+        <div class="cat-count">15 artículos</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="14" rx="2" stroke="#667C90" stroke-width="1.2"/><circle cx="12" cy="13" r="4" stroke="#667C90" stroke-width="1.2"/><path d="M9 6l1.5-3h3L15 6" stroke="#667C90" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+        <div class="cat-name">Fotografía</div>
+        <div class="cat-count">12 artículos</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21v-8" stroke="#667C90" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="9" r="2" stroke="#667C90" stroke-width="1.1"/><circle cx="12" cy="5.5" r="2.5" stroke="#667C90" stroke-width="1.1"/><circle cx="15.5" cy="7.5" r="2.5" stroke="#667C90" stroke-width="1.1"/><circle cx="15" cy="11.5" r="2.5" stroke="#667C90" stroke-width="1.1"/><circle cx="9" cy="11.5" r="2.5" stroke="#667C90" stroke-width="1.1"/><circle cx="8.5" cy="7.5" r="2.5" stroke="#667C90" stroke-width="1.1"/></svg></div>
+        <div class="cat-name">Flores & Deco</div>
+        <div class="cat-count">10 artículos</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3C8 3 5 6 5 9c0 4 4 8 7 10 3-2 7-6 7-10 0-3-3-6-7-6z" stroke="#667C90" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+        <div class="cat-name">Luna de miel</div>
+        <div class="cat-count">9 artículos</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke="#667C90" stroke-width="1.2"/><circle cx="15" cy="8" r="3" stroke="#667C90" stroke-width="1.2"/><path d="M3 20c0-3.31 2.69-6 6-6h6c3.31 0 6 2.69 6 6" stroke="#667C90" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+        <div class="cat-name">Invitados</div>
+        <div class="cat-count">8 artículos</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z" stroke="#667C90" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+        <div class="cat-name">Moda nupcial</div>
+        <div class="cat-count">11 artículos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-logo">Mi Wedding Planner</div>
+    <div class="footer-links">
+      <a href="index.html">Inicio</a>
+      <a href="proveedores.html">Proveedores</a>
+      <a href="precios.html">Precios</a>
+      <a href="#">Contacto</a>
+    </div>
+    <div class="footer-copy">© 2026 Mi Wedding Planner · México</div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.topic-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
