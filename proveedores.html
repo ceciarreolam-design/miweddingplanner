@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Encuentra wedding planners, sedes, fotógrafos y más proveedores verificados para tu boda en México.">
+  <title>Proveedores — Mi Wedding Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --night:  #3E5766;
+      --pigeon: #667C90;
+      --stone:  #A6B8C7;
+      --laurel: #BDC4A9;
+      --cotton: #E9E8EB;
+      --white:  #FFFFFF;
+      --ink:    #2A3A42;
+      --muted:  #6B7A82;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'Jost', system-ui, sans-serif;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); color: var(--ink); background: #F5F4F6; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+
+    /* NAV */
+    .nav { display:flex; align-items:center; justify-content:space-between; padding:0 40px; height:64px; background:var(--white); border-bottom:0.5px solid var(--cotton); position:sticky; top:0; z-index:100; }
+    .nav-logo { font-family:var(--serif); font-size:19px; color:var(--night); }
+    .nav-logo span { color:var(--pigeon); }
+    .nav-links { display:flex; gap:28px; font-size:13px; color:var(--muted); }
+    .nav-links a:hover { color:var(--night); }
+    .nav-links a.active { color:var(--night); font-weight:500; }
+    .nav-cta { font-family:var(--sans); font-size:13px; font-weight:500; background:var(--night); color:var(--white); border:none; border-radius:var(--radius-md); padding:10px 22px; cursor:pointer; transition:background 0.2s; }
+    .nav-cta:hover { background:var(--pigeon); }
+
+    /* SEARCH BAR */
+    .search-bar { background:var(--night); padding:28px 40px; }
+    .search-inner { display:flex; gap:0; max-width:700px; margin:0 auto; border:0.5px solid rgba(166,184,199,0.3); border-radius:var(--radius-lg); overflow:hidden; background:var(--white); }
+    .search-inner select, .search-inner input { flex:1; border:none; outline:none; font-family:var(--sans); font-size:14px; color:var(--muted); padding:14px 18px; background:transparent; }
+    .search-inner select { border-right:0.5px solid var(--cotton); appearance:none; cursor:pointer; }
+    .search-inner input { border-right:0.5px solid var(--cotton); }
+    .search-inner button { font-family:var(--sans); font-size:14px; font-weight:500; background:var(--pigeon); color:var(--white); border:none; padding:14px 28px; cursor:pointer; white-space:nowrap; transition:background 0.2s; }
+    .search-inner button:hover { background:var(--night); }
+
+    /* CATEGORY PILLS */
+    .cat-pills { background:var(--white); border-bottom:0.5px solid var(--cotton); padding:14px 40px; display:flex; gap:8px; overflow-x:auto; }
+    .cat-pills::-webkit-scrollbar { display:none; }
+    .cat-pill { font-family:var(--sans); font-size:12px; font-weight:400; padding:7px 16px; border-radius:99px; border:0.5px solid var(--cotton); color:var(--muted); cursor:pointer; white-space:nowrap; transition:all 0.15s; background:var(--white); }
+    .cat-pill:hover { border-color:var(--stone); color:var(--night); }
+    .cat-pill.active { background:var(--night); color:var(--white); border-color:var(--night); }
+
+    /* LAYOUT */
+    .layout { display:grid; grid-template-columns:240px minmax(0,1fr); min-height:calc(100vh - 180px); }
+
+    /* FILTERS */
+    .filters { background:var(--white); border-right:0.5px solid var(--cotton); padding:24px 20px; }
+    .filter-title { font-size:13px; font-weight:500; color:var(--night); margin-bottom:20px; }
+    .filter-section { margin-bottom:22px; padding-bottom:20px; border-bottom:0.5px solid var(--cotton); }
+    .filter-section:last-child { border-bottom:none; margin-bottom:0; }
+    .filter-label { font-size:10px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+    .filter-check { display:flex; align-items:center; gap:8px; margin-bottom:8px; cursor:pointer; }
+    .filter-check input { accent-color:var(--pigeon); width:14px; height:14px; cursor:pointer; }
+    .filter-check-label { font-size:13px; color:var(--muted); font-weight:300; }
+    .filter-check-count { font-size:11px; color:var(--stone); margin-left:auto; }
+    .range-wrap { margin-top:4px; }
+    .range-vals { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-top:6px; font-weight:300; }
+    input[type=range] { width:100%; accent-color:var(--pigeon); }
+    .star-row { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+    .star-opt { font-size:11px; padding:5px 12px; border-radius:99px; border:0.5px solid var(--cotton); color:var(--muted); cursor:pointer; transition:all 0.15s; }
+    .star-opt:hover, .star-opt.active { background:var(--cotton); border-color:var(--stone); color:var(--night); }
+    .filter-clear { font-size:12px; color:var(--pigeon); cursor:pointer; display:block; margin-top:16px; }
+    .filter-clear:hover { color:var(--night); }
+
+    /* RESULTS */
+    .results { padding:24px 28px; }
+    .results-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px; }
+    .results-count { font-size:14px; color:var(--night); }
+    .results-count span { font-weight:500; }
+    .results-sort { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); }
+    .results-sort select { border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:7px 12px; font-size:12px; color:var(--muted); font-family:var(--sans); background:var(--white); outline:none; cursor:pointer; }
+
+    /* ACTIVE FILTERS */
+    .active-filters { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+    .af-tag { display:flex; align-items:center; gap:5px; font-size:11px; background:var(--white); border:0.5px solid var(--stone); color:var(--pigeon); border-radius:99px; padding:4px 12px; }
+    .af-x { cursor:pointer; color:var(--muted); font-size:13px; line-height:1; margin-left:2px; }
+    .af-x:hover { color:var(--night); }
+
+    /* VENDOR CARDS */
+    .cards-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; }
+
+    .vcard { background:var(--white); border:0.5px solid var(--cotton); border-radius:var(--radius-lg); overflow:hidden; cursor:pointer; transition:border-color 0.2s, transform 0.2s; display:flex; flex-direction:column; }
+    .vcard:hover { border-color:var(--stone); transform:translateY(-2px); }
+
+    .vcard-img { height:150px; background:var(--cotton); display:flex; align-items:center; justify-content:center; position:relative; flex-shrink:0; }
+    .vcard-badge { position:absolute; top:10px; left:10px; font-size:10px; font-weight:500; background:var(--night); color:var(--white); padding:3px 10px; border-radius:99px; letter-spacing:0.03em; }
+    .vcard-badge.elite { background:var(--laurel); color:var(--night); }
+    .vcard-fav { position:absolute; top:10px; right:10px; width:28px; height:28px; background:rgba(255,255,255,0.92); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; cursor:pointer; color:var(--stone); transition:color 0.2s; border:none; }
+    .vcard-fav:hover { color:var(--pigeon); }
+
+    .vcard-body { padding:14px 16px; flex:1; display:flex; flex-direction:column; }
+    .vcard-name { font-size:15px; font-weight:500; color:var(--night); margin-bottom:2px; }
+    .vcard-type { font-size:12px; color:var(--pigeon); margin-bottom:10px; letter-spacing:0.02em; }
+    .vcard-bottom { display:flex; align-items:center; justify-content:space-between; margin-top:auto; }
+    .vcard-stars { font-size:12px; color:var(--pigeon); }
+    .vcard-price { font-size:12px; color:var(--muted); font-weight:300; }
+
+    /* PREMIUM LOCK */
+    .lock-banner { background:var(--night); border-radius:var(--radius-lg); padding:28px 24px; text-align:center; margin-top:24px; }
+    .lock-title { font-family:var(--serif); font-size:20px; color:var(--white); font-weight:400; margin-bottom:8px; }
+    .lock-sub { font-size:13px; color:rgba(255,255,255,0.65); margin-bottom:18px; font-weight:300; line-height:1.6; }
+    .lock-btn { font-family:var(--sans); font-size:13px; font-weight:500; background:var(--pigeon); color:var(--white); border:none; border-radius:var(--radius-md); padding:11px 28px; cursor:pointer; transition:background 0.2s; }
+    .lock-btn:hover { background:var(--stone); }
+
+    /* PAGINATION */
+    .pagination { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:24px; padding-bottom:8px; }
+    .pg-btn { width:34px; height:34px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; border:0.5px solid var(--cotton); background:var(--white); color:var(--muted); font-family:var(--sans); transition:all 0.15s; }
+    .pg-btn:hover { border-color:var(--stone); color:var(--night); }
+    .pg-btn.active { background:var(--pigeon); color:var(--white); border-color:var(--pigeon); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .layout { grid-template-columns:1fr; }
+      .filters { display:none; }
+      .nav-links { display:none; }
+      .nav { padding:0 20px; }
+      .search-bar { padding:20px; }
+      .cat-pills { padding:12px 20px; }
+      .results { padding:16px 20px; }
+      .cards-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Mi Wedding <span>Planner</span></a>
+    <div class="nav-links">
+      <a href="proveedores.html" class="active">Proveedores</a>
+      <a href="#">Aprende</a>
+      <a href="precios.html">Precios</a>
+    </div>
+    <button class="nav-cta" onclick="window.location.href='aplicar.html'">Únete</button>
+  </nav>
+
+  <!-- SEARCH BAR -->
+  <div class="search-bar">
+    <div class="search-inner">
+      <select id="cat-select" onchange="filterCards()">
+        <option value="">Todos los proveedores</option>
+        <option value="wedding-planner">Wedding planners</option>
+        <option value="venue">Sedes & haciendas</option>
+        <option value="photographer">Fotografía & video</option>
+        <option value="catering">Catering & banqueteros</option>
+        <option value="florist">Floristas</option>
+        <option value="dj">DJ's & música</option>
+        <option value="beauty">Peinado & maquillaje</option>
+      </select>
+      <input type="text" id="city-input" placeholder="Ciudad..." oninput="filterCards()">
+      <button onclick="filterCards()">Buscar</button>
+    </div>
+  </div>
+
+  <!-- CATEGORY PILLS -->
+  <div class="cat-pills">
+    <button class="cat-pill active" onclick="setPill(this, '')">Todos</button>
+    <button class="cat-pill" onclick="setPill(this, 'wedding-planner')">Wedding planners</button>
+    <button class="cat-pill" onclick="setPill(this, 'venue')">Sedes & haciendas</button>
+    <button class="cat-pill" onclick="setPill(this, 'photographer')">Fotografía & video</button>
+    <button class="cat-pill" onclick="setPill(this, 'catering')">Catering</button>
+    <button class="cat-pill" onclick="setPill(this, 'florist')">Floristas</button>
+    <button class="cat-pill" onclick="setPill(this, 'dj')">DJ's & música</button>
+    <button class="cat-pill" onclick="setPill(this, 'beauty')">Peinado & maquillaje</button>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="layout">
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <div class="filter-title">Filtros</div>
+
+      <div class="filter-section">
+        <div class="filter-label">Ciudad</div>
+        <label class="filter-check"><input type="checkbox" checked onchange="filterCards()"><span class="filter-check-label">CDMX</span><span class="filter-check-count">89</span></label>
+        <label class="filter-check"><input type="checkbox" onchange="filterCards()"><span class="filter-check-label">Guadalajara</span><span class="filter-check-count">54</span></label>
+        <label class="filter-check"><input type="checkbox" onchange="filterCards()"><span class="filter-check-label">Monterrey</span><span class="filter-check-count">38</span></label>
+        <label class="filter-check"><input type="checkbox" onchange="filterCards()"><span class="filter-check-label">Cancún</span><span class="filter-check-count">29</span></label>
+        <label class="filter-check"><input type="checkbox" onchange="filterCards()"><span class="filter-check-label">Oaxaca</span><span class="filter-check-count">18</span></label>
+        <label class="filter-check"><input type="checkbox" onchange="filterCards()"><span class="filter-check-label">San Miguel de Allende</span><span class="filter-check-count">15</span></label>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-label">Precio máximo</div>
+        <div class="range-wrap">
+          <input type="range" min="5000" max="200000" value="100000" step="5000" id="price-range" oninput="updatePriceLabel(this.value)">
+          <div class="range-vals"><span>$5k MXN</span><span id="price-label">$100k MXN</span></div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-label">Calificación mínima</div>
+        <div class="star-row">
+          <span class="star-opt" onclick="setStar(this, 0)">Todas</span>
+          <span class="star-opt active" onclick="setStar(this, 4.5)">★ 4.5+</span>
+          <span class="star-opt" onclick="setStar(this, 4)">★ 4.0+</span>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-label">Estado</div>
+        <label class="filter-check"><input type="checkbox" checked><span class="filter-check-label">Solo verificados</span></label>
+        <label class="filter-check"><input type="checkbox"><span class="filter-check-label">Con disponibilidad</span></label>
+        <label class="filter-check"><input type="checkbox"><span class="filter-check-label">Responde rápido</span></label>
+      </div>
+
+      <label class="filter-label">Idiomas</label>
+      <div class="filter-section">
+        <label class="filter-check"><input type="checkbox" checked><span class="filter-check-label">Español</span></label>
+        <label class="filter-check"><input type="checkbox"><span class="filter-check-label">Inglés</span></label>
+        <label class="filter-check"><input type="checkbox"><span class="filter-check-label">Francés</span></label>
+      </div>
+
+      <span class="filter-clear" onclick="clearFilters()">Limpiar filtros</span>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results">
+      <div class="results-header">
+        <div class="results-count"><span id="count">267</span> proveedores verificados</div>
+        <div class="results-sort">
+          Ordenar por
+          <select onchange="filterCards()">
+            <option>Más relevantes</option>
+            <option>Mejor calificación</option>
+            <option>Precio: menor a mayor</option>
+            <option>Más reseñas</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="active-filters" id="active-filters">
+        <span class="af-tag">CDMX <span class="af-x" onclick="removeFilter(this)">×</span></span>
+        <span class="af-tag">★ 4.5+ <span class="af-x" onclick="removeFilter(this)">×</span></span>
+        <span class="af-tag">Verificados <span class="af-x" onclick="removeFilter(this)">×</span></span>
+      </div>
+
+      <div class="cards-grid" id="cards-grid">
+
+        <!-- Card 1 -->
+        <div class="vcard" data-cat="wedding-planner" onclick="window.location.href='proveedor.html'">
+          <div class="vcard-img" style="background:#D4DCE4;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="18" r="9" stroke="#667C90" stroke-width="1.5"/><path d="M8 42c0-8.84 7.16-16 16-16s16 7.16 16 16" stroke="#667C90" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span class="vcard-badge">Verificado</span>
+            <button class="vcard-fav">♡</button>
+          </div>
+          <div class="vcard-body">
+            <div class="vcard-name">Elena Bodas & Eventos</div>
+            <div class="vcard-type">Wedding planner · CDMX</div>
+            <div class="vcard-bottom">
+              <span class="vcard-stars">★★★★★ 4.9 (84)</span>
+              <span class="vcard-price">Desde $25,000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="vcard" data-cat="venue" onclick="window.location.href='proveedor.html'">
+          <div class="vcard-img" style="background:#C8D4DC;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M6 42V22l18-16 18 16v20" stroke="#667C90" stroke-width="1.5" stroke-linejoin="round"/><rect x="18" y="28" width="8" height="14" stroke="#667C90" stroke-width="1.5"/><rect x="28" y="28" width="8" height="10" stroke="#667C90" stroke-width="1.5"/></svg>
+            <span class="vcard-badge">Verificado</span>
+            <button class="vcard-fav">♡</button>
+          </div>
+          <div class="vcard-body">
+            <div class="vcard-name">Hacienda San Miguel</div>
+            <div class="vcard-type">Sede & hacienda · Guadalajara</div>
+            <div class="vcard-bottom">
+              <span class="vcard-stars">★★★★★ 4.8 (56)</span>
+              <span class="vcard-price">Desde $80,000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="vcard" data-cat="photographer" onclick="window.location.href='proveedor.html'">
+          <div class="vcard-img" style="background:#BFC9A8;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="14" width="36" height="26" rx="4" stroke="#667C90" stroke-width="1.5"/><circle cx="24" cy="27" r="8" stroke="#667C90" stroke-width="1.5"/><path d="M18 14l3-5h6l3 5" stroke="#667C90" stroke-width="1.5" stroke-linejoin="round"/><circle cx="36" cy="20" r="2" fill="#667C90"/></svg>
+            <span class="vcard-badge elite">Elite</span>
+            <button class="vcard-fav">♡</button>
+          </div>
+          <div class="vcard-body">
+            <div class="vcard-name">Luz & Sombra Studio</div>
+            <div class="vcard-type">Fotografía & video · Monterrey</div>
+            <div class="vcard-bottom">
+              <span class="vcard-stars">★★★★★ 5.0 (120)</span>
+              <span class="vcard-price">Desde $35,000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="vcard" data-cat="catering" onclick="window.location.href='proveedor.html'">
+          <div class="vcard-img" style="background:#D0DAE0;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M12 30c0-7 5.4-12 12-12s12 5.4 12 12" stroke="#667C90" stroke-width="1.5"/><ellipse cx="24" cy="30" rx="12" ry="3" stroke="#667C90" stroke-width="1.5"/><rect x="8" y="34" width="32" height="4" rx="2" stroke="#667C90" stroke-width="1.5"/><line x1="24" y1="18" x2="24" y2="14" stroke="#667C90" stroke-width="1.5" stroke-linecap="round"/><circle cx="24" cy="12" r="2.5" stroke="#667C90" stroke-width="1.5"/></svg>
+            <span class="vcard-badge">Verificado</span>
+            <button class="vcard-fav">♡</button>
+          </div>
+          <div class="vcard-body">
+            <div class="vcard-name">Banquetes Careyes</div>
+            <div class="vcard-type">Catering & banqueteros · CDMX</div>
+            <div class="vcard-bottom">
+              <span class="vcard-stars">★★★★☆ 4.7 (43)</span>
+              <span class="vcard-price">Desde $18,000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="vcard" data-cat="florist" onclick="window.location.href='proveedor.html'">
+          <div class="vcard-img" style="background:#C4CEB8;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="20" r="4" stroke="#667C90" stroke-width="1.5"/><circle cx="24" cy="12" r="5" stroke="#667C90" stroke-width="1.5"/><circle cx="31" cy="16" r="5" stroke="#667C90" stroke-width="1.5"/><circle cx="31" cy="24" r="5" stroke="#667C90" stroke-width="1.5"/><circle cx="24" cy="28" r="5" stroke="#667C90" stroke-width="1.5"/><circle cx="17" cy="24" r="5" stroke="#667C90" stroke-width="1.5"/><circle cx="17" cy="16" r="5" stroke="#667C90" stroke-width="1.5"/><path d="M24 32v10" stroke="#667C90" stroke-width="1.5" stroke-linecap="round"/><path d="M20 38c-3 1-5 0-5 0" stroke="#667C90" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span class="vcard-badge">Verificado</span>
+            <button class="vcard-fav">♡</button>
+          </div>
+          <div class="vcard-body">
+            <div class="vcard-name">Flores de Francia</div>
+            <div class="vcard-type">Florista · CDMX & Cuernavaca</div>
+            <div class="vcard-bottom">
+              <span class="vcard-stars">★★★★★ 4.9 (67)</span>
+              <span class="vcard-price">Desde $8,000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="vcard" data-cat="dj" onclick="window.location.href='proveedor.html'">
+          <div class="vcard-img" style="background:#D4DCE4;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M20 38V8l24-6v26" stroke="#667C90" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="14" cy="38" r="6" stroke="#667C90" stroke-width="1.5"/><circle cx="38" cy="28" r="6" stroke="#667C90" stroke-width="1.5"/></svg>
+            <span class="vcard-badge">Verificado</span>
+            <button class="vcard-fav">♡</button>
+          </div>
+          <div class="vcard-body">
+            <div class="vcard-name">DJ Armando Reyes</div>
+            <div class="vcard-type">DJ & música · Cancún & Riviera Maya</div>
+            <div class="vcard-bottom">
+              <span class="vcard-stars">★★★★★ 4.8 (91)</span>
+              <span class="vcard-price">Desde $12,000</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PREMIUM LOCK BANNER -->
+      <div class="lock-banner">
+        <div class="lock-title">Hay 261 proveedores más esperándote</div>
+        <div class="lock-sub">Suscríbete al plan Premium para ver todos los perfiles, contactar proveedores directamente y acceder a tu panel de bodas personalizado.</div>
+        <button class="lock-btn" onclick="window.location.href='precios.html'">Ver planes desde $199 MXN / mes</button>
+      </div>
+
+      <div class="pagination">
+        <div class="pg-btn">←</div>
+        <div class="pg-btn active">1</div>
+        <div class="pg-btn">2</div>
+        <div class="pg-btn">3</div>
+        <div class="pg-btn">…</div>
+        <div class="pg-btn">12</div>
+        <div class="pg-btn">→</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setPill(el, cat) {
+      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('cat-select').value = cat;
+      filterCards();
+    }
+
+    function filterCards() {
+      const cat = document.getElementById('cat-select').value;
+      const cards = document.querySelectorAll('.vcard');
+      let visible = 0;
+      cards.forEach(c => {
+        const match = !cat || c.dataset.cat === cat;
+        c.style.display = match ? 'flex' : 'none';
+        if (match) visible++;
+      });
+      document.getElementById('count').textContent = visible < 6 ? visible : '267';
+    }
+
+    function updatePriceLabel(val) {
+      const num = parseInt(val).toLocaleString('es-MX');
+      document.getElementById('price-label').textContent = '$' + num.slice(0,-3) + 'k MXN';
+    }
+
+    function setStar(el, val) {
+      document.querySelectorAll('.star-opt').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function removeFilter(el) {
+      el.parentElement.remove();
+    }
+
+    function clearFilters() {
+      document.getElementById('active-filters').innerHTML = '';
+      document.querySelectorAll('.filter-check input').forEach(i => i.checked = false);
+      document.querySelectorAll('.star-opt').forEach(s => s.classList.remove('active'));
+      document.querySelector('.star-opt').classList.add('active');
+      document.getElementById('price-range').value = 100000;
+      updatePriceLabel(100000);
+      setPill(document.querySelector('.cat-pill'), '');
+    }
+  </script>
+
+</body>
+</html>
