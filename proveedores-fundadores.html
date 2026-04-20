@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Conviértete en Proveedor Fundador de Mi Wedding Planner — la plataforma de bodas más exclusiva de México. Acceso prioritario, precio bloqueado para siempre y badge exclusivo.">
+  <title>Proveedores Fundadores — Mi Wedding Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --night:  #3E5766;
+      --pigeon: #667C90;
+      --stone:  #A6B8C7;
+      --laurel: #BDC4A9;
+      --cotton: #E9E8EB;
+      --white:  #FFFFFF;
+      --ink:    #2A3A42;
+      --muted:  #6B7A82;
+      --gold:   #C9A96E;
+      --gold-light: #E8D5B0;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'Jost', system-ui, sans-serif;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); color: var(--ink); background: var(--white); -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+
+    /* NAV */
+    .nav { display:flex; align-items:center; justify-content:space-between; padding:0 40px; height:64px; background:var(--white); border-bottom:0.5px solid var(--cotton); position:sticky; top:0; z-index:100; }
+    .nav-logo { font-family:var(--serif); font-size:19px; color:var(--night); }
+    .nav-logo span { color:var(--pigeon); }
+    .nav-cta { font-family:var(--sans); font-size:13px; font-weight:500; background:var(--night); color:var(--white); border:none; border-radius:var(--radius-md); padding:10px 22px; cursor:pointer; transition:background 0.2s; }
+    .nav-cta:hover { background:var(--pigeon); }
+
+    /* HERO */
+    .hero { background:var(--night); padding:80px 40px 72px; text-align:center; position:relative; overflow:hidden; }
+    .hero::before { content:''; position:absolute; top:-100px; left:50%; transform:translateX(-50%); width:600px; height:600px; border-radius:50%; background:rgba(201,169,110,0.06); pointer-events:none; }
+    .hero-eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:11px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; }
+    .hero-eyebrow::before, .hero-eyebrow::after { content:''; width:32px; height:0.5px; background:var(--gold); opacity:0.5; }
+    .hero-title { font-family:var(--serif); font-size:52px; color:var(--white); font-weight:400; line-height:1.15; margin-bottom:18px; }
+    .hero-title em { color:var(--gold); font-style:italic; }
+    .hero-sub { font-size:17px; color:rgba(255,255,255,0.6); font-weight:300; line-height:1.8; max-width:520px; margin:0 auto 36px; }
+    .hero-spots { display:inline-flex; align-items:center; gap:10px; background:rgba(201,169,110,0.12); border:0.5px solid rgba(201,169,110,0.3); border-radius:99px; padding:10px 22px; font-size:13px; color:var(--gold-light); font-weight:300; margin-bottom:36px; }
+    .spots-dot { width:8px; height:8px; border-radius:50%; background:var(--gold); animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+    .hero-btn { font-family:var(--sans); font-size:15px; font-weight:500; background:var(--gold); color:var(--night); border:none; border-radius:var(--radius-md); padding:15px 40px; cursor:pointer; transition:all 0.2s; letter-spacing:0.02em; }
+    .hero-btn:hover { background:var(--gold-light); }
+    .hero-note { font-size:12px; color:rgba(255,255,255,0.3); margin-top:14px; font-weight:300; }
+
+    /* FOUNDER BADGE PREVIEW */
+    .badge-section { background:var(--cotton); padding:56px 40px; text-align:center; }
+    .badge-eyebrow { font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+    .badge-title { font-family:var(--serif); font-size:28px; color:var(--night); margin-bottom:12px; font-weight:400; }
+    .badge-sub { font-size:14px; color:var(--muted); font-weight:300; max-width:480px; margin:0 auto 36px; line-height:1.7; }
+    .badge-preview { display:inline-flex; align-items:center; gap:10px; background:var(--night); border-radius:var(--radius-lg); padding:14px 24px; margin-bottom:16px; }
+    .badge-icon { width:32px; height:32px; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; }
+    .badge-text { text-align:left; }
+    .badge-name { font-size:14px; font-weight:500; color:var(--white); }
+    .badge-label { font-size:10px; color:var(--gold); font-weight:500; letter-spacing:0.08em; text-transform:uppercase; margin-top:2px; }
+    .badge-desc { font-size:12px; color:var(--muted); font-weight:300; max-width:360px; margin:0 auto; line-height:1.6; }
+
+    /* BENEFITS */
+    .benefits { padding:72px 40px; max-width:1000px; margin:0 auto; }
+    .benefits-title { font-family:var(--serif); font-size:34px; color:var(--night); text-align:center; font-weight:400; margin-bottom:8px; }
+    .benefits-sub { font-size:15px; color:var(--muted); font-weight:300; text-align:center; margin-bottom:52px; }
+    .benefits-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; }
+    .benefit-card { border:0.5px solid var(--cotton); border-radius:var(--radius-xl); padding:32px 28px; position:relative; overflow:hidden; transition:border-color 0.2s; }
+    .benefit-card:hover { border-color:var(--stone); }
+    .benefit-card.gold { border-color:rgba(201,169,110,0.4); background:linear-gradient(135deg, rgba(201,169,110,0.04) 0%, transparent 60%); }
+    .benefit-num { font-family:var(--serif); font-size:56px; color:rgba(201,169,110,0.15); font-weight:400; line-height:1; position:absolute; top:20px; right:24px; }
+    .benefit-icon { width:48px; height:48px; border-radius:50%; background:var(--cotton); display:flex; align-items:center; justify-content:center; margin-bottom:18px; }
+    .benefit-card.gold .benefit-icon { background:rgba(201,169,110,0.15); }
+    .benefit-title { font-family:var(--serif); font-size:20px; color:var(--night); margin-bottom:10px; font-weight:400; }
+    .benefit-desc { font-size:14px; color:var(--muted); font-weight:300; line-height:1.8; }
+    .benefit-tag { display:inline-block; font-size:10px; font-weight:500; letter-spacing:0.06em; text-transform:uppercase; background:rgba(201,169,110,0.15); color:var(--gold); border-radius:99px; padding:4px 12px; margin-top:14px; }
+
+    /* OFFER */
+    .offer { background:var(--night); padding:72px 40px; }
+    .offer-inner { max-width:800px; margin:0 auto; }
+    .offer-eyebrow { font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); text-align:center; margin-bottom:12px; }
+    .offer-title { font-family:var(--serif); font-size:36px; color:var(--white); text-align:center; font-weight:400; margin-bottom:40px; line-height:1.25; }
+    .offer-title em { color:var(--gold); font-style:italic; }
+    .offer-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:40px; }
+    .offer-card { background:rgba(255,255,255,0.05); border:0.5px solid rgba(255,255,255,0.1); border-radius:var(--radius-lg); padding:24px 20px; text-align:center; }
+    .offer-card.featured { background:rgba(201,169,110,0.1); border-color:rgba(201,169,110,0.3); }
+    .offer-plan { font-size:14px; font-weight:500; color:rgba(255,255,255,0.6); margin-bottom:8px; letter-spacing:0.04em; }
+    .offer-price-old { font-size:13px; color:rgba(255,255,255,0.3); text-decoration:line-through; margin-bottom:4px; font-weight:300; }
+    .offer-price { font-family:var(--serif); font-size:32px; color:var(--white); font-weight:400; line-height:1; }
+    .offer-price span { font-family:var(--sans); font-size:13px; font-weight:300; color:rgba(255,255,255,0.5); }
+    .offer-card.featured .offer-price { color:var(--gold); }
+    .offer-months { font-size:12px; color:rgba(255,255,255,0.4); margin-top:8px; font-weight:300; }
+    .offer-card.featured .offer-months { color:var(--gold-light); }
+    .offer-note { text-align:center; font-size:13px; color:rgba(255,255,255,0.4); font-weight:300; line-height:1.7; margin-bottom:32px; }
+    .offer-note strong { color:rgba(255,255,255,0.7); font-weight:400; }
+    .offer-btn { display:block; width:100%; font-family:var(--sans); font-size:15px; font-weight:500; background:var(--gold); color:var(--night); border:none; border-radius:var(--radius-md); padding:16px; cursor:pointer; transition:all 0.2s; letter-spacing:0.02em; text-align:center; }
+    .offer-btn:hover { background:var(--gold-light); }
+
+    /* TESTIMONIAL / VISION */
+    .vision { padding:72px 40px; max-width:720px; margin:0 auto; text-align:center; }
+    .vision-quote { font-family:var(--serif); font-size:26px; color:var(--night); font-weight:400; font-style:italic; line-height:1.5; margin-bottom:20px; }
+    .vision-author { font-size:13px; color:var(--muted); font-weight:300; }
+    .vision-divider { width:48px; height:1px; background:var(--laurel); margin:0 auto 28px; }
+
+    /* FAQ */
+    .faq { background:var(--cotton); padding:64px 40px; }
+    .faq-inner { max-width:640px; margin:0 auto; }
+    .faq-title { font-family:var(--serif); font-size:28px; color:var(--night); text-align:center; margin-bottom:32px; font-weight:400; }
+    .faq-item { border-bottom:0.5px solid #D8D6DA; }
+    .faq-q { font-size:15px; font-weight:400; color:var(--night); padding:18px 0 14px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+    .faq-q::after { content:'+'; font-size:20px; font-weight:300; color:var(--pigeon); transition:transform 0.2s; flex-shrink:0; }
+    .faq-q.open::after { transform:rotate(45deg); }
+    .faq-a { font-size:14px; font-weight:300; color:var(--muted); line-height:1.8; padding-bottom:16px; display:none; }
+    .faq-a.open { display:block; }
+
+    /* FINAL CTA */
+    .final-cta { padding:80px 40px; text-align:center; background:var(--white); }
+    .final-eyebrow { font-size:11px; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; }
+    .final-title { font-family:var(--serif); font-size:38px; color:var(--night); font-weight:400; margin-bottom:14px; line-height:1.2; }
+    .final-title em { color:var(--pigeon); font-style:italic; }
+    .final-sub { font-size:15px; color:var(--muted); font-weight:300; max-width:480px; margin:0 auto 32px; line-height:1.7; }
+    .final-btn { font-family:var(--sans); font-size:15px; font-weight:500; background:var(--night); color:var(--white); border:none; border-radius:var(--radius-md); padding:15px 44px; cursor:pointer; transition:background 0.2s; }
+    .final-btn:hover { background:var(--pigeon); }
+    .final-note { font-size:12px; color:var(--stone); margin-top:12px; font-weight:300; }
+
+    /* FOOTER */
+    .footer { padding:24px 40px; border-top:0.5px solid var(--cotton); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    .footer-logo { font-family:var(--serif); font-size:16px; color:var(--night); }
+    .footer-copy { font-size:12px; color:var(--muted); }
+
+    @media (max-width:768px) {
+      .nav { padding:0 20px; }
+      .hero { padding:56px 20px 52px; }
+      .hero-title { font-size:34px; }
+      .badge-section, .benefits, .offer, .faq, .final-cta { padding-left:20px; padding-right:20px; }
+      .benefits-grid { grid-template-columns:1fr; }
+      .offer-cards { grid-template-columns:1fr; }
+      .footer { flex-direction:column; text-align:center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Mi Wedding <span>Planner</span></a>
+    <button class="nav-cta" onclick="document.getElementById('aplicar').scrollIntoView({behavior:'smooth'})">Quiero ser Fundador</button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">Programa exclusivo · Lugares limitados</div>
+    <h1 class="hero-title">Sé parte de algo<br><em>desde el principio.</em></h1>
+    <p class="hero-sub">Estamos construyendo la plataforma de bodas más exclusiva de México — y queremos que los mejores proveedores del país estén con nosotros desde el primer día.</p>
+    <div class="hero-spots">
+      <span class="spots-dot"></span>
+      Solo quedan <strong style="font-weight:500;margin:0 4px;">50 lugares</strong> de Proveedor Fundador disponibles
+    </div>
+    <br>
+    <button class="hero-btn" onclick="document.getElementById('aplicar').scrollIntoView({behavior:'smooth'})">Quiero ser Proveedor Fundador →</button>
+    <p class="hero-note">Sin costo durante los primeros 3 meses · Aprobación requerida</p>
+  </section>
+
+  <!-- BADGE PREVIEW -->
+  <section class="badge-section">
+    <div class="badge-eyebrow">Tu distinción permanente</div>
+    <h2 class="badge-title">El badge que nadie más podrá tener</h2>
+    <p class="badge-sub">Los Proveedores Fundadores llevarán para siempre un badge exclusivo en su perfil que los distingue como parte del grupo selecto que creyó en Mi Wedding Planner desde el inicio.</p>
+    <div class="badge-preview">
+      <div class="badge-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 4h4l-3.2 2.3 1.2 3.7L8 10 4.5 12l1.2-3.7L2.5 6h4z" fill="#3E5766"/></svg>
+      </div>
+      <div class="badge-text">
+        <div class="badge-name">Tu negocio aquí</div>
+        <div class="badge-label">✦ Proveedor Fundador MWP</div>
+      </div>
+    </div>
+    <p class="badge-desc">Este badge permanece en tu perfil para siempre, incluso cuando otros proveedores se unan después. Es una distinción que no se puede comprar — solo se gana siendo parte desde el inicio.</p>
+  </section>
+
+  <!-- BENEFITS -->
+  <section class="benefits">
+    <h2 class="benefits-title">Lo que obtienes como Fundador</h2>
+    <p class="benefits-sub">Cuatro ventajas que ningún proveedor que se una después podrá tener.</p>
+    <div class="benefits-grid">
+
+      <div class="benefit-card gold">
+        <div class="benefit-num">01</div>
+        <div class="benefit-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2l1.5 4.5H17l-3.8 2.7 1.5 4.5L11 11l-3.7 2.7 1.5-4.5L5 6.5h4.5z" stroke="#C9A96E" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="benefit-title">Badge Fundador permanente</div>
+        <div class="benefit-desc">Una distinción exclusiva y visible en tu perfil para siempre. Los proveedores que se unan después nunca podrán tenerla — es solo para quienes estuvieron desde el principio.</div>
+        <span class="benefit-tag">Solo para Fundadores</span>
+      </div>
+
+      <div class="benefit-card gold">
+        <div class="benefit-num">02</div>
+        <div class="benefit-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 11h16M11 3v16" stroke="#C9A96E" stroke-width="1.2" stroke-linecap="round"/><circle cx="11" cy="11" r="8" stroke="#C9A96E" stroke-width="1.2"/></svg>
+        </div>
+        <div class="benefit-title">Precio bloqueado para siempre</div>
+        <div class="benefit-desc">Tu tarifa mensual nunca aumentará, sin importar cuánto suba el precio para nuevos proveedores en el futuro. Es nuestra forma de reconocer tu confianza desde el inicio.</div>
+        <span class="benefit-tag">Precio garantizado</span>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-num">03</div>
+        <div class="benefit-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="4" width="16" height="14" rx="2" stroke="#667C90" stroke-width="1.2"/><path d="M3 9h16M8 4V3M14 4V3" stroke="#667C90" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="benefit-title">3 meses sin costo</div>
+        <div class="benefit-desc">Acceso completo a la plataforma durante los primeros 3 meses, totalmente gratis. Construye tu perfil, sube tu portafolio y recibe tus primeras solicitudes antes de pagar un solo peso.</div>
+      </div>
+
+      <div class="benefit-card">
+        <div class="benefit-num">04</div>
+        <div class="benefit-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3C7 3 4 6 4 9c0 4 4 8 7 10 3-2 7-6 7-10 0-3-3-6-7-6z" stroke="#667C90" stroke-width="1.2" stroke-linejoin="round"/><path d="M8 9l2 2 4-4" stroke="#667C90" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="benefit-title">Posición prioritaria en búsquedas</div>
+        <div class="benefit-desc">Durante el periodo de lanzamiento, los Proveedores Fundadores aparecerán primero en los resultados de búsqueda frente a las primeras novias que lleguen a la plataforma.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- OFFER -->
+  <section class="offer" id="aplicar">
+    <div class="offer-inner">
+      <div class="offer-eyebrow">La oferta Fundador</div>
+      <h2 class="offer-title">3 meses gratis.<br>Después, tu precio<br><em>bloqueado para siempre.</em></h2>
+      <div class="offer-cards">
+        <div class="offer-card">
+          <div class="offer-plan">Básico Fundador</div>
+          <div class="offer-price-old">$499 MXN/mes</div>
+          <div class="offer-price">$399 <span>MXN/mes</span></div>
+          <div class="offer-months">Después de los 3 meses gratis</div>
+        </div>
+        <div class="offer-card featured">
+          <div class="offer-plan">Profesional Fundador</div>
+          <div class="offer-price-old">$799 MXN/mes</div>
+          <div class="offer-price">$599 <span>MXN/mes</span></div>
+          <div class="offer-months">Después de los 3 meses gratis</div>
+        </div>
+        <div class="offer-card">
+          <div class="offer-plan">Elite Fundador</div>
+          <div class="offer-price-old">$1,499 MXN/mes</div>
+          <div class="offer-price">$999 <span>MXN/mes</span></div>
+          <div class="offer-months">Después de los 3 meses gratis</div>
+        </div>
+      </div>
+      <p class="offer-note">
+        <strong>Este precio es tuyo para siempre.</strong> Cuando subamos tarifas para nuevos proveedores, tú sigues pagando lo mismo. Sin contratos forzosos — puedes cancelar cuando quieras, pero si te quedas, tu precio no cambia jamás.
+      </p>
+      <button class="offer-btn" onclick="window.location.href='aplicar.html'">Solicitar mi lugar como Proveedor Fundador →</button>
+    </div>
+  </section>
+
+  <!-- VISION -->
+  <section class="vision">
+    <div class="vision-divider"></div>
+    <p class="vision-quote">"No estamos buscando a cualquier proveedor. Estamos buscando a los mejores — a quienes comparten nuestra visión de que las novias mexicanas merecen una experiencia de planeación verdaderamente excepcional."</p>
+    <div class="vision-author">— Equipo Mi Wedding Planner</div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="faq-inner">
+      <h2 class="faq-title">Preguntas frecuentes</h2>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">¿Cómo funciona el proceso de aplicación?</div>
+        <div class="faq-a">Llenas nuestro formulario de aplicación con información sobre tu negocio, portafolio y experiencia. Nuestro equipo revisa cada solicitud manualmente en 3 a 5 días hábiles. Si eres aprobado, te contactamos para activar tu perfil y empezar tu periodo gratuito de 3 meses.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">¿Qué pasa después de los 3 meses gratis?</div>
+        <div class="faq-a">Te avisamos con anticipación antes de que termine tu periodo gratuito. Si decides continuar, tu precio Fundador queda bloqueado permanentemente. Si decides no continuar, simplemente cancelas sin ningún cargo ni penalización.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">¿El badge Fundador realmente es permanente?</div>
+        <div class="faq-a">Sí, absolutamente. El badge "Proveedor Fundador MWP" permanece en tu perfil para siempre, incluso si en algún momento pausas o cancelas y vuelves a activar tu cuenta. Es una distinción que forma parte de tu historial en la plataforma de manera permanente.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">¿Cuántos lugares de Fundador hay disponibles?</div>
+        <div class="faq-a">El programa está limitado a 50 proveedores fundadores en total, distribuidos entre todas las categorías. Una vez que se llenen los 50 lugares, el programa cierra y los nuevos proveedores entrarán con las tarifas regulares sin los beneficios de Fundador.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">¿Todos los que aplican son aprobados?</div>
+        <div class="faq-a">No. Revisamos cada aplicación cuidadosamente para mantener la calidad y exclusividad de la plataforma. Buscamos proveedores con trayectoria comprobada, buenas reseñas y un nivel de servicio que esté alineado con lo que nuestras novias esperan. La calidad de la plataforma depende de la calidad de sus proveedores.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">¿Puedo cambiar de plan después?</div>
+        <div class="faq-a">Sí. Puedes subir de plan en cualquier momento y tu nuevo precio también quedará bloqueado al precio Fundador correspondiente. No puedes bajar de plan durante el periodo gratuito, pero sí después.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="final-eyebrow">50 lugares · Tiempo limitado</div>
+    <h2 class="final-title">Tu lugar está<br><em>esperándote.</em></h2>
+    <p class="final-sub">Las novias van a llegar. La pregunta es si van a encontrarte a ti — o a tu competencia.</p>
+    <button class="final-btn" onclick="window.location.href='aplicar.html'">Solicitar mi lugar →</button>
+    <p class="final-note">Proceso de aplicación gratuito · Respuesta en 3–5 días hábiles</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-logo">Mi Wedding Planner</div>
+    <div class="footer-copy">© 2026 Mi Wedding Planner · México · <a href="mailto:holamiweddingplanner@gmail.com" style="color:var(--pigeon);">holamiweddingplanner@gmail.com</a></div>
+  </footer>
+
+  <script>
+    function toggleFaq(el) {
+      const answer = el.nextElementSibling;
+      const isOpen = answer.classList.contains('open');
+      document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+      document.querySelectorAll('.faq-q').forEach(q => q.classList.remove('open'));
+      if (!isOpen) { answer.classList.add('open'); el.classList.add('open'); }
+    }
+  </script>
+
+</body>
+</html>
