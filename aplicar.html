@@ -393,62 +393,82 @@
         <div class="section-divider">¿Qué tipo de proveedor eres?</div>
 
         <div class="cat-grid">
-          <label class="cat-opt" onclick="selectCat(this)">
+          <label class="cat-opt" onclick="selectCat(this); document.getElementById('otro-field').style.display='none'">
             <input type="radio" name="category" value="wedding-planner">
             <div class="cat-icon">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6" r="3.5" stroke="#3E5766" stroke-width="1.2"/><path d="M3 16c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/></svg>
             </div>
             <div class="cat-name">Wedding planner</div>
           </label>
-          <label class="cat-opt" onclick="selectCat(this)">
+          <label class="cat-opt" onclick="selectCat(this); document.getElementById('otro-field').style.display='none'">
             <input type="radio" name="category" value="venue">
             <div class="cat-icon">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 17V8l7-6 7 6v9" stroke="#3E5766" stroke-width="1.2" stroke-linejoin="round"/><rect x="6" y="10" width="2.5" height="7" stroke="#3E5766" stroke-width="1.1"/><rect x="9.5" y="10" width="2.5" height="4" stroke="#3E5766" stroke-width="1.1"/></svg>
             </div>
             <div class="cat-name">Sedes & haciendas</div>
           </label>
-          <label class="cat-opt" onclick="selectCat(this)">
+          <label class="cat-opt" onclick="selectCat(this); document.getElementById('otro-field').style.display='none'">
             <input type="radio" name="category" value="photographer">
             <div class="cat-icon">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="5" width="14" height="10" rx="2" stroke="#3E5766" stroke-width="1.2"/><circle cx="9" cy="10" r="2.5" stroke="#3E5766" stroke-width="1.2"/><path d="M6 5l1.5-2h3L12 5" stroke="#3E5766" stroke-width="1.2" stroke-linejoin="round"/><circle cx="13.5" cy="7.5" r="0.75" fill="#3E5766"/></svg>
             </div>
             <div class="cat-name">Fotografía & video</div>
           </label>
-          <label class="cat-opt" onclick="selectCat(this)">
+          <label class="cat-opt" onclick="selectCat(this); document.getElementById('otro-field').style.display='none'">
             <input type="radio" name="category" value="catering">
             <div class="cat-icon">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 11c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="#3E5766" stroke-width="1.2"/><ellipse cx="9" cy="11" rx="5" ry="1.3" stroke="#3E5766" stroke-width="1.2"/><rect x="3" y="13" width="12" height="1.8" rx="0.9" stroke="#3E5766" stroke-width="1.1"/><line x1="9" y1="6" x2="9" y2="4.2" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/><circle cx="9" cy="3.6" r="1" stroke="#3E5766" stroke-width="1.1"/></svg>
             </div>
             <div class="cat-name">Catering & banqueteros</div>
           </label>
-          <label class="cat-opt" onclick="selectCat(this)">
+          <label class="cat-opt" onclick="selectCat(this); document.getElementById('otro-field').style.display='none'">
             <input type="radio" name="category" value="florist">
             <div class="cat-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 18v-5" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="9" r="1.5" stroke="#3E5766" stroke-width="1.1"/><circle cx="12" cy="5.5" r="2" stroke="#3E5766" stroke-width="1.1"/><circle cx="15.2" cy="7.5" r="2" stroke="#3E5766" stroke-width="1.1"/><circle cx="14" cy="11.5" r="2" stroke="#3E5766" stroke-width="1.1"/><circle cx="10" cy="11.5" r="2" stroke="#3E5766" stroke-width="1.1"/><circle cx="8.8" cy="7.5" r="2" stroke="#3E5766" stroke-width="1.1"/><path d="M10.5 16c-1.5 .5-3 0-3 0" stroke="#3E5766" stroke-width="1.1" stroke-linecap="round"/></svg>
             </div>
             <div class="cat-name">Florista</div>
           </label>
-          <label class="cat-opt" onclick="selectCat(this)">
+          <label class="cat-opt" onclick="selectCat(this); document.getElementById('otro-field').style.display='none'">
             <input type="radio" name="category" value="dj">
             <div class="cat-icon">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8 15V3" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/><path d="M5 12V6" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/><path d="M11 13V5" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/><path d="M14 11V7" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/><path d="M2 11V7" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/></svg>
             </div>
             <div class="cat-name">DJ's & música</div>
           </label>
-          <label class="cat-opt" onclick="selectCat(this)">
+          <label class="cat-opt" onclick="selectCat(this); document.getElementById('otro-field').style.display='none'">
             <input type="radio" name="category" value="beauty">
             <div class="cat-icon">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="7.5" r="4.5" stroke="#3E5766" stroke-width="1.2"/><path d="M9 12v3.5" stroke="#3E5766" stroke-width="1.2" stroke-linecap="round"/><path d="M7 15.5h4" stroke="#3E5766" stroke-width="1.3" stroke-linecap="round"/><path d="M6.5 5.5c.8-.8 1.8-1.2 2.5-1" stroke="#3E5766" stroke-width="0.9" stroke-linecap="round"/></svg>
             </div>
             <div class="cat-name">Peinado & maquillaje</div>
           </label>
-          <label class="cat-opt" onclick="selectCat(this)">
+          <label class="cat-opt" onclick="selectCat(this); document.getElementById('otro-field').style.display='none'">
+            <input type="radio" name="category" value="pre-wedding">
+            <div class="cat-icon">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M11 16a5 5 0 100-10 5 5 0 000 10z" stroke="#3E5766" stroke-width="1.2"/><path d="M8 7l1-2.5h4L14 7" stroke="#3E5766" stroke-width="1.2" stroke-linejoin="round"/><path d="M8 7h6" stroke="#3E5766" stroke-width="1.1" stroke-linecap="round"/><path d="M9.5 7l1.5 2.5 1.5-2.5" stroke="#3E5766" stroke-width="1" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="cat-name">Pre-boda & anillos</div>
+          </label>
+          <label class="cat-opt" onclick="selectCat(this); document.getElementById('otro-field').style.display='none'">
+            <input type="radio" name="category" value="honeymoon">
+            <div class="cat-icon">
+              <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M11 3C7.5 3 5 5.5 5 9c0 4.5 6 10 6 10s6-5.5 6-10c0-3.5-2.5-6-6-6z" stroke="#3E5766" stroke-width="1.2" stroke-linejoin="round"/><circle cx="11" cy="9" r="2" stroke="#3E5766" stroke-width="1.1"/></svg>
+            </div>
+            <div class="cat-name">Luna de miel & viajes</div>
+          </label>
+          <label class="cat-opt" onclick="selectCat(this); toggleOtro(this)">
             <input type="radio" name="category" value="other">
             <div class="cat-icon">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1" stroke="#3E5766" stroke-width="1.2"/><rect x="10" y="2" width="6" height="6" rx="1" stroke="#3E5766" stroke-width="1.2"/><rect x="2" y="10" width="6" height="6" rx="1" stroke="#3E5766" stroke-width="1.2"/><rect x="10" y="10" width="6" height="6" rx="1" stroke="#3E5766" stroke-width="1.2"/></svg>
             </div>
             <div class="cat-name">Otro servicio</div>
           </label>
+        </div>
+
+        <div id="otro-field" style="display:none;margin-top:12px;">
+          <label style="display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px;letter-spacing:0.03em;">¿Qué servicio ofreces? <span class="required">*</span></label>
+          <input type="text" id="otro-servicio" name="OtroServicio" placeholder="Ej. Renta de mobiliario, photobooth, mariachi, iluminación..." style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:11px 14px;font-size:14px;color:var(--ink);font-family:var(--sans);outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--pigeon)'" onblur="this.style.borderColor='var(--cotton)'">
+          <div class="field-hint">Describe brevemente el servicio que ofreces para bodas.</div>
         </div>
 
         <div class="section-divider">Rango de precios</div>
@@ -683,6 +703,13 @@
     function selectCat(el) {
       document.querySelectorAll('.cat-opt').forEach(o => o.classList.remove('selected'));
       el.classList.add('selected');
+    }
+
+    function toggleOtro(el) {
+      const field = document.getElementById('otro-field');
+      const isOtro = el.querySelector('input').value === 'other';
+      field.style.display = isOtro ? 'block' : 'none';
+      if (isOtro) document.getElementById('otro-servicio').focus();
     }
 
     function selectPrice(el) {
