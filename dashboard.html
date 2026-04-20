@@ -117,12 +117,16 @@
     .budget-total-label { font-size:12px; color:var(--muted); font-weight:300; margin-top:3px; }
     .budget-bar-outer { height:8px; background:var(--cotton); border-radius:99px; overflow:hidden; margin-bottom:16px; }
     .budget-bar-inner { height:100%; border-radius:99px; background:linear-gradient(to right, var(--pigeon), var(--stone)); transition:width 0.5s; }
-    .budget-item { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:0.5px solid var(--cotton); }
+    .budget-item { display:grid; grid-template-columns:16px 1fr auto auto; align-items:center; gap:10px; padding:10px 0; border-bottom:0.5px solid var(--cotton); }
     .budget-item:last-child { border-bottom:none; }
     .budget-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-    .budget-item-label { font-size:13px; color:var(--muted); font-weight:300; flex:1; }
-    .budget-item-amount { font-size:13px; color:var(--night); font-weight:500; }
+    .budget-item-label { font-size:13px; color:var(--muted); font-weight:300; }
+    .budget-item-amount { font-size:13px; color:var(--night); font-weight:500; text-align:right; }
     .budget-item-pct { font-size:11px; color:var(--stone); min-width:32px; text-align:right; }
+    .budget-item-spent { font-size:13px; font-weight:500; color:var(--night); text-align:right; cursor:pointer; border-bottom:1px dashed var(--stone); padding-bottom:1px; min-width:80px; transition:color 0.15s; }
+    .budget-item-spent:hover { color:var(--pigeon); }
+    .budget-item-spent.editing { display:none; }
+    .budget-inline-input { font-size:13px; font-weight:500; color:var(--night); border:none; border-bottom:1.5px solid var(--pigeon); outline:none; width:90px; text-align:right; background:transparent; font-family:var(--sans); padding-bottom:1px; }
     .budget-add { width:100%; margin-top:14px; font-size:13px; background:transparent; color:var(--pigeon); border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:9px; cursor:pointer; transition:all 0.2s; }
     .budget-add:hover { border-color:var(--stone); color:var(--night); }
 
@@ -420,16 +424,20 @@
             <div class="budget-total-num">$485,000 <span style="font-size:16px;color:var(--muted);">MXN</span></div>
             <div class="budget-total-label">Presupuesto total</div>
           </div>
-          <div class="budget-bar-outer"><div class="budget-bar-inner" style="width:43%"></div></div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:18px;font-weight:300;"><span>$210,000 comprometidos (43%)</span><span>$275,000 disponibles</span></div>
-          <div id="budget-list">
-            <div class="budget-item"><div class="budget-dot" style="background:#A6B8C7;"></div><div class="budget-item-label">Sede & catering</div><div class="budget-item-amount">$180,000</div><div class="budget-item-pct">37%</div></div>
-            <div class="budget-item"><div class="budget-dot" style="background:#BDC4A9;"></div><div class="budget-item-label">Fotografía & video</div><div class="budget-item-amount">$30,000</div><div class="budget-item-pct">6%</div></div>
-            <div class="budget-item"><div class="budget-dot" style="background:#667C90;"></div><div class="budget-item-label">Flores & decoración</div><div class="budget-item-amount">$0</div><div class="budget-item-pct">—</div></div>
-            <div class="budget-item"><div class="budget-dot" style="background:#8FA8BC;"></div><div class="budget-item-label">Música & DJ</div><div class="budget-item-amount">$0</div><div class="budget-item-pct">—</div></div>
-            <div class="budget-item"><div class="budget-dot" style="background:#556878;"></div><div class="budget-item-label">Vestido & beauty</div><div class="budget-item-amount">$0</div><div class="budget-item-pct">—</div></div>
-            <div class="budget-item"><div class="budget-dot" style="background:#3E5766;"></div><div class="budget-item-label">Imprevistos (10%)</div><div class="budget-item-amount">$48,500</div><div class="budget-item-pct">10%</div></div>
+          <div class="budget-bar-outer"><div class="budget-bar-inner" id="budget-bar" style="width:43%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:300;"><span id="budget-spent-label">$210,000 gastados (43%)</span><span id="budget-left-label">$275,000 disponibles</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;padding:6px 0;border-bottom:0.5px solid var(--cotton);margin-bottom:4px;">
+            <span>Categoría</span><span style="text-align:right;">Presupuestado</span><span style="text-align:right;">Gastado ✎</span>
           </div>
+          <div id="budget-list">
+            <div class="budget-item editable" data-allocated="180000" data-spent="180000"><div class="budget-dot" style="background:#A6B8C7;"></div><div class="budget-item-label">Sede & catering</div><div class="budget-item-amount">$180,000</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar">$180,000</div></div>
+            <div class="budget-item editable" data-allocated="30000" data-spent="30000"><div class="budget-dot" style="background:#BDC4A9;"></div><div class="budget-item-label">Fotografía & video</div><div class="budget-item-amount">$30,000</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar">$30,000</div></div>
+            <div class="budget-item editable" data-allocated="50000" data-spent="0"><div class="budget-dot" style="background:#667C90;"></div><div class="budget-item-label">Flores & decoración</div><div class="budget-item-amount">$50,000</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:var(--stone);">$0</div></div>
+            <div class="budget-item editable" data-allocated="25000" data-spent="0"><div class="budget-dot" style="background:#8FA8BC;"></div><div class="budget-item-label">Música & DJ</div><div class="budget-item-amount">$25,000</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:var(--stone);">$0</div></div>
+            <div class="budget-item editable" data-allocated="40000" data-spent="0"><div class="budget-dot" style="background:#556878;"></div><div class="budget-item-label">Vestido & beauty</div><div class="budget-item-amount">$40,000</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:var(--stone);">$0</div></div>
+            <div class="budget-item editable" data-allocated="48500" data-spent="0"><div class="budget-dot" style="background:#3E5766;"></div><div class="budget-item-label">Imprevistos (10%)</div><div class="budget-item-amount">$48,500</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:var(--stone);">$0</div></div>
+          </div>
+          <div style="font-size:11px;color:var(--stone);font-weight:300;text-align:right;margin-top:8px;">Toca el monto en "Gastado" para editarlo</div>
           <button class="budget-add" onclick="openAddBudget()">+ Agregar partida</button>
         </div>
         <div class="card">
@@ -733,7 +741,44 @@
     closeModal('modal-task');
   }
 
-  // ── BUDGET ───────────────────────────────────────────
+  // ── BUDGET SPENT INLINE EDIT ─────────────────────────
+  function editSpent(el) {
+    const item = el.closest('.budget-item');
+    const current = parseInt(item.dataset.spent) || 0;
+    el.classList.add('editing');
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.className = 'budget-inline-input';
+    input.value = current;
+    input.placeholder = '0';
+    el.after(input);
+    input.focus();
+    input.select();
+    function save() {
+      const val = parseInt(input.value) || 0;
+      item.dataset.spent = val;
+      el.textContent = '$' + val.toLocaleString('es-MX');
+      el.style.color = val > 0 ? 'var(--night)' : 'var(--stone)';
+      el.classList.remove('editing');
+      input.remove();
+      recalcBudget();
+    }
+    input.addEventListener('blur', save);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') { el.classList.remove('editing'); input.remove(); } });
+  }
+
+  function recalcBudget() {
+    const total = parseInt(document.getElementById('p-budget')?.value) || 485000;
+    let spent = 0;
+    document.querySelectorAll('.budget-item.editable').forEach(item => {
+      spent += parseInt(item.dataset.spent) || 0;
+    });
+    const pct = Math.round((spent / total) * 100);
+    const left = total - spent;
+    document.getElementById('budget-bar').style.width = pct + '%';
+    document.getElementById('budget-spent-label').textContent = '$' + spent.toLocaleString('es-MX') + ' gastados (' + pct + '%)';
+    document.getElementById('budget-left-label').textContent = '$' + left.toLocaleString('es-MX') + ' disponibles';
+  }
   const budgetColors = ['#A6B8C7','#BDC4A9','#667C90','#8FA8BC','#556878','#3E5766','#C9A96E'];
   let colorIdx = 0;
 
@@ -743,12 +788,15 @@
     if (!cat) return;
     const color = budgetColors[colorIdx % budgetColors.length]; colorIdx++;
     const item = document.createElement('div');
-    item.className = 'budget-item';
-    item.innerHTML = `<div class="budget-dot" style="background:${color};"></div><div class="budget-item-label">${cat}</div><div class="budget-item-amount">$${amount.toLocaleString('es-MX')}</div><div class="budget-item-pct">—</div>`;
+    item.className = 'budget-item editable';
+    item.dataset.allocated = amount;
+    item.dataset.spent = 0;
+    item.innerHTML = `<div class="budget-dot" style="background:${color};"></div><div class="budget-item-label">${cat}</div><div class="budget-item-amount">$${amount.toLocaleString('es-MX')}</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:var(--stone);">$0</div>`;
     document.getElementById('budget-list').appendChild(item);
     document.getElementById('new-budget-cat').value = '';
     document.getElementById('new-budget-amount').value = '';
     closeModal('modal-budget');
+    recalcBudget();
   }
 
   // ── AGENDA ───────────────────────────────────────────
