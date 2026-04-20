@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Panel — Mi Wedding Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --night:  #3E5766;
+      --pigeon: #667C90;
+      --stone:  #A6B8C7;
+      --laurel: #BDC4A9;
+      --cotton: #E9E8EB;
+      --white:  #FFFFFF;
+      --ink:    #2A3A42;
+      --muted:  #6B7A82;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'Jost', system-ui, sans-serif;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+    html { scroll-behavior:smooth; }
+    body { font-family:var(--sans); color:var(--ink); background:#F5F4F6; -webkit-font-smoothing:antialiased; min-height:100vh; }
+    a { text-decoration:none; color:inherit; }
+    input, textarea, select, button { font-family:var(--sans); }
+
+    /* LAYOUT */
+    .layout { display:grid; grid-template-columns:240px minmax(0,1fr); min-height:100vh; }
+
+    /* SIDEBAR */
+    .sidebar { background:var(--night); display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .sidebar-logo { padding:24px 20px 20px; border-bottom:0.5px solid rgba(255,255,255,0.08); }
+    .sidebar-logo-text { font-family:var(--serif); font-size:16px; color:var(--white); }
+    .sidebar-logo-text span { color:var(--stone); }
+    .sidebar-user { padding:18px 20px; border-bottom:0.5px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:12px; }
+    .user-avatar { width:38px; height:38px; border-radius:50%; background:var(--pigeon); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--white); flex-shrink:0; }
+    .user-name { font-size:13px; font-weight:500; color:var(--white); }
+    .user-plan { font-size:11px; color:var(--stone); font-weight:300; margin-top:1px; }
+    .sidebar-nav { padding:12px 0; flex:1; }
+    .nav-section-label { font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.3); padding:14px 20px 6px; }
+    .nav-item { display:flex; align-items:center; gap:12px; padding:10px 20px; font-size:13px; color:rgba(255,255,255,0.6); cursor:pointer; transition:all 0.15s; border-left:2px solid transparent; }
+    .nav-item:hover { color:var(--white); background:rgba(255,255,255,0.05); }
+    .nav-item.active { color:var(--white); background:rgba(255,255,255,0.08); border-left-color:var(--laurel); }
+    .nav-item svg { width:16px; height:16px; flex-shrink:0; opacity:0.7; }
+    .nav-item.active svg { opacity:1; }
+    .sidebar-bottom { padding:16px 20px; border-top:0.5px solid rgba(255,255,255,0.08); }
+    .sidebar-bottom-link { font-size:12px; color:rgba(255,255,255,0.4); cursor:pointer; display:flex; align-items:center; gap:8px; transition:color 0.15s; }
+    .sidebar-bottom-link:hover { color:rgba(255,255,255,0.7); }
+
+    /* MAIN */
+    .main { padding:32px; overflow-x:hidden; }
+
+    /* TOP BAR */
+    .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+    .topbar-left h1 { font-family:var(--serif); font-size:24px; color:var(--night); font-weight:400; }
+    .topbar-left p { font-size:13px; color:var(--muted); font-weight:300; margin-top:3px; }
+    .topbar-right { display:flex; align-items:center; gap:10px; }
+    .btn-sm { font-size:13px; font-weight:500; padding:9px 18px; border-radius:var(--radius-md); border:none; cursor:pointer; transition:all 0.2s; }
+    .btn-primary { background:var(--pigeon); color:var(--white); }
+    .btn-primary:hover { background:var(--night); }
+    .btn-outline { background:var(--white); color:var(--night); border:0.5px solid var(--cotton); }
+    .btn-outline:hover { border-color:var(--stone); }
+
+    /* COUNTDOWN BANNER */
+    .countdown-banner { background:var(--night); border-radius:var(--radius-lg); padding:24px 28px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px; }
+    .countdown-left { display:flex; align-items:center; gap:20px; }
+    .countdown-icon { width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .countdown-title { font-family:var(--serif); font-size:18px; color:var(--white); font-weight:400; margin-bottom:3px; }
+    .countdown-sub { font-size:12px; color:rgba(255,255,255,0.5); font-weight:300; }
+    .countdown-days { display:flex; gap:16px; }
+    .countdown-unit { text-align:center; }
+    .countdown-num { font-family:var(--serif); font-size:32px; color:var(--white); line-height:1; }
+    .countdown-label { font-size:10px; color:rgba(255,255,255,0.4); font-weight:300; margin-top:2px; letter-spacing:0.06em; text-transform:uppercase; }
+
+    /* STATS ROW */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+    .stat-card { background:var(--white); border:0.5px solid var(--cotton); border-radius:var(--radius-lg); padding:18px; }
+    .stat-num { font-size:26px; font-weight:500; color:var(--night); line-height:1; }
+    .stat-label { font-size:12px; color:var(--muted); font-weight:300; margin-top:4px; }
+    .stat-sub { font-size:11px; color:var(--stone); margin-top:6px; font-weight:300; }
+
+    /* GRID */
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
+    .grid-3 { display:grid; grid-template-columns:2fr 1fr; gap:20px; margin-bottom:24px; }
+
+    /* CARDS */
+    .card { background:var(--white); border:0.5px solid var(--cotton); border-radius:var(--radius-lg); padding:22px; }
+    .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .card-title { font-size:15px; font-weight:500; color:var(--night); }
+    .card-link { font-size:12px; color:var(--pigeon); cursor:pointer; transition:color 0.2s; }
+    .card-link:hover { color:var(--night); }
+
+    /* CHECKLIST */
+    .checklist-tabs { display:flex; gap:4px; margin-bottom:16px; background:var(--cotton); padding:4px; border-radius:var(--radius-md); }
+    .checklist-tab { flex:1; font-size:12px; font-weight:400; padding:7px 10px; border-radius:8px; border:none; background:transparent; color:var(--muted); cursor:pointer; transition:all 0.15s; text-align:center; }
+    .checklist-tab.active { background:var(--white); color:var(--night); font-weight:500; }
+    .check-item { display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-bottom:0.5px solid var(--cotton); }
+    .check-item:last-child { border-bottom:none; }
+    .check-box { width:18px; height:18px; border-radius:4px; border:1.5px solid var(--cotton); display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; transition:all 0.15s; margin-top:1px; }
+    .check-box.done { background:var(--pigeon); border-color:var(--pigeon); }
+    .check-box.done svg { display:block; }
+    .check-box svg { display:none; width:10px; height:10px; }
+    .check-text { flex:1; }
+    .check-title { font-size:13px; color:var(--ink); font-weight:400; line-height:1.4; }
+    .check-title.done { text-decoration:line-through; color:var(--stone); }
+    .check-month { font-size:10px; color:var(--muted); font-weight:300; margin-top:2px; }
+    .check-tag { font-size:10px; background:var(--cotton); color:var(--pigeon); border-radius:99px; padding:2px 8px; margin-left:auto; flex-shrink:0; font-weight:400; }
+    .check-tag.urgent { background:#FDF0EC; color:#C4724A; }
+
+    /* BUDGET */
+    .budget-total { text-align:center; margin-bottom:18px; padding-bottom:18px; border-bottom:0.5px solid var(--cotton); }
+    .budget-total-num { font-family:var(--serif); font-size:32px; color:var(--night); font-weight:400; }
+    .budget-total-label { font-size:12px; color:var(--muted); font-weight:300; margin-top:3px; }
+    .budget-bar-outer { height:8px; background:var(--cotton); border-radius:99px; overflow:hidden; margin-bottom:16px; }
+    .budget-bar-inner { height:100%; border-radius:99px; background:linear-gradient(to right, var(--pigeon), var(--stone)); transition:width 0.5s; }
+    .budget-item { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:0.5px solid var(--cotton); }
+    .budget-item:last-child { border-bottom:none; }
+    .budget-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .budget-item-label { font-size:13px; color:var(--muted); font-weight:300; flex:1; }
+    .budget-item-amount { font-size:13px; color:var(--night); font-weight:500; }
+    .budget-item-pct { font-size:11px; color:var(--stone); min-width:32px; text-align:right; }
+    .budget-add { width:100%; margin-top:14px; font-size:13px; background:transparent; color:var(--pigeon); border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:9px; cursor:pointer; transition:all 0.2s; }
+    .budget-add:hover { border-color:var(--stone); color:var(--night); }
+
+    /* SAVED VENDORS */
+    .vendor-card { display:flex; align-items:center; gap:14px; padding:12px 0; border-bottom:0.5px solid var(--cotton); cursor:pointer; transition:opacity 0.15s; }
+    .vendor-card:last-child { border-bottom:none; }
+    .vendor-card:hover { opacity:0.8; }
+    .vendor-thumb { width:44px; height:44px; border-radius:var(--radius-md); background:var(--cotton); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; font-weight:500; color:var(--pigeon); }
+    .vendor-info { flex:1; }
+    .vendor-name { font-size:13px; font-weight:500; color:var(--night); }
+    .vendor-type { font-size:11px; color:var(--muted); font-weight:300; margin-top:2px; }
+    .vendor-stars { font-size:11px; color:var(--pigeon); }
+    .vendor-heart { color:var(--pigeon); font-size:16px; cursor:pointer; }
+
+    /* PROFILE SECTION */
+    .profile-field { margin-bottom:14px; }
+    .profile-label { font-size:11px; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:5px; }
+    .profile-input { width:100%; border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:10px 13px; font-size:13px; color:var(--ink); outline:none; transition:border-color 0.2s; background:var(--white); }
+    .profile-input:focus { border-color:var(--pigeon); }
+    .profile-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+    /* UPCOMING */
+    .upcoming-item { display:flex; align-items:flex-start; gap:14px; padding:12px 0; border-bottom:0.5px solid var(--cotton); }
+    .upcoming-item:last-child { border-bottom:none; }
+    .upcoming-date { text-align:center; min-width:38px; }
+    .upcoming-day { font-size:18px; font-weight:500; color:var(--night); line-height:1; }
+    .upcoming-month { font-size:9px; text-transform:uppercase; color:var(--muted); letter-spacing:0.06em; }
+    .upcoming-info { flex:1; }
+    .upcoming-title { font-size:13px; font-weight:500; color:var(--night); }
+    .upcoming-sub { font-size:11px; color:var(--muted); font-weight:300; margin-top:2px; }
+    .upcoming-tag { font-size:10px; background:var(--cotton); color:var(--pigeon); border-radius:99px; padding:2px 8px; margin-top:4px; display:inline-block; }
+
+    /* PANEL TABS */
+    .panel { display:none; }
+    .panel.active { display:block; }
+
+    /* MODAL */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--white); border-radius:var(--radius-lg); padding:28px; width:100%; max-width:440px; margin:20px; position:relative; }
+    .modal-close { position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%; background:var(--cotton); border:none; cursor:pointer; font-size:16px; color:var(--muted); display:flex; align-items:center; justify-content:center; }
+    .modal h3 { font-family:var(--serif); font-size:18px; color:var(--night); margin-bottom:16px; font-weight:400; }
+    .modal label { display:block; font-size:11px; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:5px; }
+    .modal input, .modal select { width:100%; border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:10px 13px; font-size:13px; color:var(--ink); outline:none; margin-bottom:13px; transition:border-color 0.2s; }
+    .modal input:focus, .modal select:focus { border-color:var(--pigeon); }
+    .modal-btns { display:flex; gap:8px; margin-top:4px; }
+    .modal-save { flex:1; background:var(--pigeon); color:var(--white); border:none; border-radius:var(--radius-md); padding:11px; font-size:13px; font-weight:500; cursor:pointer; }
+    .modal-cancel { background:transparent; color:var(--muted); border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:11px 16px; font-size:13px; cursor:pointer; }
+
+    /* RESPONSIVE */
+    @media (max-width:900px) {
+      .layout { grid-template-columns:1fr; }
+      .sidebar { display:none; }
+      .main { padding:20px; }
+      .stats-row { grid-template-columns:repeat(2,1fr); }
+      .grid-2, .grid-3 { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">Mi Wedding <span>Planner</span></div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebar-initials">SC</div>
+      <div>
+        <div class="user-name" id="sidebar-name">Sofía Castro</div>
+        <div class="user-plan">✦ Plan Premium</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Mi boda</div>
+      <div class="nav-item active" onclick="showPanel('inicio', this)">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+        Inicio
+      </div>
+      <div class="nav-item" onclick="showPanel('checklist', this)">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h7M3 12h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M12 10l1.5 1.5L16 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Checklist
+      </div>
+      <div class="nav-item" onclick="showPanel('presupuesto', this)">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 5v6M6 7h3a1 1 0 010 2H6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Presupuesto
+      </div>
+      <div class="nav-item" onclick="showPanel('favoritos', this)">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 13C8 13 2 9 2 5.5A3.5 3.5 0 018 3.5a3.5 3.5 0 016 2C14 9 8 13 8 13z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        Proveedores favoritos
+      </div>
+      <div class="nav-item" onclick="showPanel('agenda', this)">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 7h12M5 2v2M11 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Agenda
+      </div>
+      <div class="nav-section-label">Mi cuenta</div>
+      <div class="nav-item" onclick="showPanel('perfil', this)">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M2 14c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Mi perfil
+      </div>
+      <div class="nav-item" onclick="window.location.href='precios.html'">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 8h12M8 2l4 6-4 6-4-6z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        Mi suscripción
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-bottom-link" onclick="window.location.href='proveedores.html'">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.2 3.5H12L9.1 6.6l1.1 3.4L7 8 3.8 10l1.1-3.4L2 4.5h3.8z" stroke="currentColor" stroke-width="1"/></svg>
+        Explorar proveedores
+      </div>
+      <div class="sidebar-bottom-link" style="margin-top:10px;" onclick="window.location.href='index.html'">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Volver al inicio
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- INICIO PANEL -->
+    <div class="panel active" id="panel-inicio">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1>¡Hola, <span id="greeting-name">Sofía</span>! 🤍</h1>
+          <p>Aquí está el resumen de tu boda</p>
+        </div>
+        <div class="topbar-right">
+          <button class="btn-sm btn-outline" onclick="openEditProfile()">Editar perfil</button>
+          <button class="btn-sm btn-primary" onclick="window.location.href='proveedores.html'">Explorar proveedores</button>
+        </div>
+      </div>
+
+      <!-- COUNTDOWN -->
+      <div class="countdown-banner">
+        <div class="countdown-left">
+          <div class="countdown-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3C7 3 4 6 4 9c0 4 4 8 7 10 3-2 7-6 7-10 0-3-3-6-7-6z" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="countdown-title" id="wedding-title">Tu boda · <span id="wedding-date-display">15 de noviembre, 2026</span></div>
+            <div class="countdown-sub" id="wedding-location-display">Hacienda San Miguel · Guadalajara</div>
+          </div>
+        </div>
+        <div class="countdown-days" id="countdown-display">
+          <div class="countdown-unit"><div class="countdown-num" id="cd-days">209</div><div class="countdown-label">días</div></div>
+          <div class="countdown-unit"><div class="countdown-num" id="cd-hours">14</div><div class="countdown-label">horas</div></div>
+          <div class="countdown-unit"><div class="countdown-num" id="cd-mins">32</div><div class="countdown-label">min</div></div>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-tasks-done">8</div>
+          <div class="stat-label">Tareas completadas</div>
+          <div class="stat-sub" id="stat-tasks-left">12 pendientes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">$485,000</div>
+          <div class="stat-label">Presupuesto total</div>
+          <div class="stat-sub">$210,000 contratados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">4</div>
+          <div class="stat-label">Proveedores favoritos</div>
+          <div class="stat-sub">2 contactados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-guests">150</div>
+          <div class="stat-label">Invitados estimados</div>
+          <div class="stat-sub">Lista en proceso</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <!-- CHECKLIST PREVIEW -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Próximas tareas</div>
+            <span class="card-link" onclick="showPanel('checklist', document.querySelector('[onclick*=\"checklist\"]'))">Ver todas →</span>
+          </div>
+          <div id="home-checklist">
+            <div class="check-item">
+              <div class="check-box done" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="check-text"><div class="check-title done">Definir presupuesto total</div><div class="check-month">12 meses antes</div></div>
+              <span class="check-tag">Listo</span>
+            </div>
+            <div class="check-item">
+              <div class="check-box done" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="check-text"><div class="check-title done">Elegir fecha tentativa</div><div class="check-month">12 meses antes</div></div>
+              <span class="check-tag">Listo</span>
+            </div>
+            <div class="check-item">
+              <div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="check-text"><div class="check-title">Reservar iglesia</div><div class="check-month">10–12 meses antes</div></div>
+              <span class="check-tag urgent">Urgente</span>
+            </div>
+            <div class="check-item">
+              <div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="check-text"><div class="check-title">Reservar sede o hacienda</div><div class="check-month">10–12 meses antes</div></div>
+              <span class="check-tag urgent">Urgente</span>
+            </div>
+            <div class="check-item">
+              <div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="check-text"><div class="check-title">Contratar wedding planner</div><div class="check-month">10–12 meses antes</div></div>
+              <span class="check-tag">Pendiente</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div>
+          <!-- BUDGET MINI -->
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-header">
+              <div class="card-title">Presupuesto</div>
+              <span class="card-link" onclick="showPanel('presupuesto', document.querySelector('[onclick*=\"presupuesto\"]'))">Ver detalle →</span>
+            </div>
+            <div class="budget-total">
+              <div class="budget-total-num">$485,000 <span style="font-size:14px;color:var(--muted);">MXN</span></div>
+              <div class="budget-total-label">43% contratado · $210,000 comprometidos</div>
+            </div>
+            <div class="budget-bar-outer"><div class="budget-bar-inner" style="width:43%"></div></div>
+            <div class="budget-item"><div class="budget-dot" style="background:#A6B8C7;"></div><div class="budget-item-label">Sede & catering</div><div class="budget-item-amount">$180,000</div></div>
+            <div class="budget-item"><div class="budget-dot" style="background:#BDC4A9;"></div><div class="budget-item-label">Fotografía</div><div class="budget-item-amount">$30,000</div></div>
+            <div class="budget-item"><div class="budget-dot" style="background:#667C90;"></div><div class="budget-item-label">Por asignar</div><div class="budget-item-amount">$275,000</div></div>
+          </div>
+
+          <!-- UPCOMING -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Próximas citas</div>
+              <span class="card-link" onclick="showPanel('agenda', document.querySelector('[onclick*=\"agenda\"]'))">Ver agenda →</span>
+            </div>
+            <div class="upcoming-item">
+              <div class="upcoming-date"><div class="upcoming-day">28</div><div class="upcoming-month">Abr</div></div>
+              <div class="upcoming-info"><div class="upcoming-title">Visita a Hacienda San Miguel</div><div class="upcoming-sub">11:00 AM · Guadalajara</div><span class="upcoming-tag">Sede</span></div>
+            </div>
+            <div class="upcoming-item">
+              <div class="upcoming-date"><div class="upcoming-day">05</div><div class="upcoming-month">May</div></div>
+              <div class="upcoming-info"><div class="upcoming-title">Reunión con wedding planner</div><div class="upcoming-sub">4:00 PM · Videollamada</div><span class="upcoming-tag">Planificación</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHECKLIST PANEL -->
+    <div class="panel" id="panel-checklist">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Checklist</h1><p>Organiza cada paso de tu planeación</p></div>
+        <div class="topbar-right">
+          <button class="btn-sm btn-primary" onclick="openAddTask()">+ Agregar tarea</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="checklist-tabs">
+          <button class="checklist-tab active" onclick="filterTasks('all', this)">Todas</button>
+          <button class="checklist-tab" onclick="filterTasks('urgent', this)">Urgentes</button>
+          <button class="checklist-tab" onclick="filterTasks('pending', this)">Pendientes</button>
+          <button class="checklist-tab" onclick="filterTasks('done', this)">Listas</button>
+        </div>
+        <div id="full-checklist">
+          <div class="check-item" data-status="done"><div class="check-box done" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title done">Definir presupuesto total</div><div class="check-month">12 meses antes</div></div><span class="check-tag">Listo</span></div>
+          <div class="check-item" data-status="done"><div class="check-box done" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title done">Elegir fecha tentativa</div><div class="check-month">12 meses antes</div></div><span class="check-tag">Listo</span></div>
+          <div class="check-item" data-status="done"><div class="check-box done" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title done">Hacer lista de invitados preliminar</div><div class="check-month">12 meses antes</div></div><span class="check-tag">Listo</span></div>
+          <div class="check-item" data-status="urgent"><div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">Reservar iglesia</div><div class="check-month">10–12 meses antes</div></div><span class="check-tag urgent">Urgente</span></div>
+          <div class="check-item" data-status="urgent"><div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">Reservar sede o hacienda</div><div class="check-month">10–12 meses antes</div></div><span class="check-tag urgent">Urgente</span></div>
+          <div class="check-item" data-status="pending"><div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">Contratar wedding planner</div><div class="check-month">10–12 meses antes</div></div><span class="check-tag">Pendiente</span></div>
+          <div class="check-item" data-status="pending"><div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">Contratar fotógrafo y videógrafo</div><div class="check-month">8–10 meses antes</div></div><span class="check-tag">Pendiente</span></div>
+          <div class="check-item" data-status="pending"><div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">Elegir y reservar catering</div><div class="check-month">8–10 meses antes</div></div><span class="check-tag">Pendiente</span></div>
+          <div class="check-item" data-status="pending"><div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">Primera prueba de vestido</div><div class="check-month">6–8 meses antes</div></div><span class="check-tag">Pendiente</span></div>
+          <div class="check-item" data-status="pending"><div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">Contratar florista y decoración</div><div class="check-month">6–8 meses antes</div></div><span class="check-tag">Pendiente</span></div>
+          <div class="check-item" data-status="pending"><div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">Enviar invitaciones</div><div class="check-month">3–4 meses antes</div></div><span class="check-tag">Pendiente</span></div>
+          <div class="check-item" data-status="pending"><div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">Confirmar número final de invitados</div><div class="check-month">1 mes antes</div></div><span class="check-tag">Pendiente</span></div>
+          <div class="check-item" data-status="pending"><div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">Planear icebreaker para invitados de fuera</div><div class="check-month">1–2 meses antes</div></div><span class="check-tag">Pendiente</span></div>
+          <div class="check-item" data-status="pending"><div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">Prueba de maquillaje y peinado</div><div class="check-month">1 mes antes</div></div><span class="check-tag">Pendiente</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRESUPUESTO PANEL -->
+    <div class="panel" id="panel-presupuesto">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Presupuesto</h1><p>Controla cada peso de tu boda</p></div>
+        <div class="topbar-right">
+          <button class="btn-sm btn-primary" onclick="openAddBudget()">+ Agregar partida</button>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="budget-total">
+            <div class="budget-total-num">$485,000 <span style="font-size:16px;color:var(--muted);">MXN</span></div>
+            <div class="budget-total-label">Presupuesto total</div>
+          </div>
+          <div class="budget-bar-outer"><div class="budget-bar-inner" style="width:43%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:18px;font-weight:300;"><span>$210,000 comprometidos (43%)</span><span>$275,000 disponibles</span></div>
+          <div id="budget-list">
+            <div class="budget-item"><div class="budget-dot" style="background:#A6B8C7;"></div><div class="budget-item-label">Sede & catering</div><div class="budget-item-amount">$180,000</div><div class="budget-item-pct">37%</div></div>
+            <div class="budget-item"><div class="budget-dot" style="background:#BDC4A9;"></div><div class="budget-item-label">Fotografía & video</div><div class="budget-item-amount">$30,000</div><div class="budget-item-pct">6%</div></div>
+            <div class="budget-item"><div class="budget-dot" style="background:#667C90;"></div><div class="budget-item-label">Flores & decoración</div><div class="budget-item-amount">$0</div><div class="budget-item-pct">—</div></div>
+            <div class="budget-item"><div class="budget-dot" style="background:#8FA8BC;"></div><div class="budget-item-label">Música & DJ</div><div class="budget-item-amount">$0</div><div class="budget-item-pct">—</div></div>
+            <div class="budget-item"><div class="budget-dot" style="background:#556878;"></div><div class="budget-item-label">Vestido & beauty</div><div class="budget-item-amount">$0</div><div class="budget-item-pct">—</div></div>
+            <div class="budget-item"><div class="budget-dot" style="background:#3E5766;"></div><div class="budget-item-label">Imprevistos (10%)</div><div class="budget-item-amount">$48,500</div><div class="budget-item-pct">10%</div></div>
+          </div>
+          <button class="budget-add" onclick="openAddBudget()">+ Agregar partida</button>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Mi presupuesto</div><span class="card-link" onclick="openEditBudget()">Editar →</span></div>
+          <div style="text-align:center;padding:24px 0 16px;">
+            <svg viewBox="0 0 120 120" width="140" height="140">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#E9E8EB" stroke-width="14"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#A6B8C7" stroke-width="14" stroke-dasharray="314" stroke-dashoffset="177" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#BDC4A9" stroke-width="14" stroke-dasharray="314" stroke-dashoffset="295" transform="rotate(-90 60 60)" stroke-linecap="round"/>
+              <text x="60" y="56" text-anchor="middle" font-size="13" fill="#3E5766" font-family="Georgia">43%</text>
+              <text x="60" y="70" text-anchor="middle" font-size="9" fill="#6B7A82" font-family="sans-serif">asignado</text>
+            </svg>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);"><div style="width:10px;height:10px;border-radius:50%;background:#A6B8C7;flex-shrink:0;"></div>Sede & catering — $180,000</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);"><div style="width:10px;height:10px;border-radius:50%;background:#BDC4A9;flex-shrink:0;"></div>Fotografía — $30,000</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);"><div style="width:10px;height:10px;border-radius:50%;background:#E9E8EB;flex-shrink:0;"></div>Por asignar — $275,000</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAVORITOS PANEL -->
+    <div class="panel" id="panel-favoritos">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Proveedores favoritos</h1><p>Los que más te han gustado</p></div>
+        <div class="topbar-right">
+          <button class="btn-sm btn-primary" onclick="window.location.href='proveedores.html'">Explorar más →</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="vendor-card" onclick="window.location.href='proveedor.html'">
+          <div class="vendor-thumb">EB</div>
+          <div class="vendor-info"><div class="vendor-name">Elena Bodas & Eventos</div><div class="vendor-type">Wedding planner · CDMX</div></div>
+          <div class="vendor-stars">★★★★★ 4.9</div>
+          <div class="vendor-heart" onclick="event.stopPropagation()">♥</div>
+        </div>
+        <div class="vendor-card" onclick="window.location.href='proveedor.html'">
+          <div class="vendor-thumb" style="background:#D4DCE4;">HS</div>
+          <div class="vendor-info"><div class="vendor-name">Hacienda San Miguel</div><div class="vendor-type">Sede & hacienda · Guadalajara</div></div>
+          <div class="vendor-stars">★★★★★ 4.8</div>
+          <div class="vendor-heart" onclick="event.stopPropagation()">♥</div>
+        </div>
+        <div class="vendor-card" onclick="window.location.href='proveedor.html'">
+          <div class="vendor-thumb" style="background:#BFC9A8;">LS</div>
+          <div class="vendor-info"><div class="vendor-name">Luz & Sombra Studio</div><div class="vendor-type">Fotografía & video · Monterrey</div></div>
+          <div class="vendor-stars">★★★★★ 5.0</div>
+          <div class="vendor-heart" onclick="event.stopPropagation()">♥</div>
+        </div>
+        <div class="vendor-card" onclick="window.location.href='proveedor.html'">
+          <div class="vendor-thumb" style="background:#C4CEB8;">FF</div>
+          <div class="vendor-info"><div class="vendor-name">Flores de Francia</div><div class="vendor-type">Florista · CDMX & Cuernavaca</div></div>
+          <div class="vendor-stars">★★★★★ 4.9</div>
+          <div class="vendor-heart" onclick="event.stopPropagation()">♥</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENDA PANEL -->
+    <div class="panel" id="panel-agenda">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Agenda</h1><p>Tus citas y eventos importantes</p></div>
+        <div class="topbar-right">
+          <button class="btn-sm btn-primary" onclick="openAddCita()">+ Agendar cita</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="upcoming-item">
+          <div class="upcoming-date"><div class="upcoming-day">28</div><div class="upcoming-month">Abr</div></div>
+          <div class="upcoming-info"><div class="upcoming-title">Visita a Hacienda San Miguel</div><div class="upcoming-sub">11:00 AM · Guadalajara · Presencial</div><span class="upcoming-tag">Sede</span></div>
+        </div>
+        <div class="upcoming-item">
+          <div class="upcoming-date"><div class="upcoming-day">05</div><div class="upcoming-month">May</div></div>
+          <div class="upcoming-info"><div class="upcoming-title">Reunión con wedding planner</div><div class="upcoming-sub">4:00 PM · Videollamada</div><span class="upcoming-tag">Planificación</span></div>
+        </div>
+        <div class="upcoming-item">
+          <div class="upcoming-date"><div class="upcoming-day">12</div><div class="upcoming-month">May</div></div>
+          <div class="upcoming-info"><div class="upcoming-title">Prueba de menú con catering</div><div class="upcoming-sub">1:00 PM · CDMX · Presencial</div><span class="upcoming-tag">Catering</span></div>
+        </div>
+        <div style="text-align:center;padding:20px 0 8px;">
+          <button class="btn-sm btn-outline" onclick="openAddCita()">+ Agregar cita</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERFIL PANEL -->
+    <div class="panel" id="panel-perfil">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Mi perfil</h1><p>Tu información personal y de boda</p></div>
+        <div class="topbar-right">
+          <button class="btn-sm btn-primary" onclick="saveProfile()">Guardar cambios</button>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Información personal</div></div>
+          <div class="profile-row">
+            <div class="profile-field"><div class="profile-label">Nombre</div><input class="profile-input" id="p-name" value="Sofía" oninput="updateGreeting()"></div>
+            <div class="profile-field"><div class="profile-label">Apellido</div><input class="profile-input" id="p-lastname" value="Castro"></div>
+          </div>
+          <div class="profile-field"><div class="profile-label">Correo electrónico</div><input class="profile-input" type="email" value="sofia@correo.com"></div>
+          <div class="profile-field"><div class="profile-label">Teléfono / WhatsApp</div><input class="profile-input" type="tel" value="+52 55 1234 5678"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Detalles de la boda</div></div>
+          <div class="profile-field"><div class="profile-label">Fecha de la boda</div><input class="profile-input" type="date" id="p-date" value="2026-11-15" oninput="updateWeddingDate()"></div>
+          <div class="profile-field"><div class="profile-label">Ciudad de la boda</div><input class="profile-input" id="p-city" value="Guadalajara" oninput="updateLocation()"></div>
+          <div class="profile-field"><div class="profile-label">Sede / hacienda (si ya tienen)</div><input class="profile-input" id="p-venue" value="Hacienda San Miguel" oninput="updateLocation()"></div>
+          <div class="profile-row">
+            <div class="profile-field"><div class="profile-label">Invitados estimados</div><input class="profile-input" type="number" id="p-guests" value="150" oninput="updateGuests()"></div>
+            <div class="profile-field"><div class="profile-label">Presupuesto total (MXN)</div><input class="profile-input" type="number" id="p-budget" value="485000"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-task" onclick="closeModal('modal-task')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('modal-task')">×</button>
+    <h3>Agregar tarea</h3>
+    <label>Tarea</label>
+    <input type="text" id="new-task" placeholder="Ej. Contratar fotógrafo">
+    <label>¿Cuándo?</label>
+    <input type="text" id="new-task-time" placeholder="Ej. 8–10 meses antes">
+    <label>Prioridad</label>
+    <select id="new-task-priority">
+      <option value="pending">Pendiente</option>
+      <option value="urgent">Urgente</option>
+    </select>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-task')">Cancelar</button>
+      <button class="modal-save" onclick="addTask()">Agregar tarea</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-budget" onclick="closeModal('modal-budget')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('modal-budget')">×</button>
+    <h3>Agregar partida</h3>
+    <label>Categoría</label>
+    <input type="text" id="new-budget-cat" placeholder="Ej. Música & DJ">
+    <label>Monto (MXN)</label>
+    <input type="number" id="new-budget-amount" placeholder="Ej. 25000">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-budget')">Cancelar</button>
+      <button class="modal-save" onclick="addBudgetItem()">Agregar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-cita" onclick="closeModal('modal-cita')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('modal-cita')">×</button>
+    <h3>Agendar cita</h3>
+    <label>Título</label>
+    <input type="text" id="new-cita-title" placeholder="Ej. Visita a hacienda">
+    <label>Fecha</label>
+    <input type="date" id="new-cita-date">
+    <label>Hora</label>
+    <input type="time" id="new-cita-time">
+    <label>Categoría</label>
+    <select id="new-cita-tag">
+      <option>Sede</option><option>Planificación</option><option>Fotografía</option>
+      <option>Catering</option><option>Vestido</option><option>Otro</option>
+    </select>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-cita')">Cancelar</button>
+      <button class="modal-save" onclick="addCita()">Guardar cita</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-profile" onclick="closeModal('modal-profile')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('modal-profile')">×</button>
+    <h3>Editar perfil rápido</h3>
+    <label>Tu nombre</label>
+    <input type="text" id="quick-name" value="Sofía" oninput="document.getElementById('p-name').value=this.value;updateGreeting()">
+    <label>Fecha de tu boda</label>
+    <input type="date" id="quick-date" value="2026-11-15" oninput="document.getElementById('p-date').value=this.value;updateWeddingDate()">
+    <label>Ciudad de la boda</label>
+    <input type="text" id="quick-city" value="Guadalajara" oninput="document.getElementById('p-city').value=this.value;updateLocation()">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-profile')">Cancelar</button>
+      <button class="modal-save" onclick="closeModal('modal-profile');showSaved()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── NAVIGATION ───────────────────────────────────────
+  function showPanel(name, el) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    if (el) el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── COUNTDOWN ────────────────────────────────────────
+  function updateCountdown() {
+    const dateVal = document.getElementById('p-date')?.value || '2026-11-15';
+    const target = new Date(dateVal + 'T00:00:00');
+    const now = new Date();
+    const diff = target - now;
+    if (diff > 0) {
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+      const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+      document.getElementById('cd-days').textContent = days;
+      document.getElementById('cd-hours').textContent = hours;
+      document.getElementById('cd-mins').textContent = mins;
+    }
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 30000);
+
+  // ── PROFILE UPDATES ──────────────────────────────────
+  function updateGreeting() {
+    const name = document.getElementById('p-name')?.value || 'Sofía';
+    document.getElementById('greeting-name').textContent = name;
+    document.getElementById('sidebar-name').textContent = name + ' ' + (document.getElementById('p-lastname')?.value || 'Castro');
+    const initials = name.charAt(0) + (document.getElementById('p-lastname')?.value?.charAt(0) || 'C');
+    document.getElementById('sidebar-initials').textContent = initials;
+  }
+
+  function updateWeddingDate() {
+    const dateVal = document.getElementById('p-date')?.value;
+    if (!dateVal) return;
+    const d = new Date(dateVal + 'T00:00:00');
+    const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    document.getElementById('wedding-date-display').textContent = d.getDate() + ' de ' + months[d.getMonth()] + ', ' + d.getFullYear();
+    updateCountdown();
+  }
+
+  function updateLocation() {
+    const venue = document.getElementById('p-venue')?.value || '';
+    const city = document.getElementById('p-city')?.value || '';
+    document.getElementById('wedding-location-display').textContent = (venue ? venue + ' · ' : '') + city;
+  }
+
+  function updateGuests() {
+    const g = document.getElementById('p-guests')?.value || '150';
+    document.getElementById('stat-guests').textContent = g;
+  }
+
+  function saveProfile() {
+    updateGreeting(); updateWeddingDate(); updateLocation(); updateGuests();
+    showSaved();
+  }
+
+  function showSaved() {
+    const btn = document.querySelector('.btn-primary');
+    const orig = btn?.textContent;
+    if (btn) { btn.textContent = '✓ Guardado'; setTimeout(() => btn.textContent = orig, 2000); }
+  }
+
+  // ── CHECKLIST ────────────────────────────────────────
+  function toggleCheck(box) {
+    box.classList.toggle('done');
+    const title = box.closest('.check-item').querySelector('.check-title');
+    title.classList.toggle('done');
+    const tag = box.closest('.check-item').querySelector('.check-tag');
+    if (box.classList.contains('done')) {
+      tag.textContent = 'Listo';
+      tag.className = 'check-tag';
+      box.closest('.check-item').dataset.status = 'done';
+    } else {
+      tag.textContent = 'Pendiente';
+      tag.className = 'check-tag';
+      box.closest('.check-item').dataset.status = 'pending';
+    }
+  }
+
+  function filterTasks(filter, btn) {
+    document.querySelectorAll('.checklist-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#full-checklist .check-item').forEach(item => {
+      if (filter === 'all') item.style.display = 'flex';
+      else item.style.display = item.dataset.status === filter ? 'flex' : 'none';
+    });
+  }
+
+  function addTask() {
+    const title = document.getElementById('new-task').value.trim();
+    const time = document.getElementById('new-task-time').value.trim();
+    const priority = document.getElementById('new-task-priority').value;
+    if (!title) return;
+    const item = document.createElement('div');
+    item.className = 'check-item';
+    item.dataset.status = priority;
+    item.innerHTML = `<div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">${title}</div><div class="check-month">${time}</div></div><span class="check-tag ${priority === 'urgent' ? 'urgent' : ''}">${priority === 'urgent' ? 'Urgente' : 'Pendiente'}</span>`;
+    document.getElementById('full-checklist').appendChild(item);
+    document.getElementById('new-task').value = '';
+    document.getElementById('new-task-time').value = '';
+    closeModal('modal-task');
+  }
+
+  // ── BUDGET ───────────────────────────────────────────
+  const budgetColors = ['#A6B8C7','#BDC4A9','#667C90','#8FA8BC','#556878','#3E5766','#C9A96E'];
+  let colorIdx = 0;
+
+  function addBudgetItem() {
+    const cat = document.getElementById('new-budget-cat').value.trim();
+    const amount = parseInt(document.getElementById('new-budget-amount').value) || 0;
+    if (!cat) return;
+    const color = budgetColors[colorIdx % budgetColors.length]; colorIdx++;
+    const item = document.createElement('div');
+    item.className = 'budget-item';
+    item.innerHTML = `<div class="budget-dot" style="background:${color};"></div><div class="budget-item-label">${cat}</div><div class="budget-item-amount">$${amount.toLocaleString('es-MX')}</div><div class="budget-item-pct">—</div>`;
+    document.getElementById('budget-list').appendChild(item);
+    document.getElementById('new-budget-cat').value = '';
+    document.getElementById('new-budget-amount').value = '';
+    closeModal('modal-budget');
+  }
+
+  // ── AGENDA ───────────────────────────────────────────
+  function addCita() {
+    const title = document.getElementById('new-cita-title').value.trim();
+    const dateVal = document.getElementById('new-cita-date').value;
+    const time = document.getElementById('new-cita-time').value;
+    const tag = document.getElementById('new-cita-tag').value;
+    if (!title || !dateVal) return;
+    const d = new Date(dateVal + 'T00:00:00');
+    const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    const item = document.createElement('div');
+    item.className = 'upcoming-item';
+    item.innerHTML = `<div class="upcoming-date"><div class="upcoming-day">${d.getDate()}</div><div class="upcoming-month">${months[d.getMonth()]}</div></div><div class="upcoming-info"><div class="upcoming-title">${title}</div><div class="upcoming-sub">${time || ''}</div><span class="upcoming-tag">${tag}</span></div>`;
+    document.querySelector('#panel-agenda .card').insertBefore(item, document.querySelector('#panel-agenda .card div:last-child'));
+    document.getElementById('new-cita-title').value = '';
+    closeModal('modal-cita');
+  }
+
+  // ── MODALS ───────────────────────────────────────────
+  function openAddTask()    { document.getElementById('modal-task').classList.add('open'); }
+  function openAddBudget()  { document.getElementById('modal-budget').classList.add('open'); }
+  function openAddCita()    { document.getElementById('modal-cita').classList.add('open'); }
+  function openEditProfile(){ document.getElementById('modal-profile').classList.add('open'); }
+  function openEditBudget() { document.getElementById('modal-budget').classList.add('open'); }
+  function closeModal(id)   { document.getElementById(id).classList.remove('open'); }
+</script>
+</body>
+</html>
