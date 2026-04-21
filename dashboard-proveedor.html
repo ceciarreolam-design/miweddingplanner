@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Panel — Proveedor · Mi Wedding Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --night:   #3E5766;
+      --pigeon:  #667C90;
+      --stone:   #A6B8C7;
+      --laurel:  #BDC4A9;
+      --laurel-d:#8A9478;
+      --cotton:  #E9E8EB;
+      --white:   #FFFFFF;
+      --ink:     #2A3A42;
+      --muted:   #6B7A82;
+      --gold:    #C9A96E;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'Jost', system-ui, sans-serif;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+    html { scroll-behavior:smooth; }
+    body { font-family:var(--sans); color:var(--ink); background:#F5F4F6; -webkit-font-smoothing:antialiased; min-height:100vh; }
+    a { text-decoration:none; color:inherit; }
+    input, textarea, select, button { font-family:var(--sans); }
+
+    /* LAYOUT */
+    .layout { display:grid; grid-template-columns:240px minmax(0,1fr); min-height:100vh; }
+
+    /* SIDEBAR */
+    .sidebar { background:var(--night); display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; }
+    .sidebar-logo { padding:24px 20px 20px; border-bottom:0.5px solid rgba(255,255,255,0.08); }
+    .sidebar-logo-text { font-family:var(--serif); font-size:16px; color:var(--white); }
+    .sidebar-logo-text span { color:var(--stone); }
+    .sidebar-user { padding:16px 20px; border-bottom:0.5px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:12px; }
+    .user-avatar { width:38px; height:38px; border-radius:50%; background:var(--laurel-d); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:500; color:var(--white); flex-shrink:0; }
+    .user-name { font-size:13px; font-weight:500; color:var(--white); }
+    .user-badge { font-size:10px; color:var(--gold); font-weight:500; letter-spacing:0.04em; margin-top:2px; }
+    .sidebar-nav { padding:12px 0; flex:1; }
+    .nav-section-label { font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.3); padding:14px 20px 6px; }
+    .nav-item { display:flex; align-items:center; gap:12px; padding:10px 20px; font-size:13px; color:rgba(255,255,255,0.6); cursor:pointer; transition:all 0.15s; border-left:2px solid transparent; }
+    .nav-item:hover { color:var(--white); background:rgba(255,255,255,0.05); }
+    .nav-item.active { color:var(--white); background:rgba(255,255,255,0.08); border-left-color:var(--laurel); }
+    .nav-item svg { width:16px; height:16px; flex-shrink:0; opacity:0.7; }
+    .nav-item.active svg { opacity:1; }
+    .nav-badge { font-size:10px; background:var(--laurel); color:var(--night); border-radius:99px; padding:2px 7px; margin-left:auto; font-weight:500; }
+    .sidebar-bottom { padding:16px 20px; border-top:0.5px solid rgba(255,255,255,0.08); }
+    .sidebar-bottom-link { font-size:12px; color:rgba(255,255,255,0.4); cursor:pointer; display:flex; align-items:center; gap:8px; transition:color 0.15s; margin-bottom:8px; }
+    .sidebar-bottom-link:hover { color:rgba(255,255,255,0.7); }
+
+    /* MAIN */
+    .main { padding:32px; overflow-x:hidden; }
+
+    /* TOPBAR */
+    .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+    .topbar-left h1 { font-family:var(--serif); font-size:24px; color:var(--night); font-weight:400; }
+    .topbar-left p { font-size:13px; color:var(--muted); font-weight:300; margin-top:3px; }
+    .topbar-right { display:flex; align-items:center; gap:10px; }
+    .btn-sm { font-size:13px; font-weight:500; padding:9px 18px; border-radius:var(--radius-md); border:none; cursor:pointer; transition:all 0.2s; }
+    .btn-primary { background:var(--laurel-d); color:var(--white); }
+    .btn-primary:hover { background:var(--night); }
+    .btn-outline { background:var(--white); color:var(--night); border:0.5px solid var(--cotton); }
+    .btn-outline:hover { border-color:var(--stone); }
+
+    /* FOUNDER BANNER */
+    .founder-banner { background:linear-gradient(135deg, var(--night) 0%, #2A3A42 100%); border-radius:var(--radius-lg); padding:20px 24px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .founder-left { display:flex; align-items:center; gap:14px; }
+    .founder-icon { width:40px; height:40px; border-radius:50%; background:rgba(201,169,110,0.15); border:0.5px solid rgba(201,169,110,0.3); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .founder-title { font-size:13px; font-weight:500; color:var(--white); }
+    .founder-sub { font-size:11px; color:rgba(255,255,255,0.45); font-weight:300; margin-top:2px; }
+    .founder-tag { font-size:10px; font-weight:500; color:var(--gold); background:rgba(201,169,110,0.12); border:0.5px solid rgba(201,169,110,0.25); border-radius:99px; padding:4px 12px; white-space:nowrap; }
+
+    /* STATS ROW */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+    .stat-card { background:var(--white); border:0.5px solid var(--cotton); border-radius:var(--radius-lg); padding:18px; position:relative; overflow:hidden; }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background:var(--laurel); }
+    .stat-num { font-size:28px; font-weight:500; color:var(--night); line-height:1; }
+    .stat-label { font-size:12px; color:var(--muted); font-weight:300; margin-top:4px; }
+    .stat-trend { font-size:11px; color:var(--laurel-d); margin-top:6px; font-weight:400; }
+
+    /* CARDS */
+    .card { background:var(--white); border:0.5px solid var(--cotton); border-radius:var(--radius-lg); padding:22px; }
+    .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .card-title { font-size:15px; font-weight:500; color:var(--night); }
+    .card-link { font-size:12px; color:var(--pigeon); cursor:pointer; }
+    .card-link:hover { color:var(--night); }
+
+    /* GRID */
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px; }
+    .grid-3 { display:grid; grid-template-columns:2fr 1fr; gap:20px; margin-bottom:24px; }
+
+    /* INQUIRIES */
+    .inquiry-item { display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:0.5px solid var(--cotton); cursor:pointer; transition:opacity 0.15s; }
+    .inquiry-item:last-child { border-bottom:none; }
+    .inquiry-item:hover { opacity:0.8; }
+    .inquiry-avatar { width:38px; height:38px; border-radius:50%; background:var(--cotton); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:500; color:var(--pigeon); flex-shrink:0; }
+    .inquiry-info { flex:1; }
+    .inquiry-name { font-size:13px; font-weight:500; color:var(--night); }
+    .inquiry-preview { font-size:12px; color:var(--muted); font-weight:300; margin-top:2px; line-height:1.4; }
+    .inquiry-meta { display:flex; align-items:center; gap:8px; margin-top:4px; }
+    .inquiry-date { font-size:11px; color:var(--stone); }
+    .inquiry-tag { font-size:10px; padding:2px 8px; border-radius:99px; font-weight:400; }
+    .tag-new { background:#F0F4F0; color:var(--laurel-d); }
+    .tag-read { background:var(--cotton); color:var(--muted); }
+    .tag-replied { background:#F0F4F7; color:var(--pigeon); }
+    .inquiry-unread { width:8px; height:8px; border-radius:50%; background:var(--laurel); flex-shrink:0; margin-top:4px; }
+
+    /* PROFILE PREVIEW */
+    .profile-preview { border:0.5px solid var(--cotton); border-radius:var(--radius-lg); overflow:hidden; }
+    .profile-banner { height:90px; background:linear-gradient(135deg, var(--night) 0%, var(--pigeon) 100%); position:relative; }
+    .profile-avatar { width:64px; height:64px; border-radius:50%; background:var(--laurel-d); border:3px solid var(--white); position:absolute; bottom:-28px; left:20px; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:500; color:var(--white); }
+    .profile-body { padding:36px 20px 20px; }
+    .profile-name { font-family:var(--serif); font-size:17px; color:var(--night); font-weight:400; margin-bottom:2px; }
+    .profile-type { font-size:12px; color:var(--muted); font-weight:300; margin-bottom:10px; }
+    .profile-founder { display:inline-flex; align-items:center; gap:5px; background:rgba(201,169,110,0.1); border:0.5px solid rgba(201,169,110,0.3); border-radius:99px; padding:3px 10px; font-size:10px; font-weight:500; color:var(--gold); margin-bottom:12px; }
+    .profile-bio { font-size:12px; font-weight:300; color:var(--muted); line-height:1.7; margin-bottom:14px; }
+    .profile-stats { display:flex; gap:16px; }
+    .pstat { text-align:center; }
+    .pstat-num { font-size:15px; font-weight:500; color:var(--night); }
+    .pstat-label { font-size:10px; color:var(--muted); font-weight:300; margin-top:1px; }
+    .profile-edit-btn { width:100%; margin-top:14px; font-size:12px; background:transparent; color:var(--pigeon); border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:8px; cursor:pointer; transition:all 0.2s; }
+    .profile-edit-btn:hover { border-color:var(--stone); color:var(--night); }
+
+    /* CALENDAR/AVAILABILITY */
+    .avail-item { display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:0.5px solid var(--cotton); font-size:13px; }
+    .avail-item:last-child { border-bottom:none; }
+    .avail-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    .avail-date { font-weight:400; color:var(--night); min-width:110px; }
+    .avail-label { font-weight:300; color:var(--muted); flex:1; }
+    .avail-status { font-size:11px; padding:3px 9px; border-radius:99px; }
+    .status-booked { background:#FDF0EC; color:#C4724A; }
+    .status-hold { background:#FDF8EC; color:#B8922A; }
+    .status-free { background:#F0F4F0; color:var(--laurel-d); }
+
+    /* CHART BARS */
+    .chart { display:flex; align-items:flex-end; gap:6px; height:80px; margin:12px 0; }
+    .bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+    .bar { width:100%; background:var(--laurel); border-radius:4px 4px 0 0; transition:height 0.3s; min-height:4px; }
+    .bar-label { font-size:9px; color:var(--muted); }
+
+    /* PANEL */
+    .panel { display:none; }
+    .panel.active { display:block; }
+
+    /* PROFILE EDIT FORM */
+    .form-field { margin-bottom:14px; }
+    .form-label { font-size:11px; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:5px; display:block; }
+    .form-input { width:100%; border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:10px 13px; font-size:13px; color:var(--ink); outline:none; transition:border-color 0.2s; background:var(--white); }
+    .form-input:focus { border-color:var(--laurel); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    textarea.form-input { resize:vertical; min-height:90px; }
+
+    /* PACKAGES */
+    .package-card { border:0.5px solid var(--cotton); border-radius:var(--radius-lg); padding:16px; margin-bottom:12px; display:flex; align-items:flex-start; gap:14px; }
+    .package-name { font-size:13px; font-weight:500; color:var(--night); margin-bottom:3px; }
+    .package-desc { font-size:12px; font-weight:300; color:var(--muted); line-height:1.5; margin-bottom:6px; }
+    .package-price { font-size:14px; font-weight:500; color:var(--laurel-d); }
+    .package-edit { font-size:11px; color:var(--pigeon); cursor:pointer; margin-left:auto; flex-shrink:0; }
+
+    /* MODAL */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--white); border-radius:var(--radius-lg); padding:28px; width:100%; max-width:480px; margin:20px; position:relative; max-height:90vh; overflow-y:auto; }
+    .modal-close { position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%; background:var(--cotton); border:none; cursor:pointer; font-size:16px; color:var(--muted); display:flex; align-items:center; justify-content:center; }
+    .modal h3 { font-family:var(--serif); font-size:18px; color:var(--night); margin-bottom:16px; font-weight:400; }
+    .modal-btns { display:flex; gap:8px; margin-top:16px; }
+    .modal-save { flex:1; background:var(--laurel-d); color:var(--white); border:none; border-radius:var(--radius-md); padding:11px; font-size:13px; font-weight:500; cursor:pointer; }
+    .modal-cancel { background:transparent; color:var(--muted); border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:11px 16px; font-size:13px; cursor:pointer; }
+
+    @media (max-width:900px) {
+      .layout { grid-template-columns:1fr; }
+      .sidebar { display:none; }
+      .main { padding:20px; }
+      .stats-row { grid-template-columns:repeat(2,1fr); }
+      .grid-2, .grid-3 { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">Mi Wedding <span>Planner</span></div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebar-initials">EB</div>
+      <div>
+        <div class="user-name" id="sidebar-name">Elena Bodas & Eventos</div>
+        <div class="user-badge">✦ Proveedor Fundador</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Mi negocio</div>
+      <div class="nav-item active" onclick="showPanel('inicio',this)">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+        Inicio
+      </div>
+      <div class="nav-item" onclick="showPanel('solicitudes',this)">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Solicitudes
+        <span class="nav-badge" id="badge-count">3</span>
+      </div>
+      <div class="nav-item" onclick="showPanel('estadisticas',this)">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="10" width="3" height="4" stroke="currentColor" stroke-width="1.2"/><rect x="6.5" y="6" width="3" height="8" stroke="currentColor" stroke-width="1.2"/><rect x="11" y="2" width="3" height="12" stroke="currentColor" stroke-width="1.2"/></svg>
+        Estadísticas
+      </div>
+      <div class="nav-item" onclick="showPanel('disponibilidad',this)">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 7h12M5 2v2M11 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Disponibilidad
+      </div>
+      <div class="nav-section-label">Mi perfil</div>
+      <div class="nav-item" onclick="showPanel('perfil',this)">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M2 14c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Editar perfil
+      </div>
+      <div class="nav-item" onclick="showPanel('paquetes',this)">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="6" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 6V4a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Paquetes & precios
+      </div>
+      <div class="nav-item" onclick="window.location.href='precios.html'">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 5v6M6 7h3a1 1 0 010 2H6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Mi suscripción
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-bottom-link" onclick="window.location.href='proveedor.html'">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1C4.2 1 2 3.2 2 6c0 3.5 5 9 5 9s5-5.5 5-9c0-2.8-2.2-5-5-5z" stroke="currentColor" stroke-width="1"/></svg>
+        Ver mi perfil público
+      </div>
+      <div class="sidebar-bottom-link" onclick="window.location.href='index.html'" style="margin-top:8px;">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Volver al inicio
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ── INICIO ── -->
+    <div class="panel active" id="panel-inicio">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1>¡Hola, <span id="greeting-name">Elena</span>! 👋</h1>
+          <p>Aquí está el resumen de tu negocio esta semana</p>
+        </div>
+        <div class="topbar-right">
+          <button class="btn-sm btn-outline" onclick="showPanel('perfil', document.querySelector('[onclick*=\"perfil\"]'))">Editar perfil</button>
+          <button class="btn-sm btn-primary" onclick="showPanel('solicitudes', document.querySelector('[onclick*=\"solicitudes\"]'))">Ver solicitudes</button>
+        </div>
+      </div>
+
+      <!-- FOUNDER BANNER -->
+      <div class="founder-banner">
+        <div class="founder-left">
+          <div class="founder-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2l1.5 4.5H15l-3.8 2.8 1.5 4.5L9 11l-3.7 2.8 1.5-4.5L3 6.5h4.5z" stroke="#C9A96E" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="founder-title">Proveedor Fundador · Mi Wedding Planner</div>
+            <div class="founder-sub">Precio bloqueado para siempre · Badge permanente en tu perfil · Posición prioritaria</div>
+          </div>
+        </div>
+        <div class="founder-tag">✦ Fundador #12</div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num">284</div>
+          <div class="stat-label">Visitas a tu perfil</div>
+          <div class="stat-trend">↑ 18% esta semana</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">47</div>
+          <div class="stat-label">Guardados por novias</div>
+          <div class="stat-trend">↑ 5 esta semana</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-inquiries">3</div>
+          <div class="stat-label">Solicitudes nuevas</div>
+          <div class="stat-trend">Sin responder</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">12</div>
+          <div class="stat-label">Bodas confirmadas</div>
+          <div class="stat-trend">2026 · En agenda</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <!-- SOLICITUDES PREVIEW -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Solicitudes recientes</div>
+            <span class="card-link" onclick="showPanel('solicitudes', document.querySelector('[onclick*=\"solicitudes\"]'))">Ver todas →</span>
+          </div>
+          <div class="inquiry-item" onclick="openInquiry('Sofía Castro','Wedding planner para noviembre 2026','Hola, vi tu perfil en Mi Wedding Planner y me encantó tu trabajo. Estamos planeando nuestra boda para el 15 de noviembre en Guadalajara, aproximadamente 150 invitados. ¿Tienes disponibilidad y podrías compartirnos tus paquetes?','28 Abr','new')">
+            <div class="inquiry-avatar">SC</div>
+            <div class="inquiry-info">
+              <div class="inquiry-name">Sofía Castro</div>
+              <div class="inquiry-preview">Hola, vi tu perfil y me encantó tu trabajo...</div>
+              <div class="inquiry-meta"><span class="inquiry-date">28 Abr</span><span class="inquiry-tag tag-new">Nueva</span></div>
+            </div>
+            <div class="inquiry-unread"></div>
+          </div>
+          <div class="inquiry-item" onclick="openInquiry('Mariana López','Consulta para boda destino en Oaxaca','Buenos días, buscamos una wedding planner con experiencia en bodas de destino. La boda sería en Oaxaca en agosto 2026 para 80 personas. ¿Trabajan fuera de CDMX?','26 Abr','new')">
+            <div class="inquiry-avatar">ML</div>
+            <div class="inquiry-info">
+              <div class="inquiry-name">Mariana López</div>
+              <div class="inquiry-preview">Buscamos wedding planner para boda en Oaxaca...</div>
+              <div class="inquiry-meta"><span class="inquiry-date">26 Abr</span><span class="inquiry-tag tag-new">Nueva</span></div>
+            </div>
+            <div class="inquiry-unread"></div>
+          </div>
+          <div class="inquiry-item" onclick="openInquiry('Valeria Ruiz','Información sobre paquetes y precios','Hola, estamos comenzando a planear nuestra boda para diciembre 2026. ¿Podrían enviarnos información sobre sus paquetes y un estimado de precios? Somos aproximadamente 200 personas.','24 Abr','new')">
+            <div class="inquiry-avatar">VR</div>
+            <div class="inquiry-info">
+              <div class="inquiry-name">Valeria Ruiz</div>
+              <div class="inquiry-preview">¿Podrían enviarnos info sobre sus paquetes?</div>
+              <div class="inquiry-meta"><span class="inquiry-date">24 Abr</span><span class="inquiry-tag tag-new">Nueva</span></div>
+            </div>
+            <div class="inquiry-unread"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <!-- PROFILE PREVIEW -->
+          <div class="profile-preview">
+            <div class="profile-banner"></div>
+            <div style="position:relative;">
+              <div class="profile-avatar" id="preview-initials">EB</div>
+            </div>
+            <div class="profile-body">
+              <div class="profile-name" id="preview-name">Elena Bodas & Eventos</div>
+              <div class="profile-type" id="preview-type">Wedding planner · CDMX</div>
+              <div class="profile-founder">✦ Proveedor Fundador MWP</div>
+              <div class="profile-bio" id="preview-bio">Más de 8 años coordinando bodas en México. Especializada en bodas de lujo en haciendas y destinos.</div>
+              <div class="profile-stats">
+                <div class="pstat"><div class="pstat-num">8+</div><div class="pstat-label">Años</div></div>
+                <div class="pstat"><div class="pstat-num">120+</div><div class="pstat-label">Bodas</div></div>
+                <div class="pstat"><div class="pstat-num">4.9</div><div class="pstat-label">Rating</div></div>
+              </div>
+              <button class="profile-edit-btn" onclick="showPanel('perfil', document.querySelector('[onclick*=\"perfil\"]'))">Editar perfil →</button>
+            </div>
+          </div>
+          <!-- QUICK STATS -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">Esta semana</div></div>
+            <div class="chart" id="chart-bars"></div>
+            <div style="font-size:11px;color:var(--muted);font-weight:300;text-align:center;">Visitas al perfil — últimos 7 días</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SOLICITUDES ── -->
+    <div class="panel" id="panel-solicitudes">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Solicitudes</h1><p>Mensajes de novias interesadas en tu servicio</p></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;gap:8px;margin-bottom:16px;background:var(--cotton);padding:4px;border-radius:var(--radius-md);">
+          <button class="btn-sm" style="flex:1;text-align:center;background:var(--white);color:var(--night);font-size:12px;padding:7px;" onclick="filterInquiries('all',this)">Todas (6)</button>
+          <button class="btn-sm" style="flex:1;text-align:center;background:transparent;color:var(--muted);font-size:12px;padding:7px;border:none;" onclick="filterInquiries('new',this)">Nuevas (3)</button>
+          <button class="btn-sm" style="flex:1;text-align:center;background:transparent;color:var(--muted);font-size:12px;padding:7px;border:none;" onclick="filterInquiries('replied',this)">Respondidas (3)</button>
+        </div>
+        <div id="all-inquiries">
+          <div class="inquiry-item" data-status="new" onclick="openInquiry('Sofía Castro','Wedding planner para noviembre 2026','Hola, vi tu perfil en Mi Wedding Planner y me encantó tu trabajo. Estamos planeando nuestra boda para el 15 de noviembre en Guadalajara, aproximadamente 150 invitados. ¿Tienes disponibilidad y podrías compartirnos tus paquetes?','28 Abr','new')">
+            <div class="inquiry-avatar">SC</div>
+            <div class="inquiry-info"><div class="inquiry-name">Sofía Castro</div><div class="inquiry-preview">Hola, vi tu perfil en Mi Wedding Planner y me encantó tu trabajo. Estamos planeando nuestra boda para el 15 de noviembre...</div><div class="inquiry-meta"><span class="inquiry-date">28 Abr · Boda nov 2026 · 150 invitados</span><span class="inquiry-tag tag-new">Nueva</span></div></div>
+            <div class="inquiry-unread"></div>
+          </div>
+          <div class="inquiry-item" data-status="new" onclick="openInquiry('Mariana López','Consulta para boda destino en Oaxaca','Buenos días, buscamos una wedding planner con experiencia en bodas de destino. La boda sería en Oaxaca en agosto 2026 para 80 personas. ¿Trabajan fuera de CDMX?','26 Abr','new')">
+            <div class="inquiry-avatar">ML</div>
+            <div class="inquiry-info"><div class="inquiry-name">Mariana López</div><div class="inquiry-preview">Buscamos una wedding planner con experiencia en bodas de destino. La boda sería en Oaxaca en agosto 2026...</div><div class="inquiry-meta"><span class="inquiry-date">26 Abr · Boda ago 2026 · 80 invitados</span><span class="inquiry-tag tag-new">Nueva</span></div></div>
+            <div class="inquiry-unread"></div>
+          </div>
+          <div class="inquiry-item" data-status="new" onclick="openInquiry('Valeria Ruiz','Información sobre paquetes y precios','Hola, estamos comenzando a planear nuestra boda para diciembre 2026. ¿Podrían enviarnos información sobre sus paquetes y un estimado de precios? Somos aproximadamente 200 personas.','24 Abr','new')">
+            <div class="inquiry-avatar">VR</div>
+            <div class="inquiry-info"><div class="inquiry-name">Valeria Ruiz</div><div class="inquiry-preview">Estamos comenzando a planear nuestra boda para diciembre 2026. ¿Podrían enviarnos información sobre sus paquetes?</div><div class="inquiry-meta"><span class="inquiry-date">24 Abr · Boda dic 2026 · 200 invitados</span><span class="inquiry-tag tag-new">Nueva</span></div></div>
+            <div class="inquiry-unread"></div>
+          </div>
+          <div class="inquiry-item" data-status="replied" onclick="openInquiry('Andrea Méndez','Boda en hacienda en San Miguel','Hola, buscamos wedding planner para boda en hacienda en San Miguel de Allende, junio 2026, 120 personas.','20 Abr','replied')">
+            <div class="inquiry-avatar" style="background:#D4DCE4;">AM</div>
+            <div class="inquiry-info"><div class="inquiry-name">Andrea Méndez</div><div class="inquiry-preview">Boda en hacienda en San Miguel de Allende, junio 2026...</div><div class="inquiry-meta"><span class="inquiry-date">20 Abr · Boda jun 2026 · 120 invitados</span><span class="inquiry-tag tag-replied">Respondida</span></div></div>
+          </div>
+          <div class="inquiry-item" data-status="replied" onclick="openInquiry('Claudia Torres','Consulta coordinación día-de','Necesitamos solo coordinación para el día de la boda, mayo 2026 en CDMX, 90 personas.','18 Abr','replied')">
+            <div class="inquiry-avatar" style="background:#C4CEB8;">CT</div>
+            <div class="inquiry-info"><div class="inquiry-name">Claudia Torres</div><div class="inquiry-preview">Necesitamos solo coordinación para el día de la boda, mayo 2026...</div><div class="inquiry-meta"><span class="inquiry-date">18 Abr · Boda may 2026 · 90 invitados</span><span class="inquiry-tag tag-replied">Respondida</span></div></div>
+          </div>
+          <div class="inquiry-item" data-status="replied" onclick="openInquiry('Isabella Vargas','Boda íntima en jardín','Planeamos una boda pequeña de 40 personas en un jardín privado en Cuernavaca, septiembre 2026.','15 Abr','replied')">
+            <div class="inquiry-avatar" style="background:#BDC4A9;">IV</div>
+            <div class="inquiry-info"><div class="inquiry-name">Isabella Vargas</div><div class="inquiry-preview">Boda íntima de 40 personas en jardín privado, Cuernavaca...</div><div class="inquiry-meta"><span class="inquiry-date">15 Abr · Boda sep 2026 · 40 invitados</span><span class="inquiry-tag tag-replied">Respondida</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ESTADÍSTICAS ── -->
+    <div class="panel" id="panel-estadisticas">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Estadísticas</h1><p>Cómo está funcionando tu perfil este mes</p></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num">1,248</div><div class="stat-label">Visitas al perfil</div><div class="stat-trend">↑ 32% vs mes anterior</div></div>
+        <div class="stat-card"><div class="stat-num">186</div><div class="stat-label">Veces guardado</div><div class="stat-trend">↑ 14% vs mes anterior</div></div>
+        <div class="stat-card"><div class="stat-num">24</div><div class="stat-label">Solicitudes recibidas</div><div class="stat-trend">↑ 8 vs mes anterior</div></div>
+        <div class="stat-card"><div class="stat-num">4.9</div><div class="stat-label">Rating promedio</div><div class="stat-trend">18 reseñas verificadas</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Visitas por semana</div></div>
+          <div style="display:flex;align-items:flex-end;gap:8px;height:120px;margin:16px 0;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;background:var(--laurel);border-radius:4px 4px 0 0;height:45%;"></div><div style="font-size:9px;color:var(--muted);">S1</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;background:var(--laurel);border-radius:4px 4px 0 0;height:60%;"></div><div style="font-size:9px;color:var(--muted);">S2</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;background:var(--laurel);border-radius:4px 4px 0 0;height:75%;"></div><div style="font-size:9px;color:var(--muted);">S3</div></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;background:var(--laurel-d);border-radius:4px 4px 0 0;height:95%;"></div><div style="font-size:9px;color:var(--muted);font-weight:500;">S4</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);font-weight:300;">Mejor semana: Semana 4 · 342 visitas</div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">De dónde vienen</div></div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;"><span>Búsqueda en MWP</span><span style="color:var(--night);font-weight:500;">58%</span></div><div style="height:6px;background:var(--cotton);border-radius:99px;"><div style="height:100%;width:58%;background:var(--laurel);border-radius:99px;"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;"><span>Búsqueda directa</span><span style="color:var(--night);font-weight:500;">24%</span></div><div style="height:6px;background:var(--cotton);border-radius:99px;"><div style="height:100%;width:24%;background:var(--laurel);border-radius:99px;"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;"><span>Artículo del blog</span><span style="color:var(--night);font-weight:500;">12%</span></div><div style="height:6px;background:var(--cotton);border-radius:99px;"><div style="height:100%;width:12%;background:var(--laurel);border-radius:99px;"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;"><span>Referido por otra novia</span><span style="color:var(--night);font-weight:500;">6%</span></div><div style="height:6px;background:var(--cotton);border-radius:99px;"><div style="height:100%;width:6%;background:var(--laurel);border-radius:99px;"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DISPONIBILIDAD ── -->
+    <div class="panel" id="panel-disponibilidad">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Disponibilidad</h1><p>Fechas confirmadas, en revisión y disponibles</p></div>
+        <div class="topbar-right"><button class="btn-sm btn-primary" onclick="openAddDate()">+ Agregar fecha</button></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Próximas fechas</div></div>
+          <div id="availability-list">
+            <div class="avail-item"><div class="avail-dot" style="background:#C4724A;"></div><div class="avail-date">17 May 2026</div><div class="avail-label">Boda Martínez-Rojas · CDMX</div><span class="avail-status status-booked">Reservada</span></div>
+            <div class="avail-item"><div class="avail-dot" style="background:#B8922A;"></div><div class="avail-date">7 Jun 2026</div><div class="avail-label">Pendiente confirmar · San Miguel</div><span class="avail-status status-hold">En revisión</span></div>
+            <div class="avail-item"><div class="avail-dot" style="background:var(--laurel-d);"></div><div class="avail-date">28 Jun 2026</div><div class="avail-label">Disponible</div><span class="avail-status status-free">Libre</span></div>
+            <div class="avail-item"><div class="avail-dot" style="background:#C4724A;"></div><div class="avail-date">19 Sep 2026</div><div class="avail-label">Boda González-Pérez · Guadalajara</div><span class="avail-status status-booked">Reservada</span></div>
+            <div class="avail-item"><div class="avail-dot" style="background:var(--laurel-d);"></div><div class="avail-date">10 Oct 2026</div><div class="avail-label">Disponible</div><span class="avail-status status-free">Libre</span></div>
+            <div class="avail-item"><div class="avail-dot" style="background:#C4724A;"></div><div class="avail-date">15 Nov 2026</div><div class="avail-label">Boda Castro-Herrera · Guadalajara</div><span class="avail-status status-booked">Reservada</span></div>
+            <div class="avail-item"><div class="avail-dot" style="background:#C4724A;"></div><div class="avail-date">6 Dic 2026</div><div class="avail-label">Boda Vargas-Morales · Oaxaca</div><span class="avail-status status-booked">Reservada</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Resumen 2026</div></div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;color:var(--muted);">Bodas confirmadas</span><span style="font-size:18px;font-weight:500;color:var(--night);">12</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;color:var(--muted);">Fechas en revisión</span><span style="font-size:18px;font-weight:500;color:#B8922A;">2</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;color:var(--muted);">Fechas disponibles</span><span style="font-size:18px;font-weight:500;color:var(--laurel-d);">8</span></div>
+            <div style="height:0.5px;background:var(--cotton);"></div>
+            <div style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;">Tu temporada más alta es <strong style="color:var(--night);">octubre a diciembre</strong>. Te quedan <strong style="color:var(--night);">2 fechas libres</strong> en esos meses.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PERFIL ── -->
+    <div class="panel" id="panel-perfil">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Editar perfil</h1><p>Así es como las novias te verán en la plataforma</p></div>
+        <div class="topbar-right"><button class="btn-sm btn-primary" onclick="saveProfile()">Guardar cambios</button></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Información del negocio</div></div>
+          <div class="form-field"><label class="form-label">Nombre del negocio</label><input class="form-input" id="p-name" value="Elena Bodas & Eventos" oninput="updatePreview()"></div>
+          <div class="form-row">
+            <div class="form-field"><label class="form-label">Categoría</label>
+              <select class="form-input" id="p-type">
+                <option>Wedding planner</option><option>Fotografía & video</option><option>Sede & hacienda</option><option>Catering & banquetes</option><option>Florista</option><option>Peinado & maquillaje</option><option>DJ & música</option><option>Pre-boda & anillos</option><option>Luna de miel & viajes</option>
+              </select>
+            </div>
+            <div class="form-field"><label class="form-label">Ciudad principal</label><input class="form-input" id="p-city" value="CDMX" oninput="updatePreview()"></div>
+          </div>
+          <div class="form-field"><label class="form-label">Descripción breve (aparece en tu perfil)</label><textarea class="form-input" id="p-bio" oninput="updatePreview()">Más de 8 años coordinando bodas en México. Especializada en bodas de lujo en haciendas y destinos.</textarea></div>
+          <div class="form-row">
+            <div class="form-field"><label class="form-label">Años de experiencia</label><input class="form-input" type="number" value="8"></div>
+            <div class="form-field"><label class="form-label">Bodas coordinadas</label><input class="form-input" type="number" value="120"></div>
+          </div>
+          <div class="form-field"><label class="form-label">WhatsApp de contacto</label><input class="form-input" type="tel" value="+52 55 1234 5678"></div>
+          <div class="form-field"><label class="form-label">Instagram</label><input class="form-input" value="@elenabodas"></div>
+          <div class="form-field"><label class="form-label">Sitio web (opcional)</label><input class="form-input" type="url" placeholder="https://tuweb.com"></div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-header"><div class="card-title">Vista previa de tu perfil</div></div>
+            <div class="profile-preview" style="border:none;margin-top:0;">
+              <div class="profile-banner"></div>
+              <div style="position:relative;"><div class="profile-avatar" id="preview-initials-2">EB</div></div>
+              <div class="profile-body">
+                <div class="profile-name" id="preview-name-2">Elena Bodas & Eventos</div>
+                <div class="profile-type" id="preview-type-2">Wedding planner · CDMX</div>
+                <div class="profile-founder">✦ Proveedor Fundador MWP</div>
+                <div class="profile-bio" id="preview-bio-2">Más de 8 años coordinando bodas en México. Especializada en bodas de lujo en haciendas y destinos.</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Regiones donde trabajas</div></div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;" id="regions">
+              <span style="background:var(--laurel);color:var(--night);font-size:12px;padding:5px 12px;border-radius:99px;">CDMX</span>
+              <span style="background:var(--laurel);color:var(--night);font-size:12px;padding:5px 12px;border-radius:99px;">Guadalajara</span>
+              <span style="background:var(--laurel);color:var(--night);font-size:12px;padding:5px 12px;border-radius:99px;">San Miguel de Allende</span>
+              <span style="background:var(--cotton);color:var(--muted);font-size:12px;padding:5px 12px;border-radius:99px;cursor:pointer;" onclick="addRegion()">+ Agregar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAQUETES ── -->
+    <div class="panel" id="panel-paquetes">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Paquetes & precios</h1><p>Lo que las novias verán al visitar tu perfil</p></div>
+        <div class="topbar-right"><button class="btn-sm btn-primary" onclick="openAddPackage()">+ Agregar paquete</button></div>
+      </div>
+      <div class="card">
+        <div id="packages-list">
+          <div class="package-card">
+            <div style="flex:1;">
+              <div class="package-name">Coordinación día-de</div>
+              <div class="package-desc">Coordinación completa el día de la boda. Incluye cronograma detallado, coordinación de todos los proveedores y atención de imprevistos.</div>
+              <div class="package-price">Desde $15,000 MXN</div>
+            </div>
+            <span class="package-edit" onclick="openEditPackage(this)">Editar</span>
+          </div>
+          <div class="package-card">
+            <div style="flex:1;">
+              <div class="package-name">Planeación parcial (3 meses)</div>
+              <div class="package-desc">Acompañamiento los últimos 3 meses antes de la boda. Revisión de contratos, creación de cronograma y coordinación día-de incluida.</div>
+              <div class="package-price">Desde $28,000 MXN</div>
+            </div>
+            <span class="package-edit" onclick="openEditPackage(this)">Editar</span>
+          </div>
+          <div class="package-card">
+            <div style="flex:1;">
+              <div class="package-name">Planeación completa</div>
+              <div class="package-desc">Desde el primer día hasta el último baile. Incluye búsqueda y negociación con proveedores, manejo de presupuesto y coordinación total.</div>
+              <div class="package-price">Desde $55,000 MXN</div>
+            </div>
+            <span class="package-edit" onclick="openEditPackage(this)">Editar</span>
+          </div>
+        </div>
+        <div style="margin-top:16px;padding-top:16px;border-top:0.5px solid var(--cotton);">
+          <p style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;">Los precios que muestras son orientativos. Las novias pueden solicitar una cotización personalizada directamente desde tu perfil.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- INQUIRY MODAL -->
+<div class="modal-overlay" id="modal-inquiry" onclick="closeModal('modal-inquiry')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('modal-inquiry')">×</button>
+    <div style="font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--laurel-d);margin-bottom:6px;" id="modal-inquiry-tag">Nueva solicitud</div>
+    <h3 id="modal-inquiry-name">Nombre</h3>
+    <div style="font-size:13px;font-weight:500;color:var(--pigeon);margin-bottom:14px;" id="modal-inquiry-subject"></div>
+    <div style="background:#F5F4F6;border-radius:var(--radius-md);padding:16px;font-size:13px;font-weight:300;color:var(--ink);line-height:1.8;margin-bottom:16px;" id="modal-inquiry-body"></div>
+    <div style="font-size:11px;color:var(--stone);margin-bottom:16px;" id="modal-inquiry-date"></div>
+    <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Tu respuesta</label>
+    <textarea style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;resize:vertical;min-height:100px;font-family:var(--sans);" placeholder="Escribe tu respuesta aquí..."></textarea>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-inquiry')">Cancelar</button>
+      <button class="modal-save" onclick="closeModal('modal-inquiry');showSaved('Respuesta enviada ✓')">Enviar respuesta</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD DATE MODAL -->
+<div class="modal-overlay" id="modal-date" onclick="closeModal('modal-date')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('modal-date')">×</button>
+    <h3>Agregar fecha</h3>
+    <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Fecha</label>
+    <input type="date" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:13px;">
+    <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Estado</label>
+    <select style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:13px;">
+      <option>Reservada</option><option>En revisión</option><option>Disponible</option>
+    </select>
+    <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Descripción (opcional)</label>
+    <input type="text" placeholder="Ej. Boda García-López · Monterrey" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:4px;">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-date')">Cancelar</button>
+      <button class="modal-save" onclick="closeModal('modal-date');showSaved('Fecha agregada ✓')">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PACKAGE MODAL -->
+<div class="modal-overlay" id="modal-package" onclick="closeModal('modal-package')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('modal-package')">×</button>
+    <h3 id="modal-package-title">Agregar paquete</h3>
+    <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Nombre del paquete</label>
+    <input type="text" id="pkg-name" placeholder="Ej. Coordinación día-de" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:13px;">
+    <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Descripción</label>
+    <textarea id="pkg-desc" placeholder="¿Qué incluye este paquete?" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;resize:vertical;min-height:80px;margin-bottom:13px;font-family:var(--sans);"></textarea>
+    <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Precio desde (MXN)</label>
+    <input type="number" id="pkg-price" placeholder="15000" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:4px;">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-package')">Cancelar</button>
+      <button class="modal-save" onclick="addPackage()">Guardar paquete</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="display:none;position:fixed;bottom:28px;right:28px;background:var(--night);color:var(--white);font-size:13px;font-weight:400;padding:12px 20px;border-radius:var(--radius-md);z-index:300;box-shadow:0 4px 20px rgba(0,0,0,0.15);transition:opacity 0.3s;"></div>
+
+<script>
+  // NAV
+  function showPanel(name, el) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    if (el) el.classList.add('active');
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  // CHART
+  const visits = [32, 48, 41, 56, 38, 62, 47];
+  const days = ['L','M','Mi','J','V','S','D'];
+  const chart = document.getElementById('chart-bars');
+  const max = Math.max(...visits);
+  visits.forEach((v, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'bar-wrap';
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.style.height = (v / max * 100) + '%';
+    if (i === 5 || i === 6) bar.style.background = 'var(--laurel-d)';
+    const label = document.createElement('div');
+    label.className = 'bar-label';
+    label.textContent = days[i];
+    wrap.appendChild(bar);
+    wrap.appendChild(label);
+    chart.appendChild(wrap);
+  });
+
+  // PROFILE LIVE PREVIEW
+  function updatePreview() {
+    const name = document.getElementById('p-name')?.value || '';
+    const type = document.getElementById('p-type')?.value || '';
+    const city = document.getElementById('p-city')?.value || '';
+    const bio  = document.getElementById('p-bio')?.value  || '';
+    const initials = name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+    ['preview-name','preview-name-2'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = name; });
+    ['preview-type','preview-type-2'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = type + ' · ' + city; });
+    ['preview-bio','preview-bio-2'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = bio; });
+    ['preview-initials','preview-initials-2','sidebar-initials'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = initials || 'EB'; });
+    const sn = document.getElementById('sidebar-name'); if(sn) sn.textContent = name;
+    const gn = document.getElementById('greeting-name'); if(gn) gn.textContent = name.split(' ')[0];
+  }
+
+  function saveProfile() { updatePreview(); showSaved('Perfil actualizado ✓'); }
+
+  // INQUIRY MODAL
+  function openInquiry(name, subject, body, date, status) {
+    document.getElementById('modal-inquiry-name').textContent = name;
+    document.getElementById('modal-inquiry-subject').textContent = subject;
+    document.getElementById('modal-inquiry-body').textContent = body;
+    document.getElementById('modal-inquiry-date').textContent = 'Recibido el ' + date;
+    document.getElementById('modal-inquiry-tag').textContent = status === 'new' ? 'Nueva solicitud' : 'Solicitud respondida';
+    document.getElementById('modal-inquiry').classList.add('open');
+  }
+
+  // PACKAGES
+  function addPackage() {
+    const name  = document.getElementById('pkg-name').value.trim();
+    const desc  = document.getElementById('pkg-desc').value.trim();
+    const price = document.getElementById('pkg-price').value;
+    if (!name) return;
+    const card = document.createElement('div');
+    card.className = 'package-card';
+    card.innerHTML = `<div style="flex:1;"><div class="package-name">${name}</div><div class="package-desc">${desc}</div><div class="package-price">Desde $${parseInt(price).toLocaleString('es-MX')} MXN</div></div><span class="package-edit" onclick="openEditPackage(this)">Editar</span>`;
+    document.getElementById('packages-list').appendChild(card);
+    document.getElementById('pkg-name').value=''; document.getElementById('pkg-desc').value=''; document.getElementById('pkg-price').value='';
+    closeModal('modal-package'); showSaved('Paquete agregado ✓');
+  }
+  function openEditPackage(el) { document.getElementById('modal-package-title').textContent = 'Editar paquete'; openAddPackage(); }
+  function openAddPackage() { document.getElementById('modal-package').classList.add('open'); }
+
+  // INQUIRY FILTER
+  function filterInquiries(filter, btn) {
+    document.querySelectorAll('#all-inquiries .inquiry-item').forEach(item => {
+      item.style.display = filter === 'all' || item.dataset.status === filter ? 'flex' : 'none';
+    });
+  }
+
+  // MODALS
+  function openAddDate() { document.getElementById('modal-date').classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  // ADD REGION
+  function addRegion() {
+    const r = prompt('¿Qué ciudad o región quieres agregar?');
+    if (!r) return;
+    const tag = document.createElement('span');
+    tag.style.cssText = 'background:var(--laurel);color:var(--night);font-size:12px;padding:5px 12px;border-radius:99px;';
+    tag.textContent = r;
+    document.getElementById('regions').insertBefore(tag, document.getElementById('regions').lastElementChild);
+  }
+
+  // TOAST
+  function showSaved(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg || '✓ Guardado';
+    t.style.display = 'block'; t.style.opacity = '1';
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.style.display='none', 300); }, 2500);
+  }
+</script>
+</body>
+</html>
