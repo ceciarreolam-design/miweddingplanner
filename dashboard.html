@@ -195,9 +195,9 @@
       <div class="sidebar-logo-text">Mi Wedding <span>Planner</span></div>
     </div>
     <div class="sidebar-user">
-      <div class="user-avatar" id="sidebar-initials">SC</div>
+      <div class="user-avatar" id="sidebar-initials">•</div>
       <div>
-        <div class="user-name" id="sidebar-name">Sofía Castro</div>
+        <div class="user-name" id="sidebar-name">Mi perfil</div>
         <div class="user-plan">✦ Plan Premium</div>
       </div>
     </div>
@@ -252,7 +252,7 @@
     <div class="panel active" id="panel-inicio">
       <div class="topbar">
         <div class="topbar-left">
-          <h1>¡Hola, <span id="greeting-name">Sofía</span>! 🤍</h1>
+          <h1>¡Hola, <span id="greeting-name">...</span>! 🤍</h1>
           <p>Aquí está el resumen de tu boda</p>
         </div>
         <div class="topbar-right">
@@ -268,38 +268,38 @@
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3C7 3 4 6 4 9c0 4 4 8 7 10 3-2 7-6 7-10 0-3-3-6-7-6z" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" stroke-linejoin="round"/></svg>
           </div>
           <div>
-            <div class="countdown-title" id="wedding-title">Tu boda · <span id="wedding-date-display">15 de noviembre, 2026</span></div>
-            <div class="countdown-sub" id="wedding-location-display">Hacienda San Miguel · Guadalajara</div>
+            <div class="countdown-title" id="wedding-title">Tu boda · <span id="wedding-date-display">—</span></div>
+            <div class="countdown-sub" id="wedding-location-display">Completa tu perfil para ver el conteo</div>
           </div>
         </div>
         <div class="countdown-days" id="countdown-display">
-          <div class="countdown-unit"><div class="countdown-num" id="cd-days">209</div><div class="countdown-label">días</div></div>
-          <div class="countdown-unit"><div class="countdown-num" id="cd-hours">14</div><div class="countdown-label">horas</div></div>
-          <div class="countdown-unit"><div class="countdown-num" id="cd-mins">32</div><div class="countdown-label">min</div></div>
+          <div class="countdown-unit"><div class="countdown-num" id="cd-days">—</div><div class="countdown-label">días</div></div>
+          <div class="countdown-unit"><div class="countdown-num" id="cd-hours">—</div><div class="countdown-label">horas</div></div>
+          <div class="countdown-unit"><div class="countdown-num" id="cd-mins">—</div><div class="countdown-label">min</div></div>
         </div>
       </div>
 
       <!-- STATS -->
       <div class="stats-row">
         <div class="stat-card">
-          <div class="stat-num" id="stat-tasks-done">8</div>
+          <div class="stat-num" id="stat-tasks-done">0</div>
           <div class="stat-label">Tareas completadas</div>
-          <div class="stat-sub" id="stat-tasks-left">12 pendientes</div>
+          <div class="stat-sub" id="stat-tasks-left">0 pendientes</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num">$485,000</div>
+          <div class="stat-num" id="stat-budget">—</div>
           <div class="stat-label">Presupuesto total</div>
-          <div class="stat-sub">$210,000 contratados</div>
+          <div class="stat-sub" id="stat-budget-sub">Agrega tu presupuesto</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num">4</div>
+          <div class="stat-num">0</div>
           <div class="stat-label">Proveedores favoritos</div>
-          <div class="stat-sub">2 contactados</div>
+          <div class="stat-sub">Explora y guarda favoritos</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num" id="stat-guests">150</div>
+          <div class="stat-num" id="stat-guests">—</div>
           <div class="stat-label">Invitados estimados</div>
-          <div class="stat-sub">Lista en proceso</div>
+          <div class="stat-sub">Actualiza en tu perfil</div>
         </div>
       </div>
 
@@ -311,31 +311,7 @@
             <span class="card-link" onclick="showPanel('checklist', document.querySelector('[onclick*=\"checklist\"]'))">Ver todas →</span>
           </div>
           <div id="home-checklist">
-            <div class="check-item">
-              <div class="check-box done" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <div class="check-text"><div class="check-title done">Definir presupuesto total</div><div class="check-month">12 meses antes</div></div>
-              <span class="check-tag">Listo</span>
-            </div>
-            <div class="check-item">
-              <div class="check-box done" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <div class="check-text"><div class="check-title done">Elegir fecha tentativa</div><div class="check-month">12 meses antes</div></div>
-              <span class="check-tag">Listo</span>
-            </div>
-            <div class="check-item">
-              <div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <div class="check-text"><div class="check-title">Reservar iglesia</div><div class="check-month">10–12 meses antes</div></div>
-              <span class="check-tag urgent">Urgente</span>
-            </div>
-            <div class="check-item">
-              <div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <div class="check-text"><div class="check-title">Reservar sede o hacienda</div><div class="check-month">10–12 meses antes</div></div>
-              <span class="check-tag urgent">Urgente</span>
-            </div>
-            <div class="check-item">
-              <div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <div class="check-text"><div class="check-title">Contratar wedding planner</div><div class="check-month">10–12 meses antes</div></div>
-              <span class="check-tag">Pendiente</span>
-            </div>
+            <div style="font-size:13px;color:var(--muted);font-weight:300;padding:12px 0;text-align:center;">Cargando tareas...</div>
           </div>
         </div>
 
@@ -348,13 +324,11 @@
               <span class="card-link" onclick="showPanel('presupuesto', document.querySelector('[onclick*=\"presupuesto\"]'))">Ver detalle →</span>
             </div>
             <div class="budget-total">
-              <div class="budget-total-num">$485,000 <span style="font-size:14px;color:var(--muted);">MXN</span></div>
-              <div class="budget-total-label">43% contratado · $210,000 comprometidos</div>
+              <div class="budget-total-num" id="home-budget-num">—</div>
+              <div class="budget-total-label" id="home-budget-label">Agrega tu presupuesto en el panel</div>
             </div>
-            <div class="budget-bar-outer"><div class="budget-bar-inner" style="width:43%"></div></div>
-            <div class="budget-item"><div class="budget-dot" style="background:#A6B8C7;"></div><div class="budget-item-label">Sede & catering</div><div class="budget-item-amount">$180,000</div></div>
-            <div class="budget-item"><div class="budget-dot" style="background:#BDC4A9;"></div><div class="budget-item-label">Fotografía</div><div class="budget-item-amount">$30,000</div></div>
-            <div class="budget-item"><div class="budget-dot" style="background:#667C90;"></div><div class="budget-item-label">Por asignar</div><div class="budget-item-amount">$275,000</div></div>
+            <div class="budget-bar-outer"><div class="budget-bar-inner" style="width:0%"></div></div>
+            <div id="home-budget-items" style="font-size:13px;color:var(--muted);font-weight:300;">Cargando...</div>
           </div>
 
           <!-- UPCOMING -->
@@ -876,7 +850,13 @@
     if (data.ciudad_boda) { document.getElementById('p-city').value = data.ciudad_boda; updateLocation(); }
     if (data.sede) { document.getElementById('p-venue').value = data.sede; updateLocation(); }
     if (data.invitados) { document.getElementById('p-guests').value = data.invitados; updateGuests(); }
-    if (data.presupuesto) document.getElementById('p-budget').value = data.presupuesto;
+    if (data.presupuesto) {
+      document.getElementById('p-budget').value = data.presupuesto;
+      const budgetEl = document.getElementById('stat-budget');
+      if (budgetEl) budgetEl.textContent = '$' + parseInt(data.presupuesto).toLocaleString('es-MX');
+      const budgetSub = document.getElementById('stat-budget-sub');
+      if (budgetSub) budgetSub.textContent = 'MXN total';
+    }
   }
 
   // ── SAVE PROFILE ─────────────────────────────────────
@@ -993,9 +973,15 @@
       .eq('bride_id', currentUser.id)
       .order('created_at', { ascending: true });
 
-    if (error || !data || data.length === 0) return;
+    if (error || !data || data.length === 0) {
+      const hbi = document.getElementById('home-budget-items');
+      if (hbi) hbi.textContent = 'Sin categorías aún — agrégalas en Presupuesto';
+      return;
+    }
 
     document.getElementById('budget-list').innerHTML = '';
+    const homeItems = document.getElementById('home-budget-items');
+    if (homeItems) homeItems.innerHTML = '';
 
     data.forEach(item => {
       const row = document.createElement('div');
@@ -1005,6 +991,14 @@
       row.dataset.id = item.id;
       row.innerHTML = `<div class="budget-dot" style="background:${item.color};"></div><div class="budget-item-label">${item.categoria}</div><div class="budget-item-amount">$${item.monto_presupuestado.toLocaleString('es-MX')}</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:${item.monto_gastado > 0 ? 'var(--night)' : 'var(--stone)'};">$${item.monto_gastado.toLocaleString('es-MX')}</div>`;
       document.getElementById('budget-list').appendChild(row);
+
+      // Home preview — show first 3 items
+      if (homeItems && homeItems.children.length < 3) {
+        const mini = document.createElement('div');
+        mini.className = 'budget-item';
+        mini.innerHTML = `<div class="budget-dot" style="background:${item.color};"></div><div class="budget-item-label">${item.categoria}</div><div class="budget-item-amount">$${item.monto_presupuestado.toLocaleString('es-MX')}</div>`;
+        homeItems.appendChild(mini);
+      }
     });
     recalcBudget();
   }
