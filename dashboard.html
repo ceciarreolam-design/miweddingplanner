@@ -886,32 +886,33 @@
     };
 
     const btn = document.querySelector('#panel-perfil .btn-primary');
+    console.log('Saving profile:', profileData);
+    console.log('Current user:', currentUser.id);
 
     // Try update first
-    const { error: updateError } = await sb
+    const { data: updateData, error: updateError } = await sb
       .from('bride_profiles')
       .update(profileData)
-      .eq('id', currentUser.id);
+      .eq('id', currentUser.id)
+      .select();
 
-    if (updateError) {
-      // If update fails, try insert
-      const { error: insertError } = await sb
+    console.log('Update result:', updateData, updateError);
+
+    if (updateError || !updateData || updateData.length === 0) {
+      // Row doesn't exist — insert it
+      const { data: insertData, error: insertError } = await sb
         .from('bride_profiles')
-        .insert(profileData);
+        .insert(profileData)
+        .select();
+
+      console.log('Insert result:', insertData, insertError);
 
       if (insertError) {
-        console.error('Save error:', insertError);
-        btn.textContent = '✗ Error al guardar';
-        setTimeout(() => btn.textContent = 'Guardar cambios', 2000);
+        console.error('Insert error details:', JSON.stringify(insertError));
+        btn.textContent = '✗ Error: ' + insertError.message;
+        setTimeout(() => btn.textContent = 'Guardar cambios', 3000);
         return;
       }
-    }
-
-    // Update budget stat
-    const budgetEl = document.getElementById('stat-budget');
-    if (budgetEl && profileData.presupuesto > 0) {
-      budgetEl.textContent = '$' + profileData.presupuesto.toLocaleString('es-MX');
-      document.getElementById('stat-budget-sub').textContent = 'MXN total';
     }
 
     btn.textContent = '✓ Guardado';
