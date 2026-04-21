@@ -509,20 +509,20 @@
         <div class="card">
           <div class="card-header"><div class="card-title">Información personal</div></div>
           <div class="profile-row">
-            <div class="profile-field"><div class="profile-label">Nombre</div><input class="profile-input" id="p-name" value="Sofía" oninput="updateGreeting()"></div>
-            <div class="profile-field"><div class="profile-label">Apellido</div><input class="profile-input" id="p-lastname" value="Castro"></div>
+            <div class="profile-field"><div class="profile-label">Nombre</div><input class="profile-input" id="p-name" value="" oninput="updateGreeting()"></div>
+            <div class="profile-field"><div class="profile-label">Apellido</div><input class="profile-input" id="p-lastname" value=""></div>
           </div>
-          <div class="profile-field"><div class="profile-label">Correo electrónico</div><input class="profile-input" type="email" value="sofia@correo.com"></div>
-          <div class="profile-field"><div class="profile-label">Teléfono / WhatsApp</div><input class="profile-input" type="tel" value="+52 55 1234 5678"></div>
+          <div class="profile-field"><div class="profile-label">Correo electrónico</div><input class="profile-input" type="email" value=""></div>
+          <div class="profile-field"><div class="profile-label">Teléfono / WhatsApp</div><input class="profile-input" type="tel" value=""></div>
         </div>
         <div class="card">
           <div class="card-header"><div class="card-title">Detalles de la boda</div></div>
-          <div class="profile-field"><div class="profile-label">Fecha de la boda</div><input class="profile-input" type="date" id="p-date" value="2026-11-15" oninput="updateWeddingDate()"></div>
-          <div class="profile-field"><div class="profile-label">Ciudad de la boda</div><input class="profile-input" id="p-city" value="Guadalajara" oninput="updateLocation()"></div>
-          <div class="profile-field"><div class="profile-label">Sede / hacienda (si ya tienen)</div><input class="profile-input" id="p-venue" value="Hacienda San Miguel" oninput="updateLocation()"></div>
+          <div class="profile-field"><div class="profile-label">Fecha de la boda</div><input class="profile-input" type="date" id="p-date" value="" oninput="updateWeddingDate()"></div>
+          <div class="profile-field"><div class="profile-label">Ciudad de la boda</div><input class="profile-input" id="p-city" value="" oninput="updateLocation()"></div>
+          <div class="profile-field"><div class="profile-label">Sede / hacienda (si ya tienen)</div><input class="profile-input" id="p-venue" value="" oninput="updateLocation()"></div>
           <div class="profile-row">
-            <div class="profile-field"><div class="profile-label">Invitados estimados</div><input class="profile-input" type="number" id="p-guests" value="150" oninput="updateGuests()"></div>
-            <div class="profile-field"><div class="profile-label">Presupuesto total (MXN)</div><input class="profile-input" type="number" id="p-budget" value="485000"></div>
+            <div class="profile-field"><div class="profile-label">Invitados estimados</div><input class="profile-input" type="number" id="p-guests" value="" oninput="updateGuests()"></div>
+            <div class="profile-field"><div class="profile-label">Presupuesto total (MXN)</div><input class="profile-input" type="number" id="p-budget" value=""></div>
           </div>
         </div>
       </div>
@@ -594,11 +594,11 @@
     <button class="modal-close" onclick="closeModal('modal-profile')">×</button>
     <h3>Editar perfil rápido</h3>
     <label>Tu nombre</label>
-    <input type="text" id="quick-name" value="Sofía" oninput="document.getElementById('p-name').value=this.value;updateGreeting()">
+    <input type="text" id="quick-name" value="" oninput="document.getElementById('p-name').value=this.value;updateGreeting()">
     <label>Fecha de tu boda</label>
-    <input type="date" id="quick-date" value="2026-11-15" oninput="document.getElementById('p-date').value=this.value;updateWeddingDate()">
+    <input type="date" id="quick-date" value="" oninput="document.getElementById('p-date').value=this.value;updateWeddingDate()">
     <label>Ciudad de la boda</label>
-    <input type="text" id="quick-city" value="Guadalajara" oninput="document.getElementById('p-city').value=this.value;updateLocation()">
+    <input type="text" id="quick-city" value="" oninput="document.getElementById('p-city').value=this.value;updateLocation()">
     <div class="modal-btns">
       <button class="modal-cancel" onclick="closeModal('modal-profile')">Cancelar</button>
       <button class="modal-save" onclick="closeModal('modal-profile');showSaved()">Guardar</button>
@@ -618,7 +618,7 @@
 
   // ── COUNTDOWN ────────────────────────────────────────
   function updateCountdown() {
-    const dateVal = document.getElementById('p-date')?.value || '2026-11-15';
+    const dateVal = document.getElementById('p-date')?.value || '';
     const target = new Date(dateVal + 'T00:00:00');
     const now = new Date();
     const diff = target - now;
@@ -636,9 +636,9 @@
 
   // ── PROFILE UPDATES ──────────────────────────────────
   function updateGreeting() {
-    const name = document.getElementById('p-name')?.value || 'Sofía';
+    const name = document.getElementById('p-name')?.value || '';
     document.getElementById('greeting-name').textContent = name;
-    document.getElementById('sidebar-name').textContent = name + ' ' + (document.getElementById('p-lastname')?.value || 'Castro');
+    document.getElementById('sidebar-name').textContent = name + ' ' + (document.getElementById('p-lastname')?.value || '');
     const initials = name.charAt(0) + (document.getElementById('p-lastname')?.value?.charAt(0) || 'C');
     document.getElementById('sidebar-initials').textContent = initials;
   }
@@ -659,7 +659,7 @@
   }
 
   function updateGuests() {
-    const g = document.getElementById('p-guests')?.value || '150';
+    const g = document.getElementById('p-guests')?.value || '0';
     document.getElementById('stat-guests').textContent = g;
   }
 
@@ -742,7 +742,7 @@
   }
 
   function recalcBudget() {
-    const total = parseInt(document.getElementById('p-budget')?.value) || 485000;
+    const total = parseInt(document.getElementById('p-budget')?.value) || 0;
     let spent = 0;
     document.querySelectorAll('.budget-item.editable').forEach(item => {
       spent += parseInt(item.dataset.spent) || 0;
@@ -825,13 +825,23 @@
 
   // ── LOAD PROFILE ─────────────────────────────────────
   async function loadProfile() {
-    const { data, error } = await sb
+    let { data, error } = await sb
       .from('bride_profiles')
       .select('*')
       .eq('id', currentUser.id)
       .single();
 
-    if (error || !data) return;
+    // If no profile exists yet, create an empty one
+    if (error && error.code === 'PGRST116') {
+      const { data: newData } = await sb
+        .from('bride_profiles')
+        .insert({ id: currentUser.id })
+        .select()
+        .single();
+      data = newData;
+    }
+
+    if (!data) return;
 
     // Populate profile fields
     if (data.nombre) {
@@ -843,6 +853,7 @@
     }
     if (data.apellido) document.getElementById('p-lastname').value = data.apellido;
     if (data.fecha_boda) {
+      // Supabase returns date as YYYY-MM-DD — set it directly
       document.getElementById('p-date').value = data.fecha_boda;
       updateWeddingDate();
       updateCountdown();
