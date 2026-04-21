@@ -164,29 +164,29 @@
         <div class="field-row">
           <div class="field">
             <label>Nombre</label>
-            <input type="text" placeholder="Tu nombre">
+            <input type="text" id="reg-nombre" placeholder="Tu nombre">
           </div>
           <div class="field">
             <label>Apellido</label>
-            <input type="text" placeholder="Tu apellido">
+            <input type="text" id="reg-apellido" placeholder="Tu apellido">
           </div>
         </div>
         <div class="field">
           <label>Correo electrónico</label>
-          <input type="email" placeholder="hola@tucorreo.com">
+          <input type="email" id="reg-email" placeholder="hola@tucorreo.com">
         </div>
         <div class="field">
           <label>Contraseña</label>
-          <input type="password" placeholder="Mínimo 8 caracteres">
+          <input type="password" id="reg-password" placeholder="Mínimo 8 caracteres">
         </div>
         <div class="field">
           <label>¿Cuándo es tu boda?</label>
-          <input type="month" id="wedding-date">
+          <input type="month" id="reg-fecha">
         </div>
 
         <button class="btn-main" onclick="goStep(2)">Continuar →</button>
         <div class="divider">o</div>
-        <div class="login-link">¿Ya tienes cuenta? <a href="#">Inicia sesión</a></div>
+        <div class="login-link">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></div>
       </div>
 
       <!-- STEP 2: WEDDING DETAILS -->
@@ -275,7 +275,7 @@
           🔒 Pago seguro. Puedes cancelar en cualquier momento desde tu perfil. No se realizarán cargos hasta confirmar tu cuenta.
         </div>
 
-        <button class="btn-main" onclick="goStep(4)">Crear mi cuenta →</button>
+        <button class="btn-main" id="btn-crear" onclick="createAccount()">Crear mi cuenta →</button>
         <button class="btn-back" onclick="goStep(2)">← Regresar</button>
       </div>
 
@@ -285,9 +285,9 @@
           <div class="success-icon">
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M6 16l7 7 13-13" stroke="#667C90" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <div class="success-title">¡Bienvenida a MWP!</div>
-          <div class="success-sub">Tu cuenta fue creada exitosamente. Revisa tu correo para confirmar tu dirección y activar tu plan Premium.</div>
-          <button class="success-btn" onclick="window.location.href='proveedores.html'">Explorar proveedores →</button>
+          <div class="success-title">¡Bienvenida a MWP! 🤍</div>
+          <div class="success-sub">Tu cuenta fue creada exitosamente. Revisa tu correo para confirmar tu dirección — después podrás acceder a tu panel completo.</div>
+          <button class="success-btn" onclick="window.location.href='dashboard.html'">Ir a mi panel →</button>
         </div>
       </div>
 
@@ -296,7 +296,15 @@
 
 </div>
 
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://rlcqdxovvhyiszvfogjz.supabase.co',
+    'sb_publishable_OFE316zb9SoPJ87utEwFyg_g0qbw_Ri'
+  );
+
   function goStep(n) {
     document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
     document.getElementById('step-' + n).classList.add('active');
@@ -313,6 +321,61 @@
     document.querySelectorAll('.plan-opt').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     el.querySelector('input').checked = true;
+  }
+
+  function showError(msg) {
+    let el = document.getElementById('form-error');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'form-error';
+      el.style.cssText = 'background:#FDF0EC;color:#C4724A;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:14px;';
+      document.getElementById('step-1').insertBefore(el, document.getElementById('step-1').firstChild);
+    }
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  async function createAccount() {
+    const nombre   = document.getElementById('reg-nombre').value.trim();
+    const apellido = document.getElementById('reg-apellido').value.trim();
+    const email    = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const fechaBoda = document.getElementById('reg-fecha').value;
+
+    if (!nombre || !email || !password) { showError('Por favor completa todos los campos obligatorios.'); goStep(1); return; }
+    if (password.length < 8) { showError('La contraseña debe tener al menos 8 caracteres.'); goStep(1); return; }
+
+    const btn = document.getElementById('btn-crear');
+    btn.textContent = 'Creando cuenta...';
+    btn.disabled = true;
+
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          role: 'bride',
+          nombre,
+          apellido,
+          fecha_boda: fechaBoda || null,
+        }
+      }
+    });
+
+    if (error) {
+      btn.textContent = 'Crear mi cuenta →';
+      btn.disabled = false;
+      if (error.message.includes('already registered')) {
+        showError('Este correo ya tiene una cuenta. ¿Quieres iniciar sesión?');
+      } else {
+        showError('Hubo un error al crear tu cuenta. Intenta de nuevo.');
+      }
+      goStep(1);
+      return;
+    }
+
+    // Success — show confirmation step
+    goStep(4);
   }
 </script>
 
