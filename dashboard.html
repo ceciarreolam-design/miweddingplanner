@@ -238,9 +238,9 @@
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.2 3.5H12L9.1 6.6l1.1 3.4L7 8 3.8 10l1.1-3.4L2 4.5h3.8z" stroke="currentColor" stroke-width="1"/></svg>
         Explorar proveedores
       </div>
-      <div class="sidebar-bottom-link" style="margin-top:10px;" onclick="window.location.href='index.html'">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Volver al inicio
+      <div class="sidebar-bottom-link" style="margin-top:10px;" onclick="logout()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2H2v10h3M9 10l3-3-3-3M12 7H5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Cerrar sesión
       </div>
     </div>
   </aside>
@@ -823,6 +823,268 @@
   function openEditProfile(){ document.getElementById('modal-profile').classList.add('open'); }
   function openEditBudget() { document.getElementById('modal-budget').classList.add('open'); }
   function closeModal(id)   { document.getElementById(id).classList.remove('open'); }
+</script>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://rlcqdxovvhyiszvfogjz.supabase.co',
+    'sb_publishable_OFE316zb9SoPJ87utEwFyg_g0qbw_Ri'
+  );
+
+  let currentUser = null;
+
+  // ── INIT: check auth on load ─────────────────────────
+  async function initDashboard() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) {
+      window.location.href = 'login.html';
+      return;
+    }
+    currentUser = session.user;
+    await loadProfile();
+    await loadChecklist();
+    await loadBudget();
+  }
+
+  // ── LOAD PROFILE ─────────────────────────────────────
+  async function loadProfile() {
+    const { data, error } = await sb
+      .from('bride_profiles')
+      .select('*')
+      .eq('id', currentUser.id)
+      .single();
+
+    if (error || !data) return;
+
+    // Populate profile fields
+    if (data.nombre) {
+      document.getElementById('p-name').value = data.nombre;
+      document.getElementById('greeting-name').textContent = data.nombre;
+      document.getElementById('sidebar-name').textContent = (data.nombre + ' ' + (data.apellido || '')).trim();
+      const initials = (data.nombre[0] || '') + (data.apellido?.[0] || '');
+      document.getElementById('sidebar-initials').textContent = initials.toUpperCase() || 'MWP';
+    }
+    if (data.apellido) document.getElementById('p-lastname').value = data.apellido;
+    if (data.fecha_boda) {
+      document.getElementById('p-date').value = data.fecha_boda;
+      updateWeddingDate();
+      updateCountdown();
+    }
+    if (data.ciudad_boda) { document.getElementById('p-city').value = data.ciudad_boda; updateLocation(); }
+    if (data.sede) { document.getElementById('p-venue').value = data.sede; updateLocation(); }
+    if (data.invitados) { document.getElementById('p-guests').value = data.invitados; updateGuests(); }
+    if (data.presupuesto) document.getElementById('p-budget').value = data.presupuesto;
+  }
+
+  // ── SAVE PROFILE ─────────────────────────────────────
+  async function saveProfile() {
+    updateGreeting(); updateWeddingDate(); updateLocation(); updateGuests();
+
+    const { error } = await sb.from('bride_profiles').upsert({
+      id:          currentUser.id,
+      nombre:      document.getElementById('p-name').value.trim(),
+      apellido:    document.getElementById('p-lastname').value.trim(),
+      fecha_boda:  document.getElementById('p-date').value || null,
+      ciudad_boda: document.getElementById('p-city').value.trim(),
+      sede:        document.getElementById('p-venue').value.trim(),
+      invitados:   parseInt(document.getElementById('p-guests').value) || 0,
+      presupuesto: parseInt(document.getElementById('p-budget').value) || 0,
+    });
+
+    const btn = document.querySelector('#panel-perfil .btn-primary');
+    if (error) {
+      btn.textContent = '✗ Error al guardar';
+      setTimeout(() => btn.textContent = 'Guardar cambios', 2000);
+    } else {
+      btn.textContent = '✓ Guardado';
+      setTimeout(() => btn.textContent = 'Guardar cambios', 2000);
+    }
+  }
+
+  // ── LOAD CHECKLIST ───────────────────────────────────
+  async function loadChecklist() {
+    const { data, error } = await sb
+      .from('checklist')
+      .select('*')
+      .eq('bride_id', currentUser.id)
+      .order('created_at', { ascending: true });
+
+    if (error || !data || data.length === 0) return;
+
+    // Clear default tasks and load from DB
+    document.getElementById('full-checklist').innerHTML = '';
+    document.getElementById('home-checklist').innerHTML = '';
+
+    data.forEach((task, i) => {
+      const status = task.completado ? 'done' : task.prioridad;
+      const html = `
+        <div class="check-item" data-id="${task.id}" data-status="${status}">
+          <div class="check-box ${task.completado ? 'done' : ''}" onclick="toggleCheck(this)">
+            <svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="check-text">
+            <div class="check-title ${task.completado ? 'done' : ''}">${task.titulo}</div>
+            <div class="check-month">${task.tiempo || ''}</div>
+          </div>
+          <span class="check-tag ${task.prioridad === 'urgent' ? 'urgent' : ''}">
+            ${task.completado ? 'Listo' : task.prioridad === 'urgent' ? 'Urgente' : 'Pendiente'}
+          </span>
+        </div>`;
+      document.getElementById('full-checklist').insertAdjacentHTML('beforeend', html);
+      if (i < 5) document.getElementById('home-checklist').insertAdjacentHTML('beforeend', html);
+    });
+  }
+
+  // ── SAVE TASK ────────────────────────────────────────
+  async function addTask() {
+    const titulo    = document.getElementById('new-task').value.trim();
+    const tiempo    = document.getElementById('new-task-time').value.trim();
+    const prioridad = document.getElementById('new-task-priority').value;
+    if (!titulo) return;
+
+    const { data, error } = await sb.from('checklist').insert({
+      bride_id:   currentUser.id,
+      titulo,
+      tiempo,
+      prioridad,
+      completado: false,
+    }).select().single();
+
+    if (!error && data) {
+      const item = document.createElement('div');
+      item.className = 'check-item';
+      item.dataset.status = prioridad;
+      item.dataset.id = data.id;
+      item.innerHTML = `<div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">${titulo}</div><div class="check-month">${tiempo}</div></div><span class="check-tag ${prioridad === 'urgent' ? 'urgent' : ''}">${prioridad === 'urgent' ? 'Urgente' : 'Pendiente'}</span>`;
+      document.getElementById('full-checklist').appendChild(item);
+    }
+
+    document.getElementById('new-task').value = '';
+    document.getElementById('new-task-time').value = '';
+    closeModal('modal-task');
+  }
+
+  // ── TOGGLE TASK ──────────────────────────────────────
+  const _origToggle = toggleCheck;
+  async function toggleCheck(box) {
+    box.classList.toggle('done');
+    const title = box.closest('.check-item').querySelector('.check-title');
+    title.classList.toggle('done');
+    const tag = box.closest('.check-item').querySelector('.check-tag');
+    const done = box.classList.contains('done');
+    tag.textContent = done ? 'Listo' : 'Pendiente';
+    tag.className = 'check-tag';
+    box.closest('.check-item').dataset.status = done ? 'done' : 'pending';
+
+    const id = box.closest('.check-item').dataset.id;
+    if (id && currentUser) {
+      await sb.from('checklist').update({ completado: done }).eq('id', id);
+    }
+  }
+
+  // ── LOAD BUDGET ──────────────────────────────────────
+  async function loadBudget() {
+    const { data, error } = await sb
+      .from('presupuesto')
+      .select('*')
+      .eq('bride_id', currentUser.id)
+      .order('created_at', { ascending: true });
+
+    if (error || !data || data.length === 0) return;
+
+    document.getElementById('budget-list').innerHTML = '';
+
+    data.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'budget-item editable';
+      row.dataset.allocated = item.monto_presupuestado;
+      row.dataset.spent = item.monto_gastado;
+      row.dataset.id = item.id;
+      row.innerHTML = `<div class="budget-dot" style="background:${item.color};"></div><div class="budget-item-label">${item.categoria}</div><div class="budget-item-amount">$${item.monto_presupuestado.toLocaleString('es-MX')}</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:${item.monto_gastado > 0 ? 'var(--night)' : 'var(--stone)'};">$${item.monto_gastado.toLocaleString('es-MX')}</div>`;
+      document.getElementById('budget-list').appendChild(row);
+    });
+    recalcBudget();
+  }
+
+  // ── SAVE BUDGET ITEM ─────────────────────────────────
+  async function addBudgetItem() {
+    const cat    = document.getElementById('new-budget-cat').value.trim();
+    const amount = parseInt(document.getElementById('new-budget-amount').value) || 0;
+    if (!cat) return;
+
+    const colors = ['#A6B8C7','#BDC4A9','#667C90','#8FA8BC','#556878','#3E5766','#C9A96E'];
+    const color  = colors[document.querySelectorAll('.budget-item').length % colors.length];
+
+    const { data, error } = await sb.from('presupuesto').insert({
+      bride_id:            currentUser.id,
+      categoria:           cat,
+      monto_presupuestado: amount,
+      monto_gastado:       0,
+      color,
+    }).select().single();
+
+    if (!error && data) {
+      const item = document.createElement('div');
+      item.className = 'budget-item editable';
+      item.dataset.allocated = amount;
+      item.dataset.spent = 0;
+      item.dataset.id = data.id;
+      item.innerHTML = `<div class="budget-dot" style="background:${color};"></div><div class="budget-item-label">${cat}</div><div class="budget-item-amount">$${amount.toLocaleString('es-MX')}</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:var(--stone);">$0</div>`;
+      document.getElementById('budget-list').appendChild(item);
+      recalcBudget();
+    }
+
+    document.getElementById('new-budget-cat').value = '';
+    document.getElementById('new-budget-amount').value = '';
+    closeModal('modal-budget');
+  }
+
+  // ── SAVE SPENT AMOUNT ────────────────────────────────
+  const _origEditSpent = editSpent;
+  function editSpent(el) {
+    const item = el.closest('.budget-item');
+    const current = parseInt(item.dataset.spent) || 0;
+    el.classList.add('editing');
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.className = 'budget-inline-input';
+    input.value = current;
+    el.after(input);
+    input.focus();
+    input.select();
+
+    async function save() {
+      const val = parseInt(input.value) || 0;
+      item.dataset.spent = val;
+      el.textContent = '$' + val.toLocaleString('es-MX');
+      el.style.color = val > 0 ? 'var(--night)' : 'var(--stone)';
+      el.classList.remove('editing');
+      input.remove();
+      recalcBudget();
+
+      const id = item.dataset.id;
+      if (id && currentUser) {
+        await sb.from('presupuesto').update({ monto_gastado: val }).eq('id', id);
+      }
+    }
+    input.addEventListener('blur', save);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') save();
+      if (e.key === 'Escape') { el.classList.remove('editing'); input.remove(); }
+    });
+  }
+
+  // ── LOGOUT ───────────────────────────────────────────
+  async function logout() {
+    await sb.auth.signOut();
+    window.location.href = 'login.html';
+  }
+
+  // ── START ────────────────────────────────────────────
+  initDashboard();
 </script>
 </body>
 </html>
