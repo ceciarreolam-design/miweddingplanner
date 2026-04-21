@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión — Mi Wedding Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --night:  #3E5766;
+      --pigeon: #667C90;
+      --stone:  #A6B8C7;
+      --laurel: #BDC4A9;
+      --cotton: #E9E8EB;
+      --white:  #FFFFFF;
+      --ink:    #2A3A42;
+      --muted:  #6B7A82;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'Jost', system-ui, sans-serif;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+    body { font-family:var(--sans); color:var(--ink); background:var(--white); -webkit-font-smoothing:antialiased; min-height:100vh; display:flex; }
+    a { text-decoration:none; color:inherit; }
+
+    /* LAYOUT */
+    .page { display:grid; grid-template-columns:1fr 1fr; min-height:100vh; width:100%; }
+
+    /* LEFT */
+    .left { background:var(--night); padding:48px; display:flex; flex-direction:column; justify-content:space-between; }
+    .left-logo { font-family:var(--serif); font-size:20px; color:var(--white); cursor:pointer; }
+    .left-logo span { color:var(--stone); }
+    .left-content { flex:1; display:flex; flex-direction:column; justify-content:center; padding:40px 0; }
+    .left-title { font-family:var(--serif); font-size:34px; color:var(--white); font-weight:400; line-height:1.2; margin-bottom:16px; }
+    .left-title em { color:var(--stone); font-style:italic; }
+    .left-sub { font-size:14px; color:rgba(255,255,255,0.55); font-weight:300; line-height:1.8; margin-bottom:40px; }
+    .left-testimonial { background:rgba(255,255,255,0.06); border-radius:var(--radius-lg); padding:24px; border-left:3px solid var(--laurel); }
+    .left-quote { font-family:var(--serif); font-size:16px; color:rgba(255,255,255,0.8); font-style:italic; line-height:1.6; margin-bottom:12px; font-weight:400; }
+    .left-author { font-size:12px; color:rgba(255,255,255,0.4); font-weight:300; }
+    .left-footer { font-size:12px; color:rgba(255,255,255,0.3); }
+
+    /* RIGHT */
+    .right { padding:48px; display:flex; flex-direction:column; justify-content:center; background:var(--white); }
+    .right-inner { max-width:380px; margin:0 auto; width:100%; }
+
+    /* TABS */
+    .tabs { display:flex; gap:4px; background:var(--cotton); padding:4px; border-radius:var(--radius-md); margin-bottom:28px; }
+    .tab { flex:1; text-align:center; font-size:13px; font-weight:400; padding:9px; border-radius:8px; background:transparent; border:none; color:var(--muted); cursor:pointer; transition:all 0.15s; }
+    .tab.active { background:var(--white); color:var(--night); font-weight:500; }
+
+    /* FORM */
+    .form-panel { display:none; }
+    .form-panel.active { display:block; }
+    .form-title { font-family:var(--serif); font-size:26px; color:var(--night); margin-bottom:6px; font-weight:400; }
+    .form-sub { font-size:13px; color:var(--muted); font-weight:300; margin-bottom:24px; line-height:1.6; }
+    .field { margin-bottom:14px; }
+    .field label { display:block; font-size:11px; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:5px; }
+    .field input { width:100%; border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:12px 14px; font-size:14px; color:var(--ink); outline:none; transition:border-color 0.2s; font-family:var(--sans); }
+    .field input:focus { border-color:var(--pigeon); }
+    .btn-main { width:100%; background:var(--night); color:var(--white); border:none; border-radius:var(--radius-md); padding:14px; font-size:14px; font-weight:500; cursor:pointer; font-family:var(--sans); transition:background 0.2s; margin-top:4px; }
+    .btn-main:hover { background:var(--pigeon); }
+    .btn-main:disabled { opacity:0.6; cursor:not-allowed; }
+    .forgot { text-align:right; font-size:12px; color:var(--pigeon); cursor:pointer; margin-top:6px; display:block; }
+    .forgot:hover { color:var(--night); }
+    .divider { display:flex; align-items:center; gap:12px; margin:20px 0; font-size:12px; color:var(--stone); }
+    .divider::before, .divider::after { content:''; flex:1; height:0.5px; background:var(--cotton); }
+    .register-link { text-align:center; font-size:13px; color:var(--muted); font-weight:300; }
+    .register-link a { color:var(--pigeon); font-weight:400; cursor:pointer; }
+    .register-link a:hover { color:var(--night); }
+
+    /* ERROR / SUCCESS */
+    .alert { border-radius:var(--radius-md); padding:12px 16px; font-size:13px; margin-bottom:14px; display:none; }
+    .alert-error { background:#FDF0EC; color:#C4724A; }
+    .alert-success { background:#F0F4F0; color:#6B8C6B; }
+
+    /* RESET FORM */
+    .back-link { font-size:13px; color:var(--pigeon); cursor:pointer; display:inline-flex; align-items:center; gap:6px; margin-bottom:20px; }
+    .back-link:hover { color:var(--night); }
+
+    @media (max-width:768px) {
+      .page { grid-template-columns:1fr; }
+      .left { display:none; }
+      .right { padding:32px 24px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="left-logo" onclick="window.location.href='index.html'">Mi Wedding <span>Planner</span></div>
+    <div class="left-content">
+      <h1 class="left-title">Bienvenida<br>de <em>vuelta.</em></h1>
+      <p class="left-sub">Tu boda te está esperando. Retoma tu planeación justo donde la dejaste — tu checklist, presupuesto y proveedores favoritos están todos aquí.</p>
+      <div class="left-testimonial">
+        <p class="left-quote">"Encontré a mi fotógrafa y a mi wedding planner en la misma plataforma. No me imagino haberlo hecho de otra manera."</p>
+        <div class="left-author">— Sofía C. · Boda en Guadalajara, noviembre 2026</div>
+      </div>
+    </div>
+    <div class="left-footer">© 2026 Mi Wedding Planner · México</div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="right-inner">
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('login', this)">Iniciar sesión</button>
+        <button class="tab" onclick="switchTab('reset', this)">Recuperar contraseña</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div class="form-panel active" id="panel-login">
+        <div class="form-title">Inicia sesión</div>
+        <div class="form-sub">Ingresa con tu correo y contraseña para acceder a tu panel.</div>
+
+        <div class="alert alert-error" id="login-error"></div>
+
+        <div class="field">
+          <label>Correo electrónico</label>
+          <input type="email" id="login-email" placeholder="hola@tucorreo.com" onkeydown="if(event.key==='Enter') doLogin()">
+        </div>
+        <div class="field">
+          <label>Contraseña</label>
+          <input type="password" id="login-password" placeholder="Tu contraseña" onkeydown="if(event.key==='Enter') doLogin()">
+        </div>
+        <a class="forgot" onclick="switchTab('reset', document.querySelectorAll('.tab')[1])">¿Olvidaste tu contraseña?</a>
+
+        <button class="btn-main" id="btn-login" onclick="doLogin()">Iniciar sesión →</button>
+
+        <div class="divider">o</div>
+        <div class="register-link">¿No tienes cuenta? <a onclick="window.location.href='registro.html'">Regístrate gratis</a></div>
+      </div>
+
+      <!-- RESET PASSWORD FORM -->
+      <div class="form-panel" id="panel-reset">
+        <a class="back-link" onclick="switchTab('login', document.querySelectorAll('.tab')[0])">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="#667C90" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Volver
+        </a>
+        <div class="form-title">Recupera tu cuenta</div>
+        <div class="form-sub">Te enviaremos un enlace para restablecer tu contraseña al correo que usaste al registrarte.</div>
+
+        <div class="alert alert-error" id="reset-error"></div>
+        <div class="alert alert-success" id="reset-success"></div>
+
+        <div class="field">
+          <label>Correo electrónico</label>
+          <input type="email" id="reset-email" placeholder="hola@tucorreo.com" onkeydown="if(event.key==='Enter') doReset()">
+        </div>
+
+        <button class="btn-main" id="btn-reset" onclick="doReset()">Enviar enlace →</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://rlcqdxovvhyiszvfogjz.supabase.co',
+    'sb_publishable_OFE316zb9SoPJ87utEwFyg_g0qbw_Ri'
+  );
+
+  // Check if already logged in — redirect to dashboard
+  sb.auth.getSession().then(({ data: { session } }) => {
+    if (session) window.location.href = 'dashboard.html';
+  });
+
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + name).classList.add('active');
+  }
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function hideAlerts() {
+    document.querySelectorAll('.alert').forEach(a => a.style.display = 'none');
+  }
+
+  async function doLogin() {
+    hideAlerts();
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    if (!email || !password) { showError('login-error', 'Por favor ingresa tu correo y contraseña.'); return; }
+
+    const btn = document.getElementById('btn-login');
+    btn.textContent = 'Ingresando...';
+    btn.disabled = true;
+
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      btn.textContent = 'Iniciar sesión →';
+      btn.disabled = false;
+      if (error.message.includes('Invalid login')) {
+        showError('login-error', 'Correo o contraseña incorrectos. Intenta de nuevo.');
+      } else if (error.message.includes('Email not confirmed')) {
+        showError('login-error', 'Aún no has confirmado tu correo. Revisa tu bandeja de entrada.');
+      } else {
+        showError('login-error', 'Hubo un error al iniciar sesión. Intenta de nuevo.');
+      }
+      return;
+    }
+
+    // Check user role and redirect accordingly
+    const role = data.user?.user_metadata?.role;
+    if (role === 'vendor') {
+      window.location.href = 'dashboard-proveedor.html';
+    } else {
+      window.location.href = 'dashboard.html';
+    }
+  }
+
+  async function doReset() {
+    hideAlerts();
+    const email = document.getElementById('reset-email').value.trim();
+    if (!email) { showError('reset-error', 'Por favor ingresa tu correo electrónico.'); return; }
+
+    const btn = document.getElementById('btn-reset');
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://miweddingplanner.com.mx/reset-password.html'
+    });
+
+    btn.textContent = 'Enviar enlace →';
+    btn.disabled = false;
+
+    if (error) {
+      showError('reset-error', 'No encontramos una cuenta con ese correo.');
+    } else {
+      const success = document.getElementById('reset-success');
+      success.textContent = '✓ Listo — revisa tu correo y sigue el enlace para restablecer tu contraseña.';
+      success.style.display = 'block';
+      document.getElementById('reset-email').value = '';
+    }
+  }
+</script>
+</body>
+</html>
