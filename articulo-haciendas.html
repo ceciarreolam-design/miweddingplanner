@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Las 10 haciendas más bonitas para bodas en México — desde San Miguel de Allende hasta la Riviera Maya. Capacidad, estilo y todo lo que necesitan saber antes de reservar.">
+  <title>Las 10 haciendas más bonitas para bodas en México — Mi Wedding Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --night:  #3E5766;
+      --pigeon: #667C90;
+      --stone:  #A6B8C7;
+      --laurel: #BDC4A9;
+      --cotton: #E9E8EB;
+      --white:  #FFFFFF;
+      --ink:    #2A3A42;
+      --muted:  #6B7A82;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'Jost', system-ui, sans-serif;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+    html { scroll-behavior:smooth; }
+    body { font-family:var(--sans); color:var(--ink); background:var(--white); -webkit-font-smoothing:antialiased; }
+    a { text-decoration:none; color:inherit; }
+
+    /* NAV */
+    .nav { display:flex; align-items:center; justify-content:space-between; padding:0 40px; height:64px; background:var(--white); border-bottom:0.5px solid var(--cotton); position:sticky; top:0; z-index:100; }
+    .nav-logo { font-family:var(--serif); font-size:19px; color:var(--night); }
+    .nav-logo span { color:var(--pigeon); }
+    .nav-back { font-size:13px; color:var(--pigeon); display:flex; align-items:center; gap:6px; cursor:pointer; transition:color 0.2s; }
+    .nav-back:hover { color:var(--night); }
+    .nav-cta { font-family:var(--sans); font-size:13px; font-weight:500; background:var(--night); color:var(--white); border:none; border-radius:var(--radius-md); padding:10px 22px; cursor:pointer; }
+
+    /* HERO */
+    .hero { background:var(--night); padding:64px 40px 0; }
+    .hero-inner { max-width:720px; margin:0 auto; }
+    .hero-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.1); color:var(--laurel); font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; padding:6px 14px; border-radius:99px; margin-bottom:20px; }
+    .hero-title { font-family:var(--serif); font-size:42px; color:var(--white); font-weight:400; line-height:1.2; margin-bottom:16px; }
+    .hero-title em { color:var(--stone); font-style:italic; }
+    .hero-desc { font-size:16px; color:rgba(255,255,255,0.65); font-weight:300; line-height:1.8; margin-bottom:28px; max-width:580px; }
+    .hero-meta { display:flex; align-items:center; gap:20px; flex-wrap:wrap; padding-bottom:32px; }
+    .author-row { display:flex; align-items:center; gap:10px; }
+    .author-dot { width:36px; height:36px; border-radius:50%; background:var(--pigeon); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:500; color:var(--white); }
+    .author-name { font-size:13px; color:rgba(255,255,255,0.75); }
+    .author-role { font-size:11px; color:rgba(255,255,255,0.4); font-weight:300; }
+    .meta-sep { width:1px; height:28px; background:rgba(255,255,255,0.15); }
+    .meta-item { font-size:12px; color:rgba(255,255,255,0.45); font-weight:300; }
+
+    /* HERO IMAGE */
+    .hero-img { max-width:720px; margin:0 auto; height:340px; border-radius:var(--radius-lg) var(--radius-lg) 0 0; overflow:hidden; }
+    .hero-img img { width:100%; height:100%; object-fit:cover; display:block; }
+    .hero-img-placeholder { width:100%; height:100%; background:linear-gradient(135deg, #4A6478 0%, #2E4555 100%); display:flex; align-items:center; justify-content:center; }
+
+    /* ARTICLE */
+    .article-wrap { max-width:720px; margin:0 auto; padding:56px 40px 80px; }
+    .intro { font-size:18px; font-weight:300; color:var(--ink); line-height:1.8; margin-bottom:40px; border-left:3px solid var(--laurel); padding-left:20px; }
+    h2 { font-family:var(--serif); font-size:26px; color:var(--night); font-weight:400; margin:48px 0 14px; line-height:1.3; }
+    h3 { font-family:var(--serif); font-size:20px; color:var(--night); font-weight:400; margin:28px 0 10px; }
+    p { font-size:15px; font-weight:300; color:var(--muted); line-height:1.9; margin-bottom:16px; }
+    p strong { color:var(--ink); font-weight:500; }
+
+    /* HACIENDA CARDS */
+    .hacienda-card { border:0.5px solid var(--cotton); border-radius:var(--radius-lg); overflow:hidden; margin:32px 0; transition:border-color 0.2s; }
+    .hacienda-card:hover { border-color:var(--stone); }
+    .hacienda-img { height:220px; background:var(--cotton); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+    .hacienda-img img { width:100%; height:100%; object-fit:cover; }
+    .hacienda-num { position:absolute; top:16px; left:16px; width:36px; height:36px; border-radius:50%; background:var(--night); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:14px; color:var(--white); font-weight:400; }
+    .hacienda-state { position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.92); border-radius:99px; padding:4px 12px; font-size:11px; font-weight:500; color:var(--night); }
+    .hacienda-body { padding:22px 24px; }
+    .hacienda-name { font-family:var(--serif); font-size:22px; color:var(--night); font-weight:400; margin-bottom:4px; }
+    .hacienda-location { font-size:13px; color:var(--pigeon); margin-bottom:14px; display:flex; align-items:center; gap:6px; }
+    .hacienda-desc { font-size:14px; font-weight:300; color:var(--muted); line-height:1.8; margin-bottom:16px; }
+    .hacienda-specs { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:14px 0; border-top:0.5px solid var(--cotton); border-bottom:0.5px solid var(--cotton); margin-bottom:14px; }
+    .spec { text-align:center; }
+    .spec-val { font-size:15px; font-weight:500; color:var(--night); }
+    .spec-label { font-size:11px; color:var(--muted); font-weight:300; margin-top:2px; }
+    .hacienda-tags { display:flex; flex-wrap:wrap; gap:6px; }
+    .htag { font-size:11px; padding:4px 12px; border-radius:99px; background:var(--cotton); color:var(--night); font-weight:400; }
+
+    /* CALLOUT */
+    .callout { border-radius:var(--radius-lg); padding:22px 26px; margin:28px 0; }
+    .callout-tip { background:#F0F4F0; border-left:3px solid var(--laurel); }
+    .callout-warning { background:#FDF5F0; border-left:3px solid #D4956A; }
+    .callout-info { background:#F0F4F7; border-left:3px solid var(--pigeon); }
+    .callout-label { font-size:10px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px; }
+    .callout-tip .callout-label { color:var(--laurel); }
+    .callout-warning .callout-label { color:#D4956A; }
+    .callout-info .callout-label { color:var(--pigeon); }
+    .callout p { margin-bottom:0; font-size:14px; }
+
+    /* PULLQUOTE */
+    .pullquote { font-family:var(--serif); font-size:22px; font-style:italic; color:var(--night); line-height:1.5; text-align:center; padding:32px 0; border-top:0.5px solid var(--cotton); border-bottom:0.5px solid var(--cotton); margin:40px 0; font-weight:400; }
+    .pullquote span { display:block; font-family:var(--sans); font-size:12px; font-style:normal; color:var(--muted); font-weight:300; margin-top:12px; }
+
+    /* SECTION DIVIDER */
+    .section-divider { display:flex; align-items:center; gap:16px; margin:40px 0; }
+    .section-divider::before, .section-divider::after { content:''; flex:1; height:0.5px; background:var(--cotton); }
+
+    /* CHECKLIST */
+    .checklist { list-style:none; margin:16px 0; display:flex; flex-direction:column; gap:10px; }
+    .checklist li { display:flex; align-items:flex-start; gap:12px; font-size:14px; font-weight:300; color:var(--muted); line-height:1.6; }
+    .check-icon { width:20px; height:20px; border-radius:50%; background:var(--cotton); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+    .check-icon svg { width:10px; height:10px; }
+
+    /* RELATED */
+    .related { background:var(--cotton); border-radius:var(--radius-lg); padding:28px; margin-top:48px; }
+    .related-title { font-size:13px; font-weight:500; color:var(--night); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:16px; }
+    .related-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .related-card { background:var(--white); border-radius:var(--radius-md); padding:16px; cursor:pointer; transition:border-color 0.2s; border:0.5px solid transparent; }
+    .related-card:hover { border-color:var(--stone); }
+    .related-tag { font-size:10px; color:var(--pigeon); font-weight:500; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }
+    .related-name { font-size:13px; font-weight:500; color:var(--night); line-height:1.4; }
+
+    /* CTA */
+    .cta-band { background:var(--laurel); border-radius:var(--radius-lg); padding:32px; text-align:center; margin-top:40px; }
+    .cta-title { font-family:var(--serif); font-size:24px; color:var(--night); font-weight:400; margin-bottom:8px; }
+    .cta-sub { font-size:14px; color:var(--night); opacity:0.7; font-weight:300; margin-bottom:20px; }
+    .cta-btn { font-family:var(--sans); font-size:14px; font-weight:500; background:var(--night); color:var(--white); border:none; border-radius:var(--radius-md); padding:12px 28px; cursor:pointer; }
+
+    @media (max-width:768px) {
+      .nav { padding:0 20px; }
+      .hero { padding:48px 20px 0; }
+      .hero-title { font-size:28px; }
+      .article-wrap { padding:40px 20px 60px; }
+      .hacienda-specs { grid-template-columns:repeat(3,1fr); }
+      .related-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Mi Wedding <span>Planner</span></a>
+    <a href="aprende.html" class="nav-back">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="#667C90" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Aprende
+    </a>
+    <a href="login.html" style="font-size:13px;font-weight:400;color:var(--pigeon);margin-right:4px;">Iniciar sesión</a><a href="login.html" style="font-size:13px;font-weight:400;color:var(--pigeon);margin-right:8px;">Iniciar sesión</a><button class="nav-cta" onclick="window.location.href='unete.html'">Únete</button>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 2.5 4 7 4 7s4-4.5 4-7c0-2.2-1.8-4-4-4z" stroke="#BDC4A9" stroke-width="1"/></svg>
+        Gratis · 6 min lectura · Sedes
+      </div>
+      <h1 class="hero-title">Las 10 haciendas más<br>bonitas para bodas<br><em>en México</em></h1>
+      <p class="hero-desc">Desde los valles de San Miguel de Allende hasta la selva de la Riviera Maya — una selección cuidadosa de las sedes más impresionantes del país, con todo lo que necesitan saber antes de reservar.</p>
+      <div class="hero-meta">
+        <div class="author-row">
+          <div class="author-dot">MWP</div>
+          <div>
+            <div class="author-name">Redacción MWP</div>
+            <div class="author-role">Mi Wedding Planner · Editorial</div>
+          </div>
+        </div>
+        <div class="meta-sep"></div>
+        <span class="meta-item">Publicado en abril 2026</span>
+        <div class="meta-sep"></div>
+        <span class="meta-item">6 min lectura</span>
+      </div>
+    </div>
+    <div class="hero-img" style="max-width:720px;margin:0 auto;">
+      <img src="img-haciendas.jpg" alt="Hacienda para boda en México" onerror="this.parentElement.innerHTML='<div class=\'hero-img-placeholder\'><svg width=\'64\' height=\'64\' viewBox=\'0 0 64 64\' fill=\'none\' opacity=\'0.3\'><path d=\'M8 56V28l24-20 24 20v28\' stroke=\'white\' stroke-width=\'2\' stroke-linejoin=\'round\'/><rect x=\'22\' y=\'36\' width=\'10\' height=\'20\' stroke=\'white\' stroke-width=\'2\'/><rect x=\'36\' y=\'36\' width=\'10\' height=\'14\' stroke=\'white\' stroke-width=\'2\'/></svg></div>'">
+    </div>
+  </section>
+
+  <article class="article-wrap">
+
+    <p class="intro">
+      La sede es la decisión más importante de su boda — y también la más urgente. Define la fecha, el número de invitados, el estilo y, en muchos casos, a los demás proveedores que pueden contratar. Aquí van las diez que más nos han impresionado.
+    </p>
+
+    <div class="callout callout-warning">
+      <div class="callout-label">Antes de seguir leyendo</div>
+      <p>Las haciendas más solicitadas se reservan con 12 a 18 meses de anticipación. Si ya tienen fecha en mente, no esperen — contacten primero y decidan después.</p>
+    </div>
+
+    <!-- HACIENDA 1 -->
+    <div class="hacienda-card">
+      <div class="hacienda-img" style="background:#C8D4DC;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.3"><path d="M6 42V22l18-16 18 16v20" stroke="#3E5766" stroke-width="2" stroke-linejoin="round"/><rect x="18" y="28" width="8" height="14" stroke="#3E5766" stroke-width="2"/></svg>
+        <span class="hacienda-num">01</span>
+        <span class="hacienda-state">San Miguel de Allende</span>
+      </div>
+      <div class="hacienda-body">
+        <div class="hacienda-name">Hacienda de los Santos</div>
+        <div class="hacienda-location">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 2.5 4 7 4 7s4-4.5 4-7c0-2.2-1.8-4-4-4z" stroke="#667C90" stroke-width="1"/></svg>
+          San Miguel de Allende, Guanajuato
+        </div>
+        <p class="hacienda-desc">Una de las haciendas más icónicas de México. Sus jardines coloniales, capilla propia del siglo XVIII y arquitectura de cantera rosa la convierten en el escenario perfecto para bodas íntimas de lujo. Cada rincón cuenta una historia — y cada foto parece sacada de una revista.</p>
+        <div class="hacienda-specs">
+          <div class="spec"><div class="spec-val">20–200</div><div class="spec-label">Invitados</div></div>
+          <div class="spec"><div class="spec-val">Capilla propia</div><div class="spec-label">Ceremonia</div></div>
+          <div class="spec"><div class="spec-val">Todo incluido</div><div class="spec-label">Modelo</div></div>
+        </div>
+        <div class="hacienda-tags">
+          <span class="htag">Colonial</span>
+          <span class="htag">Capilla propia</span>
+          <span class="htag">Jardines</span>
+          <span class="htag">Boutique hotel</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HACIENDA 2 -->
+    <div class="hacienda-card">
+      <div class="hacienda-img" style="background:#BDC4B0;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.3"><path d="M6 42V22l18-16 18 16v20" stroke="#3E5766" stroke-width="2" stroke-linejoin="round"/><rect x="18" y="28" width="8" height="14" stroke="#3E5766" stroke-width="2"/></svg>
+        <span class="hacienda-num">02</span>
+        <span class="hacienda-state">Valle de Bravo</span>
+      </div>
+      <div class="hacienda-body">
+        <div class="hacienda-name">Hacienda La Vega</div>
+        <div class="hacienda-location">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 2.5 4 7 4 7s4-4.5 4-7c0-2.2-1.8-4-4-4z" stroke="#667C90" stroke-width="1"/></svg>
+          Valle de Bravo, Estado de México
+        </div>
+        <p class="hacienda-desc">A solo dos horas de CDMX, esta hacienda del siglo XIX ofrece vistas espectaculares al lago de Valle de Bravo entre montañas y bosques de pino. Su terraza principal es el escenario ideal para ceremonias al aire libre con puesta de sol. Un secreto bien guardado de las novias capitalinas.</p>
+        <div class="hacienda-specs">
+          <div class="spec"><div class="spec-val">50–300</div><div class="spec-label">Invitados</div></div>
+          <div class="spec"><div class="spec-val">Al aire libre</div><div class="spec-label">Ceremonia</div></div>
+          <div class="spec"><div class="spec-val">2 hrs de CDMX</div><div class="spec-label">Distancia</div></div>
+        </div>
+        <div class="hacienda-tags">
+          <span class="htag">Lago & montañas</span>
+          <span class="htag">Puesta de sol</span>
+          <span class="htag">Al aire libre</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HACIENDA 3 -->
+    <div class="hacienda-card">
+      <div class="hacienda-img" style="background:#D4DCE4;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.3"><path d="M6 42V22l18-16 18 16v20" stroke="#3E5766" stroke-width="2" stroke-linejoin="round"/><rect x="18" y="28" width="8" height="14" stroke="#3E5766" stroke-width="2"/></svg>
+        <span class="hacienda-num">03</span>
+        <span class="hacienda-state">Cuernavaca</span>
+      </div>
+      <div class="hacienda-body">
+        <div class="hacienda-name">Hacienda Vista Hermosa</div>
+        <div class="hacienda-location">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 2.5 4 7 4 7s4-4.5 4-7c0-2.2-1.8-4-4-4z" stroke="#667C90" stroke-width="1"/></svg>
+          Tequesquitengo, Morelos
+        </div>
+        <p class="hacienda-desc">Construida en el siglo XVI como hacienda azucarera, Vista Hermosa es hoy uno de los escenarios más dramáticos para bodas en México. Su acueducto, sus arcos de cantera y su alberca colonial crean un ambiente de película. El clima de Morelos permite bodas al aire libre prácticamente todo el año.</p>
+        <div class="hacienda-specs">
+          <div class="spec"><div class="spec-val">100–500</div><div class="spec-label">Invitados</div></div>
+          <div class="spec"><div class="spec-val">Siglo XVI</div><div class="spec-label">Historia</div></div>
+          <div class="spec"><div class="spec-val">1.5 hrs de CDMX</div><div class="spec-label">Distancia</div></div>
+        </div>
+        <div class="hacienda-tags">
+          <span class="htag">Acueducto</span>
+          <span class="htag">Colonial</span>
+          <span class="htag">Alberca histórica</span>
+          <span class="htag">Todo el año</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-label">Lo que nadie les dice</div>
+      <p>El precio que ven en la página web de una hacienda casi nunca es el precio final. Siempre pregunten qué incluye: mobiliario, iluminación, generador de luz, estacionamiento y seguridad pueden duplicar el costo base.</p>
+    </div>
+
+    <!-- HACIENDA 4 -->
+    <div class="hacienda-card">
+      <div class="hacienda-img" style="background:#C4CEB8;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.3"><path d="M6 42V22l18-16 18 16v20" stroke="#3E5766" stroke-width="2" stroke-linejoin="round"/><rect x="18" y="28" width="8" height="14" stroke="#3E5766" stroke-width="2"/></svg>
+        <span class="hacienda-num">04</span>
+        <span class="hacienda-state">Guadalajara</span>
+      </div>
+      <div class="hacienda-body">
+        <div class="hacienda-name">Hacienda del Refugio</div>
+        <div class="hacienda-location">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 2.5 4 7 4 7s4-4.5 4-7c0-2.2-1.8-4-4-4z" stroke="#667C90" stroke-width="1"/></svg>
+          Tlajomulco de Zúñiga, Jalisco
+        </div>
+        <p class="hacienda-desc">En los alrededores de Guadalajara, esta hacienda combina la calidez del estilo jalisciense con instalaciones de primer nivel. Sus jardines de bugambilias, su capilla restaurada y su terraza con vista a los campos la hacen ideal para parejas que buscan el sabor del occidente mexicano en su boda.</p>
+        <div class="hacienda-specs">
+          <div class="spec"><div class="spec-val">80–400</div><div class="spec-label">Invitados</div></div>
+          <div class="spec"><div class="spec-val">Capilla propia</div><div class="spec-label">Ceremonia</div></div>
+          <div class="spec"><div class="spec-val">Jalisco</div><div class="spec-label">Región</div></div>
+        </div>
+        <div class="hacienda-tags">
+          <span class="htag">Bugambilias</span>
+          <span class="htag">Estilo jalisciense</span>
+          <span class="htag">Capilla</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HACIENDA 5 -->
+    <div class="hacienda-card">
+      <div class="hacienda-img" style="background:#D0DAE0;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.3"><path d="M6 42V22l18-16 18 16v20" stroke="#3E5766" stroke-width="2" stroke-linejoin="round"/><rect x="18" y="28" width="8" height="14" stroke="#3E5766" stroke-width="2"/></svg>
+        <span class="hacienda-num">05</span>
+        <span class="hacienda-state">Yucatán</span>
+      </div>
+      <div class="hacienda-body">
+        <div class="hacienda-name">Hacienda Temozon</div>
+        <div class="hacienda-location">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 2.5 4 7 4 7s4-4.5 4-7c0-2.2-1.8-4-4-4z" stroke="#667C90" stroke-width="1"/></svg>
+          Temozon Sur, Yucatán
+        </div>
+        <p class="hacienda-desc">Una de las haciendas henequeneras más impresionantes de la Península de Yucatán. Parte del grupo Starwood, ofrece una combinación única de historia maya, arquitectura colonial y lujo contemporáneo. Su cenote privado, sus jardines tropicales y su arquitectura de arcos son sencillamente únicos en México.</p>
+        <div class="hacienda-specs">
+          <div class="spec"><div class="spec-val">20–250</div><div class="spec-label">Invitados</div></div>
+          <div class="spec"><div class="spec-val">Cenote privado</div><div class="spec-label">Exclusivo</div></div>
+          <div class="spec"><div class="spec-val">Lujo 5★</div><div class="spec-label">Categoría</div></div>
+        </div>
+        <div class="hacienda-tags">
+          <span class="htag">Cenote privado</span>
+          <span class="htag">Maya-colonial</span>
+          <span class="htag">Lujo</span>
+          <span class="htag">Destino</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pullquote">
+      "La hacienda perfecta no es la más cara ni la más famosa — es la que se siente como suya desde el primer momento en que la visitan."
+      <span>— Redacción MWP</span>
+    </div>
+
+    <!-- HACIENDA 6 -->
+    <div class="hacienda-card">
+      <div class="hacienda-img" style="background:#BFC9A8;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.3"><path d="M6 42V22l18-16 18 16v20" stroke="#3E5766" stroke-width="2" stroke-linejoin="round"/><rect x="18" y="28" width="8" height="14" stroke="#3E5766" stroke-width="2"/></svg>
+        <span class="hacienda-num">06</span>
+        <span class="hacienda-state">Oaxaca</span>
+      </div>
+      <div class="hacienda-body">
+        <div class="hacienda-name">Hacienda Los Laureles</div>
+        <div class="hacienda-location">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 2.5 4 7 4 7s4-4.5 4-7c0-2.2-1.8-4-4-4z" stroke="#667C90" stroke-width="1"/></svg>
+          San Felipe del Agua, Oaxaca
+        </div>
+        <p class="hacienda-desc">Oaxaca se ha convertido en uno de los destinos de bodas más deseados de México, y Los Laureles es su joya más discreta. Rodeada de árboles centenarios y con vistas a la Sierra Juárez, ofrece una experiencia auténticamente oaxaqueña — desde la gastronomía hasta los textiles que decoran cada espacio.</p>
+        <div class="hacienda-specs">
+          <div class="spec"><div class="spec-val">30–180</div><div class="spec-label">Invitados</div></div>
+          <div class="spec"><div class="spec-val">Gastronomía local</div><div class="spec-label">Especial</div></div>
+          <div class="spec"><div class="spec-val">Boutique</div><div class="spec-label">Estilo</div></div>
+        </div>
+        <div class="hacienda-tags">
+          <span class="htag">Oaxaca auténtico</span>
+          <span class="htag">Gastronomía</span>
+          <span class="htag">Sierra Juárez</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HACIENDA 7 -->
+    <div class="hacienda-card">
+      <div class="hacienda-img" style="background:#C8D4DC;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.3"><path d="M6 42V22l18-16 18 16v20" stroke="#3E5766" stroke-width="2" stroke-linejoin="round"/><rect x="18" y="28" width="8" height="14" stroke="#3E5766" stroke-width="2"/></svg>
+        <span class="hacienda-num">07</span>
+        <span class="hacienda-state">Riviera Maya</span>
+      </div>
+      <div class="hacienda-body">
+        <div class="hacienda-name">Hacienda del Mar</div>
+        <div class="hacienda-location">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 2.5 4 7 4 7s4-4.5 4-7c0-2.2-1.8-4-4-4z" stroke="#667C90" stroke-width="1"/></svg>
+          Playa del Carmen, Quintana Roo
+        </div>
+        <p class="hacienda-desc">Para las parejas que sueñan con una boda frente al mar, esta hacienda de estilo colonial caribeño combina lo mejor de dos mundos: la elegancia de una hacienda mexicana y la magia del Caribe. Perfecta para invitados internacionales y parejas que buscan un destino que haga el viaje parte de la celebración.</p>
+        <div class="hacienda-specs">
+          <div class="spec"><div class="spec-val">50–350</div><div class="spec-label">Invitados</div></div>
+          <div class="spec"><div class="spec-val">Frente al mar</div><div class="spec-label">Ubicación</div></div>
+          <div class="spec"><div class="spec-val">Internacional</div><div class="spec-label">Perfil</div></div>
+        </div>
+        <div class="hacienda-tags">
+          <span class="htag">Playa</span>
+          <span class="htag">Caribeño</span>
+          <span class="htag">Destino</span>
+          <span class="htag">Internacional</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HACIENDA 8 -->
+    <div class="hacienda-card">
+      <div class="hacienda-img" style="background:#D4DCE4;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.3"><path d="M6 42V22l18-16 18 16v20" stroke="#3E5766" stroke-width="2" stroke-linejoin="round"/><rect x="18" y="28" width="8" height="14" stroke="#3E5766" stroke-width="2"/></svg>
+        <span class="hacienda-num">08</span>
+        <span class="hacienda-state">Puebla</span>
+      </div>
+      <div class="hacienda-body">
+        <div class="hacienda-name">Hacienda San Gabriel de las Palmas</div>
+        <div class="hacienda-location">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 2.5 4 7 4 7s4-4.5 4-7c0-2.2-1.8-4-4-4z" stroke="#667C90" stroke-width="1"/></svg>
+          Amacuzac, Morelos
+        </div>
+        <p class="hacienda-desc">Fundada en 1529, es una de las haciendas más antiguas de México y fue la primera en introducir el cultivo de caña de azúcar al país. Sus muros de cinco siglos de historia, su capilla barroca y sus jardines repletos de palmeras crean una atmósfera absolutamente cinematográfica.</p>
+        <div class="hacienda-specs">
+          <div class="spec"><div class="spec-val">50–400</div><div class="spec-label">Invitados</div></div>
+          <div class="spec"><div class="spec-val">Desde 1529</div><div class="spec-label">Historia</div></div>
+          <div class="spec"><div class="spec-val">Capilla barroca</div><div class="spec-label">Ceremonia</div></div>
+        </div>
+        <div class="hacienda-tags">
+          <span class="htag">Siglo XVI</span>
+          <span class="htag">Capilla barroca</span>
+          <span class="htag">Palmeras</span>
+          <span class="htag">Histórica</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HACIENDA 9 -->
+    <div class="hacienda-card">
+      <div class="hacienda-img" style="background:#BDC9B5;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.3"><path d="M6 42V22l18-16 18 16v20" stroke="#3E5766" stroke-width="2" stroke-linejoin="round"/><rect x="18" y="28" width="8" height="14" stroke="#3E5766" stroke-width="2"/></svg>
+        <span class="hacienda-num">09</span>
+        <span class="hacienda-state">Querétaro</span>
+      </div>
+      <div class="hacienda-body">
+        <div class="hacienda-name">Hacienda La Querencia</div>
+        <div class="hacienda-location">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 2.5 4 7 4 7s4-4.5 4-7c0-2.2-1.8-4-4-4z" stroke="#667C90" stroke-width="1"/></svg>
+          El Marqués, Querétaro
+        </div>
+        <p class="hacienda-desc">Querétaro es uno de los destinos de bodas que más ha crecido en México en los últimos años, y La Querencia lidera esa escena. Con viñedos propios, una cava para catas privadas y jardines diseñados especialmente para eventos nupciales, combina la elegancia del Bajío con toques contemporáneos.</p>
+        <div class="hacienda-specs">
+          <div class="spec"><div class="spec-val">60–300</div><div class="spec-label">Invitados</div></div>
+          <div class="spec"><div class="spec-val">Viñedos propios</div><div class="spec-label">Especial</div></div>
+          <div class="spec"><div class="spec-val">Bajío</div><div class="spec-label">Región</div></div>
+        </div>
+        <div class="hacienda-tags">
+          <span class="htag">Viñedos</span>
+          <span class="htag">Cava privada</span>
+          <span class="htag">Bajío</span>
+          <span class="htag">Contemporánea</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HACIENDA 10 -->
+    <div class="hacienda-card">
+      <div class="hacienda-img" style="background:#C8D4DC;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" opacity="0.3"><path d="M6 42V22l18-16 18 16v20" stroke="#3E5766" stroke-width="2" stroke-linejoin="round"/><rect x="18" y="28" width="8" height="14" stroke="#3E5766" stroke-width="2"/></svg>
+        <span class="hacienda-num">10</span>
+        <span class="hacienda-state">Los Cabos</span>
+      </div>
+      <div class="hacienda-body">
+        <div class="hacienda-name">Hacienda Encantada</div>
+        <div class="hacienda-location">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.8 1 2 2.8 2 5c0 2.5 4 7 4 7s4-4.5 4-7c0-2.2-1.8-4-4-4z" stroke="#667C90" stroke-width="1"/></svg>
+          Pedregal, Los Cabos, Baja California Sur
+        </div>
+        <p class="hacienda-desc">En el extremo sur de Baja California, Hacienda Encantada ofrece una experiencia única: bodas con vista al famoso Arco de Cabo San Lucas, con el Océano Pacífico y el Mar de Cortés como telón de fondo. Es la opción más espectacular para parejas que quieren que su boda sea verdaderamente irrepetible.</p>
+        <div class="hacienda-specs">
+          <div class="spec"><div class="spec-val">30–200</div><div class="spec-label">Invitados</div></div>
+          <div class="spec"><div class="spec-val">Vista al Arco</div><div class="spec-label">Icónico</div></div>
+          <div class="spec"><div class="spec-val">Lujo resort</div><div class="spec-label">Categoría</div></div>
+        </div>
+        <div class="hacienda-tags">
+          <span class="htag">Vista al Arco</span>
+          <span class="htag">Los Cabos</span>
+          <span class="htag">Océano Pacífico</span>
+          <span class="htag">Destino</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"><span>✦</span></div>
+
+    <h2>¿Cómo elegir la sede correcta?</h2>
+    <p>Más allá de la estética, hay preguntas prácticas que deben hacerse antes de enamorarse de una hacienda. Aquí van las más importantes:</p>
+
+    <ul class="checklist">
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#667C90" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span><strong>¿Tienen disponibilidad en su fecha?</strong> Pregunten esto primero. No tiene sentido enamorarse de un lugar que ya está reservado.</span>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#667C90" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span><strong>¿Qué incluye exactamente el precio?</strong> Mobiliario, mantelería, iluminación básica, estacionamiento, seguridad y coordinador de venue deben estar claros desde el inicio.</span>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#667C90" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span><strong>¿Tienen lista de proveedores exclusivos?</strong> Algunas haciendas obligan a trabajar solo con sus proveedores. Esto puede limitar sus opciones de catering, flores y fotografía.</span>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#667C90" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span><strong>¿Cuál es el horario máximo del evento?</strong> Muchas haciendas tienen restricciones de horario — sobre todo en zonas residenciales. Pregunten hasta qué hora puede sonar la música.</span>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#667C90" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span><strong>¿Tienen plan de contingencia para lluvia?</strong> Si planean una boda al aire libre, necesitan saber qué pasa si llueve. Un espacio techado alternativo no es opcional — es indispensable.</span>
+      </li>
+      <li>
+        <div class="check-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#667C90" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span><strong>¿Cuánto anticipo piden para reservar?</strong> La mayoría pide entre 30% y 50% del total para apartar la fecha. Asegúrense de tener ese monto disponible antes de firmar.</span>
+      </li>
+    </ul>
+
+    <div class="callout callout-info">
+      <div class="callout-label">Siguiente paso</div>
+      <p>Una vez que tengan su sede confirmada, el siguiente proveedor más urgente es el wedding planner — si deciden contratar uno. Ellos conocen estas haciendas por dentro y pueden negociar en su nombre. En Mi Wedding Planner pueden explorar wedding planners verificados con experiencia en cada una de estas regiones.</p>
+    </div>
+
+    <div class="related">
+      <div class="related-title">Artículos relacionados</div>
+      <div class="related-grid">
+        <div class="related-card" onclick="window.location.href='articulo-presupuesto.html'">
+          <div class="related-tag">Presupuesto</div>
+          <div class="related-name">Cómo hacer un presupuesto de boda realista en México</div>
+        </div>
+        <div class="related-card" onclick="window.location.href='aprende.html'">
+          <div class="related-tag">Planificación</div>
+          <div class="related-name">¿Cuándo contratar a tu wedding planner?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-band">
+      <div class="cta-title">¿Listas para encontrar su hacienda?</div>
+      <div class="cta-sub">Explora sedes y haciendas verificadas en toda México con perfiles reales, fotos y reseñas.</div>
+      <button class="cta-btn" onclick="window.location.href='proveedores.html'">Explorar sedes verificadas →</button>
+    </div>
+
+  </article>
+
+</body>
+</html>
