@@ -423,33 +423,13 @@
       <div class="topbar">
         <div class="topbar-left"><h1>Proveedores favoritos</h1><p>Los que más te han gustado</p></div>
         <div class="topbar-right">
-          <button class="btn-sm btn-primary" onclick="window.location.href='proveedores.html'">Explorar más →</button>
+          <button class="btn-sm btn-primary" onclick="window.location.href='proveedores.html'">Explorar proveedores →</button>
         </div>
       </div>
-      <div class="card">
-        <div class="vendor-card" onclick="window.location.href='proveedor.html'">
-          <div class="vendor-thumb">EB</div>
-          <div class="vendor-info"><div class="vendor-name">Elena Bodas & Eventos</div><div class="vendor-type">Wedding planner · CDMX</div></div>
-          <div class="vendor-stars">★★★★★ 4.9</div>
-          <div class="vendor-heart" onclick="event.stopPropagation()">♥</div>
-        </div>
-        <div class="vendor-card" onclick="window.location.href='proveedor.html'">
-          <div class="vendor-thumb" style="background:#D4DCE4;">HS</div>
-          <div class="vendor-info"><div class="vendor-name">Hacienda San Miguel</div><div class="vendor-type">Sede & hacienda · Guadalajara</div></div>
-          <div class="vendor-stars">★★★★★ 4.8</div>
-          <div class="vendor-heart" onclick="event.stopPropagation()">♥</div>
-        </div>
-        <div class="vendor-card" onclick="window.location.href='proveedor.html'">
-          <div class="vendor-thumb" style="background:#BFC9A8;">LS</div>
-          <div class="vendor-info"><div class="vendor-name">Luz & Sombra Studio</div><div class="vendor-type">Fotografía & video · Monterrey</div></div>
-          <div class="vendor-stars">★★★★★ 5.0</div>
-          <div class="vendor-heart" onclick="event.stopPropagation()">♥</div>
-        </div>
-        <div class="vendor-card" onclick="window.location.href='proveedor.html'">
-          <div class="vendor-thumb" style="background:#C4CEB8;">FF</div>
-          <div class="vendor-info"><div class="vendor-name">Flores de Francia</div><div class="vendor-type">Florista · CDMX & Cuernavaca</div></div>
-          <div class="vendor-stars">★★★★★ 4.9</div>
-          <div class="vendor-heart" onclick="event.stopPropagation()">♥</div>
+      <div class="card" id="favoritos-list">
+        <div id="favoritos-empty" style="text-align:center;padding:48px 0;font-size:13px;color:var(--muted);font-weight:300;">
+          Aún no tienes proveedores guardados.<br><br>
+          <button class="btn-sm btn-primary" onclick="window.location.href='proveedores.html'" style="margin-top:8px;">Explorar proveedores →</button>
         </div>
       </div>
     </div>
@@ -1071,15 +1051,46 @@
 
   // ── LOAD FAVORITOS ───────────────────────────────────
   async function loadFavoritos() {
-    const { count } = await sb
+    const { data, error } = await sb
       .from('favoritos')
-      .select('*', { count: 'exact', head: true })
+      .select('vendor_id, vendor_profiles(nombre_negocio, categoria, ciudad)')
       .eq('bride_id', currentUser.id);
 
+    const count = (data && !error) ? data.length : 0;
+
+    // Update stat card
     const statEl = document.getElementById('stat-favoritos');
     const subEl  = document.getElementById('stat-favoritos-sub');
-    if (statEl) statEl.textContent = count || 0;
+    if (statEl) statEl.textContent = count;
     if (subEl)  subEl.textContent  = count > 0 ? 'guardados' : 'Explora y guarda favoritos';
+
+    // Update favoritos panel
+    const list  = document.getElementById('favoritos-list');
+    const empty = document.getElementById('favoritos-empty');
+    if (!list) return;
+
+    if (!data || data.length === 0) {
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+
+    if (empty) empty.style.display = 'none';
+    data.forEach(fav => {
+      const v = fav.vendor_profiles;
+      if (!v) return;
+      const initials = v.nombre_negocio.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+      const card = document.createElement('div');
+      card.className = 'vendor-card';
+      card.innerHTML = `
+        <div class="vendor-thumb">${initials}</div>
+        <div class="vendor-info">
+          <div class="vendor-name">${v.nombre_negocio}</div>
+          <div class="vendor-type">${v.categoria || ''}${v.ciudad ? ' · ' + v.ciudad : ''}</div>
+        </div>
+        <div class="vendor-heart">♥</div>
+      `;
+      list.appendChild(card);
+    });
   }
 
   function editAllocated(el) {
