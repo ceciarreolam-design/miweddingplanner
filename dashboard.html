@@ -572,22 +572,6 @@
   </div>
 </div>
 
-<div class="modal-overlay" id="modal-profile" onclick="closeModal('modal-profile')">
-  <div class="modal" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal('modal-profile')">×</button>
-    <h3>Editar perfil rápido</h3>
-    <label>Tu nombre</label>
-    <input type="text" id="quick-name" value="" oninput="document.getElementById('p-name').value=this.value;updateGreeting()">
-    <label>Fecha de tu boda</label>
-    <input type="date" id="quick-date" value="" oninput="document.getElementById('p-date').value=this.value;updateWeddingDate()">
-    <label>Ciudad de la boda</label>
-    <input type="text" id="quick-city" value="" oninput="document.getElementById('p-city').value=this.value;updateLocation()">
-    <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeModal('modal-profile')">Cancelar</button>
-      <button class="modal-save" onclick="closeModal('modal-profile');showSaved()">Guardar</button>
-    </div>
-  </div>
-</div>
 
 <script>
   // ── NAVIGATION ───────────────────────────────────────
@@ -815,8 +799,6 @@
   function openAddTask()    { document.getElementById('modal-task').classList.add('open'); }
   function openAddBudget()  { document.getElementById('modal-budget').classList.add('open'); }
   function openAddCita()    { document.getElementById('modal-cita').classList.add('open'); }
-  function openEditProfile(){ document.getElementById('modal-profile').classList.add('open'); }
-  function openEditBudget() { document.getElementById('modal-budget').classList.add('open'); }
   function closeModal(id)   { document.getElementById(id).classList.remove('open'); }
 </script>
 
