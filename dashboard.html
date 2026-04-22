@@ -876,9 +876,22 @@
       fullList.appendChild(item);
       // Home preview: show up to 5 pending tasks only
       if (!task.completado && homeList && homeList.querySelectorAll('.check-item').length < 5) {
-        const clone = item.cloneNode(true);
-        clone.querySelector('[onclick*="editTask"]')?.remove();
-        homeList.appendChild(clone);
+        const preview = document.createElement('div');
+        preview.className = 'check-item';
+        preview.dataset.id = task.id;
+        preview.dataset.status = status;
+        preview.innerHTML = `
+          <div class="check-box" onclick="toggleCheckById('${task.id}', this)">
+            <svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="check-text">
+            <div class="check-title">${task.titulo}</div>
+            <div class="check-month">${task.tiempo || ''}</div>
+          </div>
+          <span class="check-tag ${task.prioridad === 'urgent' ? 'urgent' : ''}">
+            ${task.prioridad === 'urgent' ? 'Urgente' : 'Pendiente'}
+          </span>`;
+        homeList.appendChild(preview);
       }
     });
     updateTaskStats();
@@ -968,6 +981,30 @@
     const statLeft = document.getElementById('stat-tasks-left');
     if (statDone) statDone.textContent = done.length;
     if (statLeft) statLeft.textContent = pending + ' pendiente' + (pending !== 1 ? 's' : '');
+  }
+
+  // Delegates a home-preview checkbox click to the real item in #full-checklist
+  async function toggleCheckById(id, homeBox) {
+    // Toggle the real item in full checklist
+    const realItem = document.querySelector(`#full-checklist .check-item[data-id="${id}"]`);
+    if (realItem) {
+      const realBox = realItem.querySelector('.check-box');
+      await toggleCheck(realBox);
+    }
+
+    // Mirror the visual on the home preview box
+    const done = homeBox.classList.toggle('done');
+    const homeItem = homeBox.closest('.check-item');
+    homeItem.querySelector('.check-title')?.classList.toggle('done');
+    const tag = homeItem.querySelector('.check-tag');
+    if (tag) tag.textContent = done ? 'Listo' : 'Pendiente';
+
+    // If now done, fade out and remove from home preview after a moment
+    if (done) {
+      homeItem.style.transition = 'opacity 0.4s';
+      homeItem.style.opacity = '0.4';
+      setTimeout(() => homeItem.remove(), 500);
+    }
   }
 
   // ── LOAD BUDGET ──────────────────────────────────────
