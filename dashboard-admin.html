@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Mi Wedding Planner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --night:#3E5766; --pigeon:#667C90; --stone:#A6B8C7; --laurel:#BDC4A9;
+      --laurel-d:#8A9478; --cotton:#E9E8EB; --white:#FFFFFF; --ink:#2A3A42;
+      --muted:#6B7A82; --gold:#C9A96E; --danger:#C4724A; --warn:#B8922A;
+      --serif:'Playfair Display',serif; --sans:'Jost',system-ui,sans-serif;
+      --radius-md:10px; --radius-lg:14px;
+    }
+    body { font-family:var(--sans); color:var(--ink); background:#F5F4F6; min-height:100vh; }
+
+    /* LOGIN */
+    #login-screen { display:flex; align-items:center; justify-content:center; min-height:100vh; }
+    .login-box { background:var(--white); border:0.5px solid var(--cotton); border-radius:var(--radius-lg); padding:40px; width:100%; max-width:380px; }
+    .login-logo { font-family:var(--serif); font-size:18px; color:var(--night); margin-bottom:4px; }
+    .login-logo span { color:var(--stone); }
+    .login-sub { font-size:12px; color:var(--muted); margin-bottom:28px; }
+    .login-label { font-size:11px; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; display:block; margin-bottom:5px; }
+    .login-input { width:100%; border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:10px 13px; font-size:13px; color:var(--ink); outline:none; margin-bottom:12px; font-family:var(--sans); }
+    .login-input:focus { border-color:var(--pigeon); }
+    .login-btn { width:100%; background:var(--night); color:var(--white); border:none; border-radius:var(--radius-md); padding:12px; font-size:13px; font-weight:500; cursor:pointer; font-family:var(--sans); }
+    .login-btn:hover { background:var(--pigeon); }
+    .login-error { background:#FDF0EC; color:var(--danger); border-radius:var(--radius-md); padding:10px 14px; font-size:13px; margin-bottom:14px; display:none; }
+
+    /* LAYOUT */
+    #app { display:none; grid-template-columns:220px minmax(0,1fr); min-height:100vh; }
+    #app.visible { display:grid; }
+
+    /* SIDEBAR */
+    .sidebar { background:var(--night); display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
+    .sidebar-logo { padding:22px 20px 18px; border-bottom:0.5px solid rgba(255,255,255,0.08); }
+    .sidebar-logo-text { font-family:var(--serif); font-size:15px; color:var(--white); }
+    .sidebar-logo-text span { color:var(--stone); }
+    .sidebar-badge { font-size:10px; color:var(--gold); font-weight:500; margin-top:3px; }
+    .sidebar-nav { padding:12px 0; flex:1; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:10px 20px; font-size:13px; color:rgba(255,255,255,0.6); cursor:pointer; border-left:2px solid transparent; transition:all 0.15s; }
+    .nav-item:hover { color:var(--white); background:rgba(255,255,255,0.05); }
+    .nav-item.active { color:var(--white); background:rgba(255,255,255,0.08); border-left-color:var(--gold); }
+    .nav-badge { font-size:10px; background:var(--danger); color:var(--white); border-radius:99px; padding:2px 7px; margin-left:auto; font-weight:500; }
+    .sidebar-bottom { padding:16px 20px; border-top:0.5px solid rgba(255,255,255,0.08); }
+    .logout-btn { font-size:12px; color:rgba(255,255,255,0.4); cursor:pointer; display:flex; align-items:center; gap:8px; }
+    .logout-btn:hover { color:rgba(255,255,255,0.7); }
+
+    /* MAIN */
+    .main { padding:32px; overflow-x:hidden; }
+    .topbar { margin-bottom:28px; }
+    .topbar h1 { font-family:var(--serif); font-size:24px; color:var(--night); font-weight:400; }
+    .topbar p { font-size:13px; color:var(--muted); font-weight:300; margin-top:3px; }
+
+    /* PANEL */
+    .panel { display:none; }
+    .panel.active { display:block; }
+
+    /* STAT CARDS */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+    .stat-card { background:var(--white); border:0.5px solid var(--cotton); border-radius:var(--radius-lg); padding:18px; }
+    .stat-num { font-size:28px; font-weight:500; color:var(--night); line-height:1; }
+    .stat-label { font-size:12px; color:var(--muted); font-weight:300; margin-top:4px; }
+    .stat-sub { font-size:11px; color:var(--stone); margin-top:6px; }
+
+    /* CARD */
+    .card { background:var(--white); border:0.5px solid var(--cotton); border-radius:var(--radius-lg); padding:22px; margin-bottom:20px; }
+    .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px; }
+    .card-title { font-size:15px; font-weight:500; color:var(--night); }
+
+    /* TABLE */
+    .tbl { width:100%; border-collapse:collapse; font-size:13px; }
+    .tbl th { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); padding:8px 12px; text-align:left; border-bottom:0.5px solid var(--cotton); }
+    .tbl td { padding:12px 12px; border-bottom:0.5px solid var(--cotton); vertical-align:middle; }
+    .tbl tr:last-child td { border-bottom:none; }
+    .tbl tr:hover td { background:#FAFAFA; }
+
+    /* BADGES */
+    .badge { font-size:10px; font-weight:500; padding:3px 9px; border-radius:99px; white-space:nowrap; }
+    .badge-green  { background:#F0F4F0; color:var(--laurel-d); }
+    .badge-blue   { background:#F0F4F7; color:var(--pigeon); }
+    .badge-orange { background:#FDF0EC; color:var(--danger); }
+    .badge-yellow { background:#FDF8EC; color:var(--warn); }
+    .badge-gray   { background:var(--cotton); color:var(--muted); }
+    .badge-gold   { background:rgba(201,169,110,0.12); color:var(--gold); border:0.5px solid rgba(201,169,110,0.3); }
+
+    /* ACTION BUTTONS */
+    .btn-approve { font-size:11px; font-weight:500; padding:5px 12px; border-radius:var(--radius-md); border:none; cursor:pointer; background:#F0F4F0; color:var(--laurel-d); transition:all 0.15s; }
+    .btn-approve:hover { background:var(--laurel-d); color:var(--white); }
+    .btn-reject  { font-size:11px; font-weight:500; padding:5px 12px; border-radius:var(--radius-md); border:none; cursor:pointer; background:#FDF0EC; color:var(--danger); transition:all 0.15s; margin-left:6px; }
+    .btn-reject:hover { background:var(--danger); color:var(--white); }
+    .btn-sm { font-size:12px; font-weight:500; padding:8px 16px; border-radius:var(--radius-md); border:none; cursor:pointer; transition:all 0.2s; }
+    .btn-primary { background:var(--night); color:var(--white); }
+    .btn-primary:hover { background:var(--pigeon); }
+    .btn-outline { background:var(--white); color:var(--night); border:0.5px solid var(--cotton); }
+    .btn-outline:hover { border-color:var(--stone); }
+
+    /* SEARCH / FILTER */
+    .filter-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .search-input { border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:8px 12px; font-size:13px; color:var(--ink); outline:none; font-family:var(--sans); min-width:200px; }
+    .search-input:focus { border-color:var(--pigeon); }
+    .filter-select { border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:8px 12px; font-size:13px; color:var(--ink); outline:none; font-family:var(--sans); background:var(--white); cursor:pointer; }
+
+    /* TICKET */
+    .ticket-item { padding:14px 0; border-bottom:0.5px solid var(--cotton); display:flex; align-items:flex-start; gap:12px; }
+    .ticket-item:last-child { border-bottom:none; }
+    .ticket-check { width:18px; height:18px; border-radius:4px; border:1.5px solid var(--cotton); display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; margin-top:2px; transition:all 0.15s; }
+    .ticket-check.done { background:var(--laurel-d); border-color:var(--laurel-d); }
+    .ticket-check svg { display:none; width:10px; height:10px; }
+    .ticket-check.done svg { display:block; }
+    .ticket-body { flex:1; }
+    .ticket-title { font-size:13px; color:var(--ink); font-weight:400; }
+    .ticket-title.done { text-decoration:line-through; color:var(--stone); }
+    .ticket-meta { font-size:11px; color:var(--muted); margin-top:3px; }
+    .ticket-priority { font-size:10px; padding:2px 8px; border-radius:99px; margin-left:8px; }
+
+    /* MODAL */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:200; align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--white); border-radius:var(--radius-lg); padding:28px; width:100%; max-width:500px; margin:20px; position:relative; max-height:90vh; overflow-y:auto; }
+    .modal-close { position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%; background:var(--cotton); border:none; cursor:pointer; font-size:16px; color:var(--muted); display:flex; align-items:center; justify-content:center; }
+    .modal h3 { font-family:var(--serif); font-size:18px; color:var(--night); margin-bottom:16px; font-weight:400; }
+    .modal label { display:block; font-size:11px; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:5px; margin-top:12px; }
+    .modal input, .modal select, .modal textarea { width:100%; border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:10px 13px; font-size:13px; color:var(--ink); outline:none; font-family:var(--sans); }
+    .modal textarea { min-height:80px; resize:vertical; }
+    .modal input:focus, .modal select:focus, .modal textarea:focus { border-color:var(--pigeon); }
+    .modal-btns { display:flex; gap:8px; margin-top:16px; }
+    .modal-save { flex:1; background:var(--night); color:var(--white); border:none; border-radius:var(--radius-md); padding:11px; font-size:13px; font-weight:500; cursor:pointer; font-family:var(--sans); }
+    .modal-cancel { background:transparent; color:var(--muted); border:0.5px solid var(--cotton); border-radius:var(--radius-md); padding:11px 16px; font-size:13px; cursor:pointer; font-family:var(--sans); }
+
+    /* TOAST */
+    #toast { display:none; position:fixed; bottom:28px; right:28px; background:var(--night); color:var(--white); font-size:13px; padding:12px 20px; border-radius:var(--radius-md); z-index:300; box-shadow:0 4px 20px rgba(0,0,0,0.15); }
+
+    /* EMPTY STATE */
+    .empty-state { text-align:center; padding:48px 0; font-size:13px; color:var(--muted); font-weight:300; }
+
+    /* LOADING */
+    .loading { text-align:center; padding:32px; font-size:13px; color:var(--muted); }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Mi Wedding <span>Planner</span></div>
+    <div class="login-sub">Panel de administración</div>
+    <div class="login-error" id="login-error"></div>
+    <label class="login-label">Correo</label>
+    <input class="login-input" type="email" id="admin-email" placeholder="admin@miweddingplanner.com.mx">
+    <label class="login-label">Contraseña</label>
+    <input class="login-input" type="password" id="admin-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')adminLogin()">
+    <button class="login-btn" onclick="adminLogin()">Entrar al panel →</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">Mi Wedding <span>Planner</span></div>
+      <div class="sidebar-badge">✦ Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" id="nav-resumen" onclick="navTo('resumen')">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+        Resumen
+      </div>
+      <div class="nav-item" id="nav-novias" onclick="navTo('novias')">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M2 14c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Novias
+        <span class="nav-badge" id="badge-novias" style="display:none;background:var(--pigeon);">0</span>
+      </div>
+      <div class="nav-item" id="nav-proveedores" onclick="navTo('proveedores')">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 13V7l6-5 6 5v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="6" y="9" width="4" height="4" rx="0.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        Proveedores
+        <span class="nav-badge" id="badge-pendientes">0</span>
+      </div>
+      <div class="nav-item" id="nav-tickets" onclick="navTo('tickets')">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 8h7M3 12h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Tickets
+        <span class="nav-badge" id="badge-tickets">0</span>
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="logout-btn" onclick="adminLogout()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2H2v10h3M9 10l3-3-3-3M12 7H5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Cerrar sesión
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- RESUMEN -->
+    <div class="panel active" id="panel-resumen">
+      <div class="topbar">
+        <h1>Panel de administración</h1>
+        <p>Bienvenida, Ceci. Aquí está el resumen de la plataforma.</p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="s-novias">—</div>
+          <div class="stat-label">Novias registradas</div>
+          <div class="stat-sub" id="s-novias-sub">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="s-proveedores">—</div>
+          <div class="stat-label">Proveedores aprobados</div>
+          <div class="stat-sub" id="s-prov-sub">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="s-pendientes">—</div>
+          <div class="stat-label">Solicitudes pendientes</div>
+          <div class="stat-sub">Requieren revisión</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="s-tickets">—</div>
+          <div class="stat-label">Tickets abiertos</div>
+          <div class="stat-sub">Sin resolver</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Solicitudes recientes</div><span style="font-size:12px;color:var(--pigeon);cursor:pointer;" onclick="navTo('proveedores')">Ver todas →</span></div>
+          <div id="recent-pending"><div class="loading">Cargando...</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Tickets sin resolver</div><span style="font-size:12px;color:var(--pigeon);cursor:pointer;" onclick="navTo('tickets')">Ver todos →</span></div>
+          <div id="recent-tickets"><div class="loading">Cargando...</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOVIAS -->
+    <div class="panel" id="panel-novias">
+      <div class="topbar">
+        <h1>Novias</h1>
+        <p>Todas las novias registradas en la plataforma.</p>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="filter-row">
+            <input class="search-input" placeholder="Buscar por nombre o correo..." oninput="filterNovias(this.value)">
+            <select class="filter-select" onchange="filterNoviasPlan(this.value)">
+              <option value="">Todos los planes</option>
+              <option value="monthly">Premium mensual</option>
+              <option value="onetime">Pago único</option>
+              <option value="free">Gratuito</option>
+            </select>
+          </div>
+          <div style="font-size:12px;color:var(--muted);" id="novias-count">— novias</div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="tbl">
+            <thead><tr>
+              <th>Nombre</th><th>Correo</th><th>Plan</th>
+              <th>Fecha de boda</th><th>Ciudad</th><th>Registro</th>
+            </tr></thead>
+            <tbody id="novias-tbody"><tr><td colspan="6" class="loading">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROVEEDORES -->
+    <div class="panel" id="panel-proveedores">
+      <div class="topbar">
+        <h1>Proveedores</h1>
+        <p>Solicitudes, aprobados y rechazados.</p>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="filter-row">
+            <input class="search-input" placeholder="Buscar negocio o ciudad..." oninput="filterProveedores(this.value)">
+            <select class="filter-select" id="prov-filter" onchange="filterProveedoresEstado(this.value)">
+              <option value="">Todos</option>
+              <option value="pendiente">Pendientes</option>
+              <option value="aprobado">Aprobados</option>
+              <option value="rechazado">Rechazados</option>
+            </select>
+          </div>
+          <div style="font-size:12px;color:var(--muted);" id="proveedores-count">— proveedores</div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="tbl">
+            <thead><tr>
+              <th>Negocio</th><th>Categoría</th><th>Ciudad</th>
+              <th>Plan solicitado</th><th>Estado</th><th>Registro</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="proveedores-tbody"><tr><td colspan="7" class="loading">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TICKETS -->
+    <div class="panel" id="panel-tickets">
+      <div class="topbar">
+        <h1>Tickets</h1>
+        <p>Tareas pendientes, bugs y mejoras.</p>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="filter-row">
+            <select class="filter-select" onchange="filterTickets(this.value)">
+              <option value="open">Abiertos</option>
+              <option value="all">Todos</option>
+              <option value="closed">Resueltos</option>
+            </select>
+          </div>
+          <button class="btn-sm btn-primary" onclick="openNewTicket()">+ Nuevo ticket</button>
+        </div>
+        <div id="tickets-list"><div class="loading">Cargando...</div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- APPROVAL MODAL -->
+<div class="modal-overlay" id="modal-approve" onclick="closeModal('modal-approve')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('modal-approve')">×</button>
+    <h3>Aprobar proveedor</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Se enviará un correo de bienvenida con el enlace a su panel.</p>
+    <label>Nombre del negocio</label>
+    <input type="text" id="approve-name" readonly style="background:#F5F4F6;">
+    <input type="hidden" id="approve-vendor-id">
+    <input type="hidden" id="approve-email">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-approve')">Cancelar</button>
+      <button class="modal-save" style="background:var(--laurel-d);" onclick="confirmApprove()">✓ Aprobar y enviar correo</button>
+    </div>
+  </div>
+</div>
+
+<!-- REJECTION MODAL -->
+<div class="modal-overlay" id="modal-reject" onclick="closeModal('modal-reject')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('modal-reject')">×</button>
+    <h3>Rechazar solicitud</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Se enviará un correo al proveedor con el motivo del rechazo.</p>
+    <label>Nombre del negocio</label>
+    <input type="text" id="reject-name" readonly style="background:#F5F4F6;">
+    <input type="hidden" id="reject-vendor-id">
+    <input type="hidden" id="reject-email">
+    <label style="margin-top:14px;">Motivo del rechazo <span style="color:var(--muted);font-weight:300;text-transform:none;font-size:11px;">(opcional — aparecerá en el correo)</span></label>
+    <textarea id="reject-reason" placeholder="Ej. Las fotografías de tu portafolio no alcanzan el nivel de calidad que requerimos en este momento. Te invitamos a aplicar nuevamente en unos meses con trabajo más reciente."></textarea>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-reject')">Cancelar</button>
+      <button class="modal-save" style="background:var(--danger);" onclick="confirmReject()">Rechazar y enviar correo</button>
+    </div>
+  </div>
+</div>
+
+<!-- TICKET MODAL -->
+<div class="modal-overlay" id="modal-ticket" onclick="closeModal('modal-ticket')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('modal-ticket')">×</button>
+    <h3 id="ticket-modal-title">Nuevo ticket</h3>
+    <label>Título</label>
+    <input type="text" id="ticket-titulo" placeholder="Ej. Botón de checklist no funciona en móvil">
+    <label>Descripción</label>
+    <textarea id="ticket-desc" placeholder="Describe el problema o mejora con detalle..."></textarea>
+    <label>Prioridad</label>
+    <select id="ticket-prioridad">
+      <option value="alta">Alta — necesita atención inmediata</option>
+      <option value="media" selected>Media — resolver pronto</option>
+      <option value="baja">Baja — mejora eventual</option>
+    </select>
+    <input type="hidden" id="ticket-edit-id">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-ticket')">Cancelar</button>
+      <button class="modal-save" onclick="saveTicket()">Guardar ticket</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://rlcqdxovvhyiszvfogjz.supabase.co',
+    'sb_publishable_OFE316zb9SoPJ87utEwFyg_g0qbw_Ri'
+  );
+
+  const ADMIN_EMAIL = 'holamiweddingplanner@gmail.com';
+  let currentUser = null;
+  let allNovias = [], allProveedores = [], allTickets = [];
+
+  // ── AUTH ─────────────────────────────────────────────
+  async function adminLogin() {
+    const email    = document.getElementById('admin-email').value.trim();
+    const password = document.getElementById('admin-password').value;
+    const errEl    = document.getElementById('login-error');
+    errEl.style.display = 'none';
+
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if (error || !data.user) {
+      errEl.textContent = 'Correo o contraseña incorrectos.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    // Check is_admin flag
+    const { data: profile } = await sb.from('bride_profiles').select('is_admin').eq('id', data.user.id).single()
+      .catch(() => ({ data: null }));
+    const { data: vProfile } = await sb.from('vendor_profiles').select('is_admin').eq('id', data.user.id).single()
+      .catch(() => ({ data: null }));
+
+    const isAdmin = profile?.is_admin || vProfile?.is_admin || email === ADMIN_EMAIL;
+
+    if (!isAdmin) {
+      await sb.auth.signOut();
+      errEl.textContent = 'Esta cuenta no tiene acceso al panel de administración.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    currentUser = data.user;
+    showApp();
+  }
+
+  async function checkSession() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+    const email = session.user.email;
+    if (email === ADMIN_EMAIL) {
+      currentUser = session.user;
+      showApp();
+    }
+  }
+
+  function showApp() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    loadAll();
+  }
+
+  async function adminLogout() {
+    await sb.auth.signOut();
+    location.reload();
+  }
+
+  // ── NAV ──────────────────────────────────────────────
+  function navTo(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('panel-' + name)?.classList.add('active');
+    document.getElementById('nav-' + name)?.classList.add('active');
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+  }
+
+  // ── LOAD ALL DATA ─────────────────────────────────────
+  async function loadAll() {
+    await Promise.all([loadNovias(), loadProveedores(), loadTickets()]);
+    renderResumen();
+  }
+
+  // ── NOVIAS ───────────────────────────────────────────
+  async function loadNovias() {
+    const { data } = await sb.from('bride_profiles').select('*').order('created_at', { ascending: false });
+    allNovias = data || [];
+    renderNovias(allNovias);
+    const el = document.getElementById('badge-novias');
+    if (allNovias.length > 0) { el.textContent = allNovias.length; el.style.display = 'inline-block'; }
+  }
+
+  function renderNovias(list) {
+    const tbody = document.getElementById('novias-tbody');
+    document.getElementById('novias-count').textContent = list.length + ' novias';
+    if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No hay novias registradas aún.</td></tr>'; return; }
+    tbody.innerHTML = list.map(n => {
+      const plan = n.plan === 'monthly' ? '<span class="badge badge-blue">Premium mensual</span>'
+                 : n.plan === 'onetime' ? '<span class="badge badge-green">Pago único</span>'
+                 : '<span class="badge badge-gray">Gratuito</span>';
+      const fecha = n.fecha_boda ? new Date(n.fecha_boda + 'T00:00:00').toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric' }) : '—';
+      const reg   = n.created_at ? new Date(n.created_at).toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric' }) : '—';
+      return `<tr>
+        <td style="font-weight:500;">${(n.nombre || '') + ' ' + (n.apellido || '') || '—'}</td>
+        <td style="color:var(--muted);">${n.email || '—'}</td>
+        <td>${plan}</td>
+        <td>${fecha}</td>
+        <td>${n.ciudad_boda || '—'}</td>
+        <td style="color:var(--stone);">${reg}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function filterNovias(q) {
+    const filtered = allNovias.filter(n =>
+      (n.nombre + ' ' + n.apellido + ' ' + (n.email || '')).toLowerCase().includes(q.toLowerCase())
+    );
+    renderNovias(filtered);
+  }
+  function filterNoviasPlan(plan) {
+    const filtered = plan ? allNovias.filter(n => (n.plan || 'free') === plan) : allNovias;
+    renderNovias(filtered);
+  }
+
+  // ── PROVEEDORES ──────────────────────────────────────
+  async function loadProveedores() {
+    const { data } = await sb.from('vendor_profiles').select('*').order('created_at', { ascending: false });
+    allProveedores = data || [];
+    renderProveedores(allProveedores);
+    const pendientes = allProveedores.filter(p => (p.solicitud_estado || 'pendiente') === 'pendiente' && !p.aprobado).length;
+    document.getElementById('badge-pendientes').textContent = pendientes;
+    if (pendientes === 0) document.getElementById('badge-pendientes').style.display = 'none';
+  }
+
+  function renderProveedores(list) {
+    const tbody = document.getElementById('proveedores-tbody');
+    document.getElementById('proveedores-count').textContent = list.length + ' proveedores';
+    if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No hay proveedores aún.</td></tr>'; return; }
+    tbody.innerHTML = list.map(p => {
+      const estado = p.aprobado ? '<span class="badge badge-green">Aprobado</span>'
+                   : p.solicitud_estado === 'rechazado' ? '<span class="badge badge-orange">Rechazado</span>'
+                   : '<span class="badge badge-yellow">Pendiente</span>';
+      const plan  = p.plan ? `<span class="badge badge-blue">${p.plan}</span>` : '—';
+      const reg   = p.created_at ? new Date(p.created_at).toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric' }) : '—';
+      const acciones = !p.aprobado && p.solicitud_estado !== 'rechazado'
+        ? `<button class="btn-approve" onclick="openApprove('${p.id}','${(p.nombre_negocio||'').replace(/'/g,"\\'")}','${p.email||''}')">Aprobar</button>
+           <button class="btn-reject"  onclick="openReject('${p.id}','${(p.nombre_negocio||'').replace(/'/g,"\\'")}','${p.email||''}')">Rechazar</button>`
+        : `<span style="font-size:11px;color:var(--stone);">${p.aprobado ? 'Activo' : 'Cerrado'}</span>`;
+      return `<tr>
+        <td style="font-weight:500;">${p.nombre_negocio || '—'}</td>
+        <td>${p.categoria || '—'}</td>
+        <td>${p.ciudad || '—'}</td>
+        <td>${plan}</td>
+        <td>${estado}</td>
+        <td style="color:var(--stone);">${reg}</td>
+        <td>${acciones}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function filterProveedores(q) {
+    const estado = document.getElementById('prov-filter').value;
+    let filtered = allProveedores.filter(p =>
+      ((p.nombre_negocio || '') + ' ' + (p.ciudad || '')).toLowerCase().includes(q.toLowerCase())
+    );
+    if (estado) filtered = filtered.filter(p => getEstado(p) === estado);
+    renderProveedores(filtered);
+  }
+  function filterProveedoresEstado(estado) {
+    const filtered = estado ? allProveedores.filter(p => getEstado(p) === estado) : allProveedores;
+    renderProveedores(filtered);
+  }
+  function getEstado(p) {
+    if (p.aprobado) return 'aprobado';
+    if (p.solicitud_estado === 'rechazado') return 'rechazado';
+    return 'pendiente';
+  }
+
+  // ── APPROVE / REJECT ─────────────────────────────────
+  function openApprove(id, nombre, email) {
+    document.getElementById('approve-vendor-id').value = id;
+    document.getElementById('approve-name').value      = nombre;
+    document.getElementById('approve-email').value     = email;
+    document.getElementById('modal-approve').classList.add('open');
+  }
+
+  function openReject(id, nombre, email) {
+    document.getElementById('reject-vendor-id').value = id;
+    document.getElementById('reject-name').value      = nombre;
+    document.getElementById('reject-email').value     = email;
+    document.getElementById('reject-reason').value    = '';
+    document.getElementById('modal-reject').classList.add('open');
+  }
+
+  async function confirmApprove() {
+    const id     = document.getElementById('approve-vendor-id').value;
+    const nombre = document.getElementById('approve-name').value;
+    const email  = document.getElementById('approve-email').value;
+
+    const { error } = await sb.from('vendor_profiles').update({
+      aprobado: true, solicitud_estado: 'aprobado'
+    }).eq('id', id);
+
+    if (error) { showToast('Error al aprobar: ' + error.message); return; }
+
+    // Send approval email via Supabase Edge Function (or fallback to mailto)
+    await sendVendorEmail(email, nombre, 'approved', '');
+
+    closeModal('modal-approve');
+    showToast('✓ ' + nombre + ' aprobado. Correo enviado.');
+    await loadProveedores();
+    renderResumen();
+  }
+
+  async function confirmReject() {
+    const id     = document.getElementById('reject-vendor-id').value;
+    const nombre = document.getElementById('reject-name').value;
+    const email  = document.getElementById('reject-email').value;
+    const reason = document.getElementById('reject-reason').value.trim();
+
+    const { error } = await sb.from('vendor_profiles').update({
+      aprobado: false, solicitud_estado: 'rechazado'
+    }).eq('id', id);
+
+    if (error) { showToast('Error al rechazar: ' + error.message); return; }
+
+    await sendVendorEmail(email, nombre, 'rejected', reason);
+
+    closeModal('modal-reject');
+    showToast('Solicitud de ' + nombre + ' rechazada. Correo enviado.');
+    await loadProveedores();
+    renderResumen();
+  }
+
+  async function sendVendorEmail(email, nombre, type, reason) {
+    // Uses Supabase's built-in email via a simple fetch to your own endpoint
+    // For now, opens a pre-filled mailto as fallback (works immediately without setup)
+    const dashboardUrl = 'https://www.miweddingplanner.com.mx/dashboard-proveedor.html';
+
+    if (type === 'approved') {
+      const subject = encodeURIComponent('¡Felicidades! Tu solicitud fue aprobada — Mi Wedding Planner');
+      const body = encodeURIComponent(
+        `Hola ${nombre},\n\n` +
+        `¡Excelentes noticias! Tu solicitud para unirte a Mi Wedding Planner fue aprobada. 🎉\n\n` +
+        `Ya puedes acceder a tu panel de proveedor y empezar a recibir solicitudes de novias:\n\n` +
+        `${dashboardUrl}\n\n` +
+        `Si tienes alguna pregunta, responde a este correo.\n\n` +
+        `Con cariño,\nEl equipo de Mi Wedding Planner`
+      );
+      window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+    } else {
+      const subject = encodeURIComponent('Tu solicitud en Mi Wedding Planner');
+      const reasonText = reason
+        ? `\n\nNos gustaría compartirte algunos comentarios:\n\n${reason}\n\n`
+        : '\n\n';
+      const body = encodeURIComponent(
+        `Hola ${nombre},\n\n` +
+        `Gracias por tu interés en formar parte de Mi Wedding Planner.\n\n` +
+        `Después de revisar tu solicitud cuidadosamente, en este momento no podemos darte acceso a la plataforma.` +
+        reasonText +
+        `Te invitamos a aplicar nuevamente en el futuro. Nuestros estándares evolucionan y siempre habrá nuevas oportunidades.\n\n` +
+        `Con cariño,\nEl equipo de Mi Wedding Planner`
+      );
+      window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+    }
+  }
+
+  // ── TICKETS ──────────────────────────────────────────
+  async function loadTickets() {
+    const { data } = await sb.from('tickets').select('*').order('created_at', { ascending: false });
+    allTickets = data || [];
+    renderTickets('open');
+    const open = allTickets.filter(t => !t.resuelto).length;
+    document.getElementById('badge-tickets').textContent = open;
+    if (open === 0) document.getElementById('badge-tickets').style.display = 'none';
+  }
+
+  function renderTickets(filter) {
+    const list = document.getElementById('tickets-list');
+    let filtered = filter === 'open' ? allTickets.filter(t => !t.resuelto)
+                 : filter === 'closed' ? allTickets.filter(t => t.resuelto)
+                 : allTickets;
+
+    if (filtered.length === 0) {
+      list.innerHTML = `<div class="empty-state">${filter === 'open' ? '¡Todo resuelto! No hay tickets abiertos.' : 'No hay tickets.'}</div>`;
+      return;
+    }
+
+    const priorityColors = { alta: 'badge-orange', media: 'badge-yellow', baja: 'badge-gray' };
+    const priorityLabels = { alta: 'Alta', media: 'Media', baja: 'Baja' };
+
+    list.innerHTML = filtered.map(t => `
+      <div class="ticket-item" id="ticket-${t.id}">
+        <div class="ticket-check ${t.resuelto ? 'done' : ''}" onclick="toggleTicket('${t.id}', ${t.resuelto})">
+          <svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="ticket-body">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span class="ticket-title ${t.resuelto ? 'done' : ''}">${t.titulo}</span>
+            <span class="badge ticket-priority ${priorityColors[t.prioridad] || 'badge-gray'}">${priorityLabels[t.prioridad] || t.prioridad}</span>
+          </div>
+          ${t.descripcion ? `<div class="ticket-meta">${t.descripcion}</div>` : ''}
+          <div class="ticket-meta">${new Date(t.created_at).toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric' })}</div>
+        </div>
+        <span style="font-size:11px;color:var(--pigeon);cursor:pointer;margin-left:8px;flex-shrink:0;" onclick="editTicket('${t.id}')">✎</span>
+      </div>`).join('');
+  }
+
+  function filterTickets(filter) { renderTickets(filter); }
+
+  async function toggleTicket(id, wasResuelto) {
+    const { error } = await sb.from('tickets').update({ resuelto: !wasResuelto }).eq('id', id);
+    if (!error) { await loadTickets(); renderResumen(); }
+  }
+
+  function openNewTicket() {
+    document.getElementById('ticket-modal-title').textContent = 'Nuevo ticket';
+    document.getElementById('ticket-titulo').value  = '';
+    document.getElementById('ticket-desc').value    = '';
+    document.getElementById('ticket-prioridad').value = 'media';
+    document.getElementById('ticket-edit-id').value = '';
+    document.getElementById('modal-ticket').classList.add('open');
+  }
+
+  function editTicket(id) {
+    const t = allTickets.find(t => t.id === id);
+    if (!t) return;
+    document.getElementById('ticket-modal-title').textContent = 'Editar ticket';
+    document.getElementById('ticket-titulo').value   = t.titulo;
+    document.getElementById('ticket-desc').value     = t.descripcion || '';
+    document.getElementById('ticket-prioridad').value = t.prioridad || 'media';
+    document.getElementById('ticket-edit-id').value  = id;
+    document.getElementById('modal-ticket').classList.add('open');
+  }
+
+  async function saveTicket() {
+    const titulo    = document.getElementById('ticket-titulo').value.trim();
+    const desc      = document.getElementById('ticket-desc').value.trim();
+    const prioridad = document.getElementById('ticket-prioridad').value;
+    const editId    = document.getElementById('ticket-edit-id').value;
+    if (!titulo) return;
+
+    if (editId) {
+      await sb.from('tickets').update({ titulo, descripcion: desc, prioridad }).eq('id', editId);
+    } else {
+      await sb.from('tickets').insert({ titulo, descripcion: desc, prioridad, resuelto: false, admin_id: currentUser.id });
+    }
+    closeModal('modal-ticket');
+    await loadTickets();
+    renderResumen();
+    showToast(editId ? 'Ticket actualizado ✓' : 'Ticket creado ✓');
+  }
+
+  // ── RESUMEN ──────────────────────────────────────────
+  function renderResumen() {
+    document.getElementById('s-novias').textContent      = allNovias.length;
+    document.getElementById('s-novias-sub').textContent  = allNovias.filter(n => n.plan && n.plan !== 'free').length + ' con plan activo';
+    const aprobados = allProveedores.filter(p => p.aprobado).length;
+    const pendientes = allProveedores.filter(p => getEstado(p) === 'pendiente').length;
+    document.getElementById('s-proveedores').textContent = aprobados;
+    document.getElementById('s-prov-sub').textContent    = pendientes + ' pendientes de revisión';
+    document.getElementById('s-pendientes').textContent  = pendientes;
+    const openTickets = allTickets.filter(t => !t.resuelto).length;
+    document.getElementById('s-tickets').textContent     = openTickets;
+
+    // Recent pending vendors
+    const recentPending = allProveedores.filter(p => getEstado(p) === 'pendiente').slice(0, 4);
+    document.getElementById('recent-pending').innerHTML = recentPending.length === 0
+      ? '<div style="font-size:13px;color:var(--muted);padding:16px 0;text-align:center;">No hay solicitudes pendientes.</div>'
+      : recentPending.map(p => `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--cotton);">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--night);">${p.nombre_negocio || '—'}</div>
+              <div style="font-size:11px;color:var(--muted);">${p.categoria || ''} · ${p.ciudad || ''}</div>
+            </div>
+            <div>
+              <button class="btn-approve" onclick="openApprove('${p.id}','${(p.nombre_negocio||'').replace(/'/g,"\\'")}','${p.email||''}')">Aprobar</button>
+              <button class="btn-reject"  onclick="openReject('${p.id}','${(p.nombre_negocio||'').replace(/'/g,"\\'")}','${p.email||''}')">Rechazar</button>
+            </div>
+          </div>`).join('');
+
+    // Recent open tickets
+    const recentTickets = allTickets.filter(t => !t.resuelto).slice(0, 4);
+    const pColors = { alta:'badge-orange', media:'badge-yellow', baja:'badge-gray' };
+    document.getElementById('recent-tickets').innerHTML = recentTickets.length === 0
+      ? '<div style="font-size:13px;color:var(--muted);padding:16px 0;text-align:center;">¡Sin tickets pendientes!</div>'
+      : recentTickets.map(t => `
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--cotton);">
+            <div class="ticket-check" onclick="toggleTicket('${t.id}', false)" style="flex-shrink:0;">
+              <svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="flex:1;">
+              <span style="font-size:13px;color:var(--ink);">${t.titulo}</span>
+              <span class="badge ${pColors[t.prioridad]||'badge-gray'}" style="margin-left:6px;font-size:9px;">${t.prioridad}</span>
+            </div>
+          </div>`).join('');
+  }
+
+  // ── INIT ─────────────────────────────────────────────
+  checkSession();
+</script>
+</body>
+</html>

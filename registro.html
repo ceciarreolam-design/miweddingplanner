@@ -212,7 +212,7 @@
         </div>
         <div class="field">
           <label>Número de invitados estimado</label>
-          <select>
+          <select id="reg-invitados">
             <option value="">Selecciona</option>
             <option>Menos de 50 (íntima)</option>
             <option>50 – 100</option>
@@ -223,7 +223,7 @@
         </div>
         <div class="field">
           <label>Presupuesto aproximado</label>
-          <select>
+          <select id="reg-presupuesto">
             <option value="">Selecciona</option>
             <option>Menos de $100,000 MXN</option>
             <option>$100,000 – $250,000 MXN</option>
@@ -234,7 +234,7 @@
         </div>
         <div class="field">
           <label>¿Qué necesitas contratar?</label>
-          <select>
+          <select id="reg-necesita">
             <option value="">Lo más urgente</option>
             <option>Sede / hacienda</option>
             <option>Wedding planner</option>
@@ -336,11 +336,15 @@
   }
 
   async function createAccount() {
-    const nombre   = document.getElementById('reg-nombre').value.trim();
-    const apellido = document.getElementById('reg-apellido').value.trim();
-    const email    = document.getElementById('reg-email').value.trim();
-    const password = document.getElementById('reg-password').value;
-    const fechaBoda = document.getElementById('reg-fecha').value;
+    const nombre    = document.getElementById('reg-nombre').value.trim();
+    const apellido  = document.getElementById('reg-apellido').value.trim();
+    const email     = document.getElementById('reg-email').value.trim();
+    const password  = document.getElementById('reg-password').value;
+    const fechaBoda = document.getElementById('reg-fecha').value || null;
+    const ciudad    = document.getElementById('reg-ciudad')?.value || '';
+    const invitados = document.getElementById('reg-invitados')?.value || '';
+    const presupuesto = document.getElementById('reg-presupuesto')?.value || '';
+    const plan      = document.querySelector('input[name="plan"]:checked')?.value || 'monthly';
 
     if (!nombre || !email || !password) { showError('Por favor completa todos los campos obligatorios.'); goStep(1); return; }
     if (password.length < 8) { showError('La contraseña debe tener al menos 8 caracteres.'); goStep(1); return; }
@@ -349,32 +353,39 @@
     btn.textContent = 'Creando cuenta...';
     btn.disabled = true;
 
+    // 1. Create auth user
     const { data, error } = await sb.auth.signUp({
       email,
       password,
       options: {
-        data: {
-          role: 'bride',
-          nombre,
-          apellido,
-          fecha_boda: fechaBoda || null,
-        }
+        data: { role: 'bride', nombre, apellido, fecha_boda: fechaBoda }
       }
     });
 
     if (error) {
       btn.textContent = 'Crear mi cuenta →';
       btn.disabled = false;
-      if (error.message.includes('already registered')) {
-        showError('Este correo ya tiene una cuenta. ¿Quieres iniciar sesión?');
-      } else {
-        showError('Hubo un error al crear tu cuenta. Intenta de nuevo.');
-      }
+      showError(error.message.includes('already registered')
+        ? 'Este correo ya tiene una cuenta. ¿Quieres iniciar sesión?'
+        : 'Hubo un error al crear tu cuenta. Intenta de nuevo.');
       goStep(1);
       return;
     }
 
-    // Success — show confirmation step
+    // 2. Save all wedding details to bride_profiles
+    if (data?.user) {
+      await sb.from('bride_profiles').upsert({
+        id:          data.user.id,
+        nombre,
+        apellido,
+        fecha_boda:  fechaBoda,
+        ciudad_boda: ciudad,
+        invitados:   invitados,
+        presupuesto: presupuesto,
+        plan:        plan,
+      });
+    }
+
     goStep(4);
   }
 </script>
