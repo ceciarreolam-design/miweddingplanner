@@ -341,10 +341,11 @@
             <div style="font-size:13px;color:var(--muted);font-weight:300;padding:16px 0;text-align:center;">
               Aún no tienes citas agendadas.<br>
               <span style="color:var(--pigeon);cursor:pointer;font-weight:400;" onclick="openAddCita()">+ Agendar primera cita →</span>
-          </div>
-        </div>
-      </div>
-    </div>
+            </div>
+          </div><!-- /card upcoming -->
+        </div><!-- /right column -->
+      </div><!-- /grid-3 -->
+    </div><!-- /panel-inicio -->
 
     <!-- CHECKLIST PANEL -->
     <div class="panel" id="panel-checklist">
@@ -643,17 +644,6 @@
     document.getElementById('stat-guests').textContent = g;
   }
 
-  function saveProfile() {
-    updateGreeting(); updateWeddingDate(); updateLocation(); updateGuests();
-    showSaved();
-  }
-
-  function showSaved() {
-    const btn = document.querySelector('.btn-primary');
-    const orig = btn?.textContent;
-    if (btn) { btn.textContent = '✓ Guardado'; setTimeout(() => btn.textContent = orig, 2000); }
-  }
-
   // ── CHECKLIST ────────────────────────────────────────
   function toggleCheck(box) {
     box.classList.toggle('done');
@@ -678,112 +668,6 @@
       if (filter === 'all') item.style.display = 'flex';
       else item.style.display = item.dataset.status === filter ? 'flex' : 'none';
     });
-  }
-
-  function addTask() {
-    const title = document.getElementById('new-task').value.trim();
-    const time = document.getElementById('new-task-time').value.trim();
-    const priority = document.getElementById('new-task-priority').value;
-    if (!title) return;
-    const item = document.createElement('div');
-    item.className = 'check-item';
-    item.dataset.status = priority;
-    item.innerHTML = `<div class="check-box" onclick="toggleCheck(this)"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="check-text"><div class="check-title">${title}</div><div class="check-month">${time}</div></div><span class="check-tag ${priority === 'urgent' ? 'urgent' : ''}">${priority === 'urgent' ? 'Urgente' : 'Pendiente'}</span>`;
-    document.getElementById('full-checklist').appendChild(item);
-    document.getElementById('new-task').value = '';
-    document.getElementById('new-task-time').value = '';
-    closeModal('modal-task');
-  }
-
-  // ── BUDGET SPENT INLINE EDIT ─────────────────────────
-  function editSpent(el) {
-    const item = el.closest('.budget-item');
-    const current = parseInt(item.dataset.spent) || 0;
-    el.classList.add('editing');
-    const input = document.createElement('input');
-    input.type = 'number';
-    input.className = 'budget-inline-input';
-    input.value = current;
-    input.placeholder = '0';
-    el.after(input);
-    input.focus();
-    input.select();
-    function save() {
-      const val = parseInt(input.value) || 0;
-      item.dataset.spent = val;
-      el.textContent = '$' + val.toLocaleString('es-MX');
-      el.style.color = val > 0 ? 'var(--night)' : 'var(--stone)';
-      el.classList.remove('editing');
-      input.remove();
-      recalcBudget();
-    }
-    input.addEventListener('blur', save);
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') { el.classList.remove('editing'); input.remove(); } });
-  }
-
-  function recalcBudget() {
-    const total = parseInt(document.getElementById('p-budget')?.value) || 0;
-    let spent = 0;
-    document.querySelectorAll('.budget-item.editable').forEach(item => {
-      spent += parseInt(item.dataset.spent) || 0;
-    });
-    const pct = total > 0 ? Math.round((spent / total) * 100) : 0;
-    const left = total - spent;
-
-    // Bar
-    const bar = document.getElementById('budget-bar');
-    if (bar) bar.style.width = pct + '%';
-
-    // Labels
-    const sl = document.getElementById('budget-spent-label');
-    if (sl) sl.textContent = '$' + spent.toLocaleString('es-MX') + ' gastados (' + pct + '%)';
-    const ll = document.getElementById('budget-left-label');
-    if (ll) ll.textContent = '$' + left.toLocaleString('es-MX') + ' disponibles';
-
-    // Donut
-    const donut = document.getElementById('donut-bar');
-    if (donut) donut.setAttribute('stroke-dashoffset', 314 - (314 * pct / 100));
-    const donutPct = document.getElementById('donut-pct');
-    if (donutPct) donutPct.textContent = pct + '%';
-
-    // Budget empty state
-    const empty = document.getElementById('budget-empty');
-    const items = document.querySelectorAll('.budget-item.editable');
-    if (empty) empty.style.display = items.length > 0 ? 'none' : 'block';
-
-    // Legend
-    const legend = document.getElementById('budget-legend');
-    if (legend && items.length > 0) {
-      legend.innerHTML = '';
-      items.forEach(item => {
-        const dot = item.querySelector('.budget-dot');
-        const label = item.querySelector('.budget-item-label');
-        const amount = item.querySelector('.budget-item-amount');
-        const div = document.createElement('div');
-        div.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);';
-        div.innerHTML = `<div style="width:10px;height:10px;border-radius:50%;background:${dot.style.background};flex-shrink:0;"></div>${label.textContent} — ${amount.textContent}`;
-        legend.appendChild(div);
-      });
-    }
-  }
-  const budgetColors = ['#A6B8C7','#BDC4A9','#667C90','#8FA8BC','#556878','#3E5766','#C9A96E'];
-  let colorIdx = 0;
-
-  function addBudgetItem() {
-    const cat = document.getElementById('new-budget-cat').value.trim();
-    const amount = parseInt(document.getElementById('new-budget-amount').value) || 0;
-    if (!cat) return;
-    const color = budgetColors[colorIdx % budgetColors.length]; colorIdx++;
-    const item = document.createElement('div');
-    item.className = 'budget-item editable';
-    item.dataset.allocated = amount;
-    item.dataset.spent = 0;
-    item.innerHTML = `<div class="budget-dot" style="background:${color};"></div><div class="budget-item-label">${cat}</div><div class="budget-item-amount">$${amount.toLocaleString('es-MX')}</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:var(--stone);">$0</div>`;
-    document.getElementById('budget-list').appendChild(item);
-    document.getElementById('new-budget-cat').value = '';
-    document.getElementById('new-budget-amount').value = '';
-    closeModal('modal-budget');
-    recalcBudget();
   }
 
   // ── AGENDA ───────────────────────────────────────────
@@ -1162,7 +1046,6 @@
   }
 
   // ── SAVE SPENT AMOUNT ────────────────────────────────
-  const _origEditSpent = editSpent;
   function editSpent(el) {
     const item = el.closest('.budget-item');
     const current = parseInt(item.dataset.spent) || 0;
