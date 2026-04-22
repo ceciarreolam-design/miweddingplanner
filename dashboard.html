@@ -477,7 +477,7 @@
           <div class="profile-field"><div class="profile-label">Sede / hacienda (si ya tienen)</div><input class="profile-input" id="p-venue" value="" oninput="updateLocation()"></div>
           <div class="profile-row">
             <div class="profile-field"><div class="profile-label">Invitados estimados</div><input class="profile-input" type="number" id="p-guests" value="" oninput="updateGuests()"></div>
-            <div class="profile-field"><div class="profile-label">Presupuesto total (MXN)</div><input class="profile-input" type="number" id="p-budget" value=""></div>
+            <div class="profile-field"><div class="profile-label">Presupuesto total (MXN)</div><input class="profile-input" type="text" id="p-budget" placeholder="Ej. 500,000" oninput="formatBudgetInput(this)"></div>
           </div>
         </div>
       </div>
@@ -639,6 +639,18 @@
     document.getElementById('stat-guests').textContent = g;
   }
 
+  function formatBudgetInput(input) {
+    // Strip everything except digits
+    const raw = input.value.replace(/[^\d]/g, '');
+    // Reformat with commas
+    input.value = raw ? parseInt(raw).toLocaleString('es-MX') : '';
+  }
+
+  function getBudgetValue() {
+    const raw = document.getElementById('p-budget')?.value || '';
+    return parseInt(raw.replace(/[^\d]/g, '')) || 0;
+  }
+
   // ── CHECKLIST ────────────────────────────────────────
   function filterTasks(filter, btn) {
     document.querySelectorAll('.checklist-tab').forEach(t => t.classList.remove('active'));
@@ -659,16 +671,16 @@
     item.dataset.date = fecha;
     if (id) item.dataset.id = id;
     item.innerHTML = `
-      <div class="upcoming-date">
+      <div class="upcoming-date" style="cursor:pointer;" onclick="${id ? `openEditCita('${id}','${titulo}','${fecha}','${hora || ''}','${etiqueta || ''}')` : ''}">
         <div class="upcoming-day">${d.getDate()}</div>
         <div class="upcoming-month">${MESES[d.getMonth()]}</div>
+        ${id ? `<div style="font-size:13px;color:var(--pigeon);margin-top:4px;">✎</div>` : ''}
       </div>
       <div class="upcoming-info">
         <div class="upcoming-title">${titulo}</div>
         <div class="upcoming-sub">${hora || ''}</div>
         <span class="upcoming-tag">${etiqueta || ''}</span>
-      </div>
-      ${id ? `<span style="font-size:11px;color:var(--stone);cursor:pointer;margin-left:8px;flex-shrink:0;" onclick="openEditCita('${id}','${titulo}','${fecha}','${hora || ''}','${etiqueta || ''}')">✎</span>` : ''}`;
+      </div>`;
     return item;
   }
 
@@ -852,7 +864,8 @@
     if (data.sede) { document.getElementById('p-venue').value = data.sede; updateLocation(); }
     if (data.invitados) { document.getElementById('p-guests').value = data.invitados; updateGuests(); }
     if (data.presupuesto) {
-      document.getElementById('p-budget').value = data.presupuesto;
+      // Show formatted with commas in the input
+      document.getElementById('p-budget').value = parseInt(data.presupuesto).toLocaleString('es-MX');
       const total = parseInt(data.presupuesto);
       const formatted = '$' + total.toLocaleString('es-MX') + ' MXN';
       // Home stat
@@ -880,7 +893,7 @@
       ciudad_boda: document.getElementById('p-city').value.trim(),
       sede:        document.getElementById('p-venue').value.trim(),
       invitados:   parseInt(document.getElementById('p-guests').value) || 0,
-      presupuesto: parseInt(document.getElementById('p-budget').value) || 0,
+      presupuesto: getBudgetValue(),
     };
 
     const btn = document.querySelector('#panel-perfil .btn-primary');
@@ -1167,7 +1180,7 @@
   }
 
   function recalcBudget() {
-    const total = parseInt(document.getElementById('p-budget')?.value) || 0;
+    const total = getBudgetValue();
     let spent = 0;
     document.querySelectorAll('.budget-item.editable').forEach(item => {
       spent += parseInt(item.dataset.spent) || 0;
