@@ -288,9 +288,9 @@
           <div class="stat-sub" id="stat-budget-sub">Agrega tu presupuesto</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num">0</div>
+          <div class="stat-num" id="stat-favoritos">0</div>
           <div class="stat-label">Proveedores favoritos</div>
-          <div class="stat-sub">Explora y guarda favoritos</div>
+          <div class="stat-sub" id="stat-favoritos-sub">Explora y guarda favoritos</div>
         </div>
         <div class="stat-card">
           <div class="stat-num" id="stat-guests">—</div>
@@ -319,14 +319,14 @@
           <!-- BUDGET MINI -->
           <div class="card" style="margin-bottom:16px;">
             <div class="card-header">
-              <div class="card-title">Presupuesto</div>
+              <div class="card-title">Presupuesto restante</div>
               <span class="card-link" onclick="navTo('presupuesto')">Ver detalle →</span>
             </div>
             <div class="budget-total">
               <div class="budget-total-num" id="home-budget-num">—</div>
-              <div class="budget-total-label" id="home-budget-label">Agrega tu presupuesto en el panel</div>
+              <div class="budget-total-label" id="home-budget-label">Disponible de tu presupuesto</div>
             </div>
-            <div class="budget-bar-outer"><div class="budget-bar-inner" style="width:0%"></div></div>
+            <div class="budget-bar-outer"><div class="budget-bar-inner" id="home-budget-bar" style="width:0%"></div></div>
             <div id="home-budget-items" style="font-size:13px;color:var(--muted);font-weight:300;padding:8px 0;">
               <span style="color:var(--pigeon);cursor:pointer;" onclick="navTo('presupuesto')">+ Agregar categorías →</span>
             </div>
@@ -645,22 +645,6 @@
   }
 
   // ── CHECKLIST ────────────────────────────────────────
-  function toggleCheck(box) {
-    box.classList.toggle('done');
-    const title = box.closest('.check-item').querySelector('.check-title');
-    title.classList.toggle('done');
-    const tag = box.closest('.check-item').querySelector('.check-tag');
-    if (box.classList.contains('done')) {
-      tag.textContent = 'Listo';
-      tag.className = 'check-tag';
-      box.closest('.check-item').dataset.status = 'done';
-    } else {
-      tag.textContent = 'Pendiente';
-      tag.className = 'check-tag';
-      box.closest('.check-item').dataset.status = 'pending';
-    }
-  }
-
   function filterTasks(filter, btn) {
     document.querySelectorAll('.checklist-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
@@ -707,6 +691,7 @@
       await loadProfile();
       await loadChecklist().catch(e => console.warn('Checklist:', e));
       await loadBudget().catch(e => console.warn('Budget:', e));
+      await loadFavoritos().catch(e => console.warn('Favoritos:', e));
     } catch(e) {
       console.error('Dashboard error:', e);
     }
@@ -859,12 +844,14 @@
         <span style="font-size:11px;color:var(--stone);cursor:pointer;margin-left:8px;" onclick="editTask(this)">✎</span>
       `;
       fullList.appendChild(item);
-      if (i < 5 && homeList) {
+      // Home preview: show up to 5 pending tasks only
+      if (!task.completado && homeList && homeList.querySelectorAll('.check-item').length < 5) {
         const clone = item.cloneNode(true);
         clone.querySelector('[onclick*="editTask"]')?.remove();
         homeList.appendChild(clone);
       }
     });
+    updateTaskStats();
   }
 
   function editTask(el) {
@@ -926,7 +913,6 @@
   }
 
   // ── TOGGLE TASK ──────────────────────────────────────
-  const _origToggle = toggleCheck;
   async function toggleCheck(box) {
     box.classList.toggle('done');
     const title = box.closest('.check-item').querySelector('.check-title');
@@ -941,6 +927,17 @@
     if (id && currentUser) {
       await sb.from('checklist').update({ completado: done }).eq('id', id);
     }
+    updateTaskStats();
+  }
+
+  function updateTaskStats() {
+    const all  = document.querySelectorAll('#full-checklist .check-item');
+    const done = document.querySelectorAll('#full-checklist .check-item[data-status="done"]');
+    const pending = all.length - done.length;
+    const statDone = document.getElementById('stat-tasks-done');
+    const statLeft = document.getElementById('stat-tasks-left');
+    if (statDone) statDone.textContent = done.length;
+    if (statLeft) statLeft.textContent = pending + ' pendiente' + (pending !== 1 ? 's' : '');
   }
 
   // ── LOAD BUDGET ──────────────────────────────────────
@@ -1016,6 +1013,73 @@
       <div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:${item.monto_gastado > 0 ? 'var(--night)' : 'var(--stone)'};">$${parseInt(item.monto_gastado).toLocaleString('es-MX')}</div>
     `;
     document.getElementById('budget-list').appendChild(row);
+  }
+
+  function recalcBudget() {
+    const total = parseInt(document.getElementById('p-budget')?.value) || 0;
+    let spent = 0;
+    document.querySelectorAll('.budget-item.editable').forEach(item => {
+      spent += parseInt(item.dataset.spent) || 0;
+    });
+    const pct = total > 0 ? Math.round((spent / total) * 100) : 0;
+    const left = total - spent;
+
+    // Main bar
+    const bar = document.getElementById('budget-bar');
+    if (bar) bar.style.width = pct + '%';
+
+    // Main labels
+    const sl = document.getElementById('budget-spent-label');
+    if (sl) sl.textContent = '$' + spent.toLocaleString('es-MX') + ' gastados (' + pct + '%)';
+    const ll = document.getElementById('budget-left-label');
+    if (ll) ll.textContent = '$' + left.toLocaleString('es-MX') + ' disponibles';
+
+    // Donut
+    const donut = document.getElementById('donut-bar');
+    if (donut) donut.setAttribute('stroke-dashoffset', 314 - (314 * pct / 100));
+    const donutPct = document.getElementById('donut-pct');
+    if (donutPct) donutPct.textContent = pct + '%';
+
+    // Budget empty state
+    const empty = document.getElementById('budget-empty');
+    const items = document.querySelectorAll('.budget-item.editable');
+    if (empty) empty.style.display = items.length > 0 ? 'none' : 'block';
+
+    // Legend
+    const legend = document.getElementById('budget-legend');
+    if (legend && items.length > 0) {
+      legend.innerHTML = '';
+      items.forEach(item => {
+        const dot = item.querySelector('.budget-dot');
+        const label = item.querySelector('.budget-item-label');
+        const amount = item.querySelector('.budget-item-amount');
+        const div = document.createElement('div');
+        div.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);';
+        div.innerHTML = `<div style="width:10px;height:10px;border-radius:50%;background:${dot.style.background};flex-shrink:0;"></div>${label.textContent} — ${amount.textContent}`;
+        legend.appendChild(div);
+      });
+    }
+
+    // Home mini card — show remaining budget
+    const homeNum = document.getElementById('home-budget-num');
+    const homeLabel = document.getElementById('home-budget-label');
+    const homeBar = document.getElementById('home-budget-bar');
+    if (homeNum) homeNum.textContent = total > 0 ? '$' + left.toLocaleString('es-MX') : '—';
+    if (homeLabel) homeLabel.textContent = total > 0 ? 'disponibles de $' + total.toLocaleString('es-MX') : 'Agrega tu presupuesto en Mi perfil';
+    if (homeBar) homeBar.style.width = pct + '%';
+  }
+
+  // ── LOAD FAVORITOS ───────────────────────────────────
+  async function loadFavoritos() {
+    const { count } = await sb
+      .from('favoritos')
+      .select('*', { count: 'exact', head: true })
+      .eq('bride_id', currentUser.id);
+
+    const statEl = document.getElementById('stat-favoritos');
+    const subEl  = document.getElementById('stat-favoritos-sub');
+    if (statEl) statEl.textContent = count || 0;
+    if (subEl)  subEl.textContent  = count > 0 ? 'guardados' : 'Explora y guarda favoritos';
   }
 
   function editAllocated(el) {
