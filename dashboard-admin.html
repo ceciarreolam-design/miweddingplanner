@@ -392,7 +392,7 @@
     'sb_publishable_OFE316zb9SoPJ87utEwFyg_g0qbw_Ri'
   );
 
-  const ADMIN_EMAIL = 'holamiweddingplanner@gmail.com';
+  const ADMIN_EMAILS = ['holamiweddingplanner@gmail.com', 'ceci.arreola.m@gmail.com'];
   let currentUser = null;
   let allNovias = [], allProveedores = [], allTickets = [];
 
@@ -401,27 +401,35 @@
     const email    = document.getElementById('admin-email').value.trim();
     const password = document.getElementById('admin-password').value;
     const errEl    = document.getElementById('login-error');
+    const btn      = document.querySelector('.login-btn');
     errEl.style.display = 'none';
+    btn.textContent = 'Entrando...';
+    btn.disabled = true;
 
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
     if (error || !data.user) {
       errEl.textContent = 'Correo o contraseña incorrectos.';
       errEl.style.display = 'block';
+      btn.textContent = 'Entrar al panel →';
+      btn.disabled = false;
       return;
     }
 
-    // Check is_admin flag
-    const { data: profile } = await sb.from('bride_profiles').select('is_admin').eq('id', data.user.id).single()
-      .catch(() => ({ data: null }));
-    const { data: vProfile } = await sb.from('vendor_profiles').select('is_admin').eq('id', data.user.id).single()
-      .catch(() => ({ data: null }));
+    // Check is_admin flag in bride_profiles or vendor_profiles
+    let isAdmin = ADMIN_EMAILS.includes(email); // fallback for known admin emails
 
-    const isAdmin = profile?.is_admin || vProfile?.is_admin || email === ADMIN_EMAIL;
+    if (!isAdmin) {
+      const { data: bp } = await sb.from('bride_profiles').select('is_admin').eq('id', data.user.id).maybeSingle();
+      const { data: vp } = await sb.from('vendor_profiles').select('is_admin').eq('id', data.user.id).maybeSingle();
+      isAdmin = bp?.is_admin === true || vp?.is_admin === true;
+    }
 
     if (!isAdmin) {
       await sb.auth.signOut();
       errEl.textContent = 'Esta cuenta no tiene acceso al panel de administración.';
       errEl.style.display = 'block';
+      btn.textContent = 'Entrar al panel →';
+      btn.disabled = false;
       return;
     }
 
@@ -433,7 +441,16 @@
     const { data: { session } } = await sb.auth.getSession();
     if (!session) return;
     const email = session.user.email;
-    if (email === ADMIN_EMAIL) {
+
+    // Check if admin email or has is_admin flag
+    let isAdmin = ADMIN_EMAILS.includes(email);
+    if (!isAdmin) {
+      const { data: bp } = await sb.from('bride_profiles').select('is_admin').eq('id', session.user.id).maybeSingle();
+      const { data: vp } = await sb.from('vendor_profiles').select('is_admin').eq('id', session.user.id).maybeSingle();
+      isAdmin = bp?.is_admin === true || vp?.is_admin === true;
+    }
+
+    if (isAdmin) {
       currentUser = session.user;
       showApp();
     }
