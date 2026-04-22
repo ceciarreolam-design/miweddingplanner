@@ -816,14 +816,23 @@
   // ── INIT: check auth on load ─────────────────────────
   async function initDashboard() {
     try {
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session) { window.location.href = 'login.html'; return; }
-      currentUser = session.user;
+      const { data: { session }, error } = await sb.auth.getSession();
+      if (!session) {
+        // Double-check with a refresh before redirecting
+        const { data: refreshData } = await sb.auth.refreshSession();
+        if (!refreshData.session) {
+          window.location.href = 'login.html';
+          return;
+        }
+        currentUser = refreshData.session.user;
+      } else {
+        currentUser = session.user;
+      }
       await loadProfile();
-      await loadChecklist().catch(e => console.warn('Checklist load failed:', e));
-      await loadBudget().catch(e => console.warn('Budget load failed:', e));
+      await loadChecklist().catch(e => console.warn('Checklist:', e));
+      await loadBudget().catch(e => console.warn('Budget:', e));
     } catch(e) {
-      console.error('Dashboard init error:', e);
+      console.error('Dashboard error:', e);
     }
   }
 
