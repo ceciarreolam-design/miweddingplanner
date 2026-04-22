@@ -525,7 +525,7 @@
 <div class="modal-overlay" id="modal-cita" onclick="closeModal('modal-cita')">
   <div class="modal" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('modal-cita')">×</button>
-    <h3>Agendar cita</h3>
+    <h3 id="modal-cita-title">Agendar cita</h3>
     <label>Título</label>
     <input type="text" id="new-cita-title" placeholder="Ej. Visita a hacienda">
     <label>Fecha</label>
@@ -537,9 +537,11 @@
       <option>Sede</option><option>Planificación</option><option>Fotografía</option>
       <option>Catering</option><option>Vestido</option><option>Otro</option>
     </select>
+    <input type="hidden" id="edit-cita-id">
     <div class="modal-btns">
+      <button class="modal-cancel" id="modal-cita-delete" style="display:none;color:#C4724A;border-color:#C4724A;" onclick="deleteCita()">Eliminar</button>
       <button class="modal-cancel" onclick="closeModal('modal-cita')">Cancelar</button>
-      <button class="modal-save" onclick="addCita()">Guardar cita</button>
+      <button class="modal-save" id="modal-cita-save" onclick="saveCita()">Guardar cita</button>
     </div>
   </div>
 </div>
@@ -563,7 +565,29 @@
   function openEditBudget()  { navTo('presupuesto'); }
   function openAddTask()   { document.getElementById('modal-task').classList.add('open'); }
   function openAddBudget() { document.getElementById('modal-budget').classList.add('open'); }
-  function openAddCita()   { document.getElementById('modal-cita').classList.add('open'); }
+  function openAddCita() {
+    document.getElementById('modal-cita-title').textContent = 'Agendar cita';
+    document.getElementById('modal-cita-save').textContent  = 'Guardar cita';
+    document.getElementById('modal-cita-delete').style.display = 'none';
+    document.getElementById('new-cita-title').value = '';
+    document.getElementById('new-cita-date').value  = '';
+    document.getElementById('new-cita-time').value  = '';
+    document.getElementById('new-cita-tag').value   = 'Sede';
+    document.getElementById('edit-cita-id').value   = '';
+    document.getElementById('modal-cita').classList.add('open');
+  }
+
+  function openEditCita(id, titulo, fecha, hora, etiqueta) {
+    document.getElementById('modal-cita-title').textContent = 'Editar cita';
+    document.getElementById('modal-cita-save').textContent  = 'Guardar cambios';
+    document.getElementById('modal-cita-delete').style.display = 'inline-block';
+    document.getElementById('new-cita-title').value = titulo;
+    document.getElementById('new-cita-date').value  = fecha;
+    document.getElementById('new-cita-time').value  = hora || '';
+    document.getElementById('new-cita-tag').value   = etiqueta || 'Otro';
+    document.getElementById('edit-cita-id').value   = id;
+    document.getElementById('modal-cita').classList.add('open');
+  }
   function closeModal(id)  { document.getElementById(id).classList.remove('open'); }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -628,21 +652,23 @@
   // ── AGENDA ───────────────────────────────────────────
   const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
-  function makeCitaItem(title, dateVal, time, tag) {
-    const d = new Date(dateVal + 'T00:00:00');
+  function makeCitaItem(titulo, fecha, hora, etiqueta, id) {
+    const d = new Date(fecha + 'T00:00:00');
     const item = document.createElement('div');
     item.className = 'upcoming-item';
-    item.dataset.date = dateVal;
+    item.dataset.date = fecha;
+    if (id) item.dataset.id = id;
     item.innerHTML = `
       <div class="upcoming-date">
         <div class="upcoming-day">${d.getDate()}</div>
         <div class="upcoming-month">${MESES[d.getMonth()]}</div>
       </div>
       <div class="upcoming-info">
-        <div class="upcoming-title">${title}</div>
-        <div class="upcoming-sub">${time || ''}</div>
-        <span class="upcoming-tag">${tag}</span>
-      </div>`;
+        <div class="upcoming-title">${titulo}</div>
+        <div class="upcoming-sub">${hora || ''}</div>
+        <span class="upcoming-tag">${etiqueta || ''}</span>
+      </div>
+      ${id ? `<span style="font-size:11px;color:var(--stone);cursor:pointer;margin-left:8px;flex-shrink:0;" onclick="openEditCita('${id}','${titulo}','${fecha}','${hora || ''}','${etiqueta || ''}')">✎</span>` : ''}`;
     return item;
   }
 
@@ -679,30 +705,58 @@
     });
   }
 
-  async function addCita() {
-    const title   = document.getElementById('new-cita-title').value.trim();
-    const dateVal = document.getElementById('new-cita-date').value;
-    const time    = document.getElementById('new-cita-time').value;
-    const tag     = document.getElementById('new-cita-tag').value;
-    if (!title || !dateVal) return;
+  async function saveCita() {
+    const titulo   = document.getElementById('new-cita-title').value.trim();
+    const fecha    = document.getElementById('new-cita-date').value;
+    const hora     = document.getElementById('new-cita-time').value;
+    const etiqueta = document.getElementById('new-cita-tag').value;
+    const editId   = document.getElementById('edit-cita-id').value;
+    if (!titulo || !fecha) return;
 
-    // Save to Supabase
-    const { data, error } = await sb.from('citas').insert({
-      bride_id: currentUser.id,
-      titulo:   title,
-      fecha:    dateVal,
-      hora:     time || null,
-      etiqueta: tag,
-    }).select().single();
-
-    if (!error && data) {
-      renderCitaItem(data);
-      updateHomeAgenda();
+    if (editId) {
+      // ── EDIT existing cita ──
+      const { error } = await sb.from('citas').update({ titulo, fecha, hora: hora || null, etiqueta }).eq('id', editId);
+      if (!error) {
+        // Remove old item and re-render
+        const old = document.querySelector(`#agenda-list .upcoming-item[data-id="${editId}"]`);
+        if (old) old.remove();
+        insertSorted(document.getElementById('agenda-list'), makeCitaItem(titulo, fecha, hora, etiqueta, editId));
+        updateHomeAgenda();
+      }
+    } else {
+      // ── ADD new cita ──
+      const { data, error } = await sb.from('citas').insert({
+        bride_id: currentUser.id, titulo, fecha, hora: hora || null, etiqueta,
+      }).select().single();
+      if (!error && data) {
+        renderCitaItem(data);
+        updateHomeAgenda();
+      }
     }
 
-    document.getElementById('new-cita-title').value = '';
-    document.getElementById('new-cita-date').value  = '';
-    document.getElementById('new-cita-time').value  = '';
+    closeModal('modal-cita');
+  }
+
+  // Keep addCita as alias so existing onclick still works
+  const addCita = saveCita;
+
+  async function deleteCita() {
+    const editId = document.getElementById('edit-cita-id').value;
+    if (!editId) return;
+    if (!confirm('¿Eliminar esta cita?')) return;
+
+    const { error } = await sb.from('citas').delete().eq('id', editId);
+    if (!error) {
+      const old = document.querySelector(`#agenda-list .upcoming-item[data-id="${editId}"]`);
+      if (old) old.remove();
+      updateHomeAgenda();
+      // Show empty state if no items left
+      const remaining = document.querySelectorAll('#agenda-list .upcoming-item');
+      if (remaining.length === 0) {
+        const agendaEmpty = document.getElementById('agenda-empty');
+        if (agendaEmpty) agendaEmpty.style.display = 'block';
+      }
+    }
     closeModal('modal-cita');
   }
 
@@ -710,7 +764,7 @@
     const agendaList  = document.getElementById('agenda-list');
     const agendaEmpty = document.getElementById('agenda-empty');
     if (agendaEmpty) agendaEmpty.style.display = 'none';
-    insertSorted(agendaList, makeCitaItem(cita.titulo, cita.fecha, cita.hora || '', cita.etiqueta || ''));
+    insertSorted(agendaList, makeCitaItem(cita.titulo, cita.fecha, cita.hora || '', cita.etiqueta || '', cita.id));
   }
 
   // ── LOAD CITAS ───────────────────────────────────────
