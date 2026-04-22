@@ -338,9 +338,11 @@
               <div class="card-title">Próximas citas</div>
               <span class="card-link" onclick="navTo('agenda')">Ver agenda →</span>
             </div>
-            <div style="font-size:13px;color:var(--muted);font-weight:300;padding:16px 0;text-align:center;">
-              Aún no tienes citas agendadas.<br>
-              <span style="color:var(--pigeon);cursor:pointer;font-weight:400;" onclick="openAddCita()">+ Agendar primera cita →</span>
+            <div id="home-agenda">
+              <div id="home-agenda-empty" style="font-size:13px;color:var(--muted);font-weight:300;padding:16px 0;text-align:center;">
+                Aún no tienes citas agendadas.<br>
+                <span style="color:var(--pigeon);cursor:pointer;font-weight:400;" onclick="openAddCita()">+ Agendar primera cita →</span>
+              </div>
             </div>
           </div><!-- /card upcoming -->
         </div><!-- /right column -->
@@ -442,21 +444,10 @@
           <button class="btn-sm btn-primary" onclick="openAddCita()">+ Agendar cita</button>
         </div>
       </div>
-      <div class="card">
-        <div class="upcoming-item">
-          <div class="upcoming-date"><div class="upcoming-day">28</div><div class="upcoming-month">Abr</div></div>
-          <div class="upcoming-info"><div class="upcoming-title">Visita a Hacienda San Miguel</div><div class="upcoming-sub">11:00 AM · Guadalajara · Presencial</div><span class="upcoming-tag">Sede</span></div>
-        </div>
-        <div class="upcoming-item">
-          <div class="upcoming-date"><div class="upcoming-day">05</div><div class="upcoming-month">May</div></div>
-          <div class="upcoming-info"><div class="upcoming-title">Reunión con wedding planner</div><div class="upcoming-sub">4:00 PM · Videollamada</div><span class="upcoming-tag">Planificación</span></div>
-        </div>
-        <div class="upcoming-item">
-          <div class="upcoming-date"><div class="upcoming-day">12</div><div class="upcoming-month">May</div></div>
-          <div class="upcoming-info"><div class="upcoming-title">Prueba de menú con catering</div><div class="upcoming-sub">1:00 PM · CDMX · Presencial</div><span class="upcoming-tag">Catering</span></div>
-        </div>
-        <div style="text-align:center;padding:20px 0 8px;">
-          <button class="btn-sm btn-outline" onclick="openAddCita()">+ Agregar cita</button>
+      <div class="card" id="agenda-list">
+        <div id="agenda-empty" style="text-align:center;padding:48px 0;font-size:13px;color:var(--muted);font-weight:300;">
+          Aún no tienes citas agendadas.<br><br>
+          <button class="btn-sm btn-primary" onclick="openAddCita()" style="margin-top:8px;">+ Agendar primera cita</button>
         </div>
       </div>
     </div>
@@ -635,19 +626,78 @@
   }
 
   // ── AGENDA ───────────────────────────────────────────
-  function addCita() {
-    const title = document.getElementById('new-cita-title').value.trim();
-    const dateVal = document.getElementById('new-cita-date').value;
-    const time = document.getElementById('new-cita-time').value;
-    const tag = document.getElementById('new-cita-tag').value;
-    if (!title || !dateVal) return;
+  const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+  function makeCitaItem(title, dateVal, time, tag) {
     const d = new Date(dateVal + 'T00:00:00');
-    const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
     const item = document.createElement('div');
     item.className = 'upcoming-item';
-    item.innerHTML = `<div class="upcoming-date"><div class="upcoming-day">${d.getDate()}</div><div class="upcoming-month">${months[d.getMonth()]}</div></div><div class="upcoming-info"><div class="upcoming-title">${title}</div><div class="upcoming-sub">${time || ''}</div><span class="upcoming-tag">${tag}</span></div>`;
-    document.querySelector('#panel-agenda .card').insertBefore(item, document.querySelector('#panel-agenda .card div:last-child'));
+    item.dataset.date = dateVal;
+    item.innerHTML = `
+      <div class="upcoming-date">
+        <div class="upcoming-day">${d.getDate()}</div>
+        <div class="upcoming-month">${MESES[d.getMonth()]}</div>
+      </div>
+      <div class="upcoming-info">
+        <div class="upcoming-title">${title}</div>
+        <div class="upcoming-sub">${time || ''}</div>
+        <span class="upcoming-tag">${tag}</span>
+      </div>`;
+    return item;
+  }
+
+  function insertSorted(container, item) {
+    const existing = [...container.querySelectorAll('.upcoming-item')];
+    const after = existing.find(el => el.dataset.date > item.dataset.date);
+    if (after) container.insertBefore(item, after);
+    else container.appendChild(item);
+  }
+
+  function updateHomeAgenda() {
+    const homeAgenda = document.getElementById('home-agenda');
+    const homeEmpty  = document.getElementById('home-agenda-empty');
+    if (!homeAgenda) return;
+
+    const today = new Date().toISOString().slice(0, 10);
+    const allItems = [...document.querySelectorAll('#agenda-list .upcoming-item')];
+    const upcoming = allItems.filter(el => el.dataset.date >= today).slice(0, 3);
+
+    // Clear except the empty state div
+    [...homeAgenda.children].forEach(el => {
+      if (el.id !== 'home-agenda-empty') el.remove();
+    });
+
+    if (upcoming.length === 0) {
+      if (homeEmpty) homeEmpty.style.display = 'block';
+      return;
+    }
+
+    if (homeEmpty) homeEmpty.style.display = 'none';
+    upcoming.forEach(orig => {
+      const clone = orig.cloneNode(true);
+      homeAgenda.appendChild(clone);
+    });
+  }
+
+  function addCita() {
+    const title   = document.getElementById('new-cita-title').value.trim();
+    const dateVal = document.getElementById('new-cita-date').value;
+    const time    = document.getElementById('new-cita-time').value;
+    const tag     = document.getElementById('new-cita-tag').value;
+    if (!title || !dateVal) return;
+
+    // Add to agenda panel
+    const agendaList  = document.getElementById('agenda-list');
+    const agendaEmpty = document.getElementById('agenda-empty');
+    if (agendaEmpty) agendaEmpty.style.display = 'none';
+    insertSorted(agendaList, makeCitaItem(title, dateVal, time, tag));
+
+    // Refresh home mini card
+    updateHomeAgenda();
+
     document.getElementById('new-cita-title').value = '';
+    document.getElementById('new-cita-date').value  = '';
+    document.getElementById('new-cita-time').value  = '';
     closeModal('modal-cita');
   }
 
