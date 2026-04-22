@@ -199,29 +199,29 @@
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Mi negocio</div>
-      <div class="nav-item active" onclick="showPanel('inicio',this)">
+      <div class="nav-item active" id="nav-inicio" onclick="navTo('inicio')">
         <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
         Inicio
       </div>
-      <div class="nav-item" onclick="showPanel('solicitudes',this)">
+      <div class="nav-item" id="nav-solicitudes" onclick="navTo('solicitudes')">
         <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         Solicitudes
         <span class="nav-badge" id="badge-count">3</span>
       </div>
-      <div class="nav-item" onclick="showPanel('estadisticas',this)">
+      <div class="nav-item" id="nav-estadisticas" onclick="navTo('estadisticas')">
         <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="10" width="3" height="4" stroke="currentColor" stroke-width="1.2"/><rect x="6.5" y="6" width="3" height="8" stroke="currentColor" stroke-width="1.2"/><rect x="11" y="2" width="3" height="12" stroke="currentColor" stroke-width="1.2"/></svg>
         Estadísticas
       </div>
-      <div class="nav-item" onclick="showPanel('disponibilidad',this)">
+      <div class="nav-item" id="nav-disponibilidad" onclick="navTo('disponibilidad')">
         <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 7h12M5 2v2M11 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         Disponibilidad
       </div>
       <div class="nav-section-label">Mi perfil</div>
-      <div class="nav-item" onclick="showPanel('perfil',this)">
+      <div class="nav-item" id="nav-perfil" onclick="navTo('perfil')">
         <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M2 14c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         Editar perfil
       </div>
-      <div class="nav-item" onclick="showPanel('paquetes',this)">
+      <div class="nav-item" id="nav-paquetes" onclick="navTo('paquetes')">
         <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="6" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 6V4a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         Paquetes & precios
       </div>
@@ -249,12 +249,12 @@
     <div class="panel active" id="panel-inicio">
       <div class="topbar">
         <div class="topbar-left">
-          <h1>¡Hola, <span id="greeting-name">Elena</span>! 👋</h1>
+          <h1>¡Hola, <span id="greeting-name">Elena</span>!</h1>
           <p>Aquí está el resumen de tu negocio esta semana</p>
         </div>
         <div class="topbar-right">
-          <button class="btn-sm btn-outline" onclick="showPanel('perfil', document.querySelector('[onclick*=\"perfil\"]'))">Editar perfil</button>
-          <button class="btn-sm btn-primary" onclick="showPanel('solicitudes', document.querySelector('[onclick*=\"solicitudes\"]'))">Ver solicitudes</button>
+          <button class="btn-sm btn-outline" onclick="navTo('perfil')">Editar perfil</button>
+          <button class="btn-sm btn-primary" onclick="navTo('solicitudes')">Ver solicitudes</button>
         </div>
       </div>
 
@@ -301,7 +301,7 @@
         <div class="card">
           <div class="card-header">
             <div class="card-title">Solicitudes recientes</div>
-            <span class="card-link" onclick="showPanel('solicitudes', document.querySelector('[onclick*=\"solicitudes\"]'))">Ver todas →</span>
+            <span class="card-link" onclick="navTo('solicitudes')">Ver todas →</span>
           </div>
           <div class="inquiry-item" onclick="openInquiry('Sofía Castro','Wedding planner para noviembre 2026','Hola, vi tu perfil en Mi Wedding Planner y me encantó tu trabajo. Estamos planeando nuestra boda para el 15 de noviembre en Guadalajara, aproximadamente 150 invitados. ¿Tienes disponibilidad y podrías compartirnos tus paquetes?','28 Abr','new')">
             <div class="inquiry-avatar">SC</div>
@@ -350,7 +350,7 @@
                 <div class="pstat"><div class="pstat-num">120+</div><div class="pstat-label">Bodas</div></div>
                 <div class="pstat"><div class="pstat-num">4.9</div><div class="pstat-label">Rating</div></div>
               </div>
-              <button class="profile-edit-btn" onclick="showPanel('perfil', document.querySelector('[onclick*=\"perfil\"]'))">Editar perfil →</button>
+              <button class="profile-edit-btn" onclick="navTo('perfil')">Editar perfil →</button>
             </div>
           </div>
           <!-- QUICK STATS -->
@@ -443,30 +443,66 @@
     <!-- ── DISPONIBILIDAD ── -->
     <div class="panel" id="panel-disponibilidad">
       <div class="topbar">
-        <div class="topbar-left"><h1>Disponibilidad</h1><p>Fechas confirmadas, en revisión y disponibles</p></div>
-        <div class="topbar-right"><button class="btn-sm btn-primary" onclick="openAddDate()">+ Agregar fecha</button></div>
+        <div class="topbar-left"><h1>Disponibilidad</h1><p>Solo tú puedes bloquear fechas — las novias las ven en tu perfil público</p></div>
+        <div class="topbar-right">
+          <button class="btn-sm btn-outline" onclick="exportIcal()" title="Exportar a Google Calendar / Outlook">📅 Exportar a mi calendario</button>
+          <button class="btn-sm btn-primary" onclick="openAddDate()">+ Bloquear fecha</button>
+        </div>
       </div>
+
+      <!-- CAPACITY SETTING -->
+      <div class="card" style="margin-bottom:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div style="font-size:14px;font-weight:500;color:var(--night);">Capacidad de eventos por día</div>
+            <div style="font-size:12px;color:var(--muted);font-weight:300;margin-top:3px;">¿Cuántos eventos puedes cubrir en el mismo día?</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button onclick="changeCapacity(-1)" style="width:32px;height:32px;border-radius:50%;border:0.5px solid var(--cotton);background:var(--white);font-size:18px;cursor:pointer;color:var(--night);display:flex;align-items:center;justify-content:center;">−</button>
+            <span id="capacity-num" style="font-size:22px;font-weight:500;color:var(--night);min-width:32px;text-align:center;">1</span>
+            <button onclick="changeCapacity(1)" style="width:32px;height:32px;border-radius:50%;border:0.5px solid var(--cotton);background:var(--white);font-size:18px;cursor:pointer;color:var(--night);display:flex;align-items:center;justify-content:center;">+</button>
+            <button onclick="saveCapacity()" class="btn-sm btn-primary" style="margin-left:8px;">Guardar</button>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--cotton);font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;">
+          💡 Si tienes un equipo más grande puedes subir este número. Las novias verán cuántos espacios quedan disponibles en cada fecha.
+        </div>
+      </div>
+
+      <!-- ICAL HINT -->
+      <div id="ical-hint" style="display:none;background:#F0F4F0;border:0.5px solid var(--laurel);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--night);line-height:1.7;">
+        <strong>¿Cómo exportar a tu calendario?</strong><br>
+        Copia el enlace de abajo y en Google Calendar ve a <em>Otros calendarios → Desde URL</em>. En Outlook selecciona <em>Agregar calendario → Suscribirse desde web</em>. Las fechas bloqueadas aparecerán automáticamente.<br><br>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <input id="ical-url" readonly style="flex:1;min-width:200px;border:0.5px solid var(--laurel);border-radius:var(--radius-md);padding:8px 12px;font-size:12px;color:var(--ink);background:var(--white);outline:none;" value="">
+          <button onclick="copyIcalUrl()" class="btn-sm btn-outline">Copiar enlace</button>
+          <button onclick="document.getElementById('ical-hint').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;">×</button>
+        </div>
+      </div>
+
       <div class="grid-2">
         <div class="card">
-          <div class="card-header"><div class="card-title">Próximas fechas</div></div>
+          <div class="card-header">
+            <div class="card-title">Fechas bloqueadas</div>
+            <span style="font-size:12px;color:var(--muted);font-weight:300;" id="avail-summary">0 fechas</span>
+          </div>
           <div id="availability-list">
-            <div class="avail-item"><div class="avail-dot" style="background:#C4724A;"></div><div class="avail-date">17 May 2026</div><div class="avail-label">Boda Martínez-Rojas · CDMX</div><span class="avail-status status-booked">Reservada</span></div>
-            <div class="avail-item"><div class="avail-dot" style="background:#B8922A;"></div><div class="avail-date">7 Jun 2026</div><div class="avail-label">Pendiente confirmar · San Miguel</div><span class="avail-status status-hold">En revisión</span></div>
-            <div class="avail-item"><div class="avail-dot" style="background:var(--laurel-d);"></div><div class="avail-date">28 Jun 2026</div><div class="avail-label">Disponible</div><span class="avail-status status-free">Libre</span></div>
-            <div class="avail-item"><div class="avail-dot" style="background:#C4724A;"></div><div class="avail-date">19 Sep 2026</div><div class="avail-label">Boda González-Pérez · Guadalajara</div><span class="avail-status status-booked">Reservada</span></div>
-            <div class="avail-item"><div class="avail-dot" style="background:var(--laurel-d);"></div><div class="avail-date">10 Oct 2026</div><div class="avail-label">Disponible</div><span class="avail-status status-free">Libre</span></div>
-            <div class="avail-item"><div class="avail-dot" style="background:#C4724A;"></div><div class="avail-date">15 Nov 2026</div><div class="avail-label">Boda Castro-Herrera · Guadalajara</div><span class="avail-status status-booked">Reservada</span></div>
-            <div class="avail-item"><div class="avail-dot" style="background:#C4724A;"></div><div class="avail-date">6 Dic 2026</div><div class="avail-label">Boda Vargas-Morales · Oaxaca</div><span class="avail-status status-booked">Reservada</span></div>
+            <div id="avail-empty" style="text-align:center;padding:32px 0;font-size:13px;color:var(--muted);font-weight:300;">
+              Aún no tienes fechas bloqueadas.<br>Las novias verán todas tus fechas como disponibles.
+            </div>
           </div>
         </div>
         <div class="card">
-          <div class="card-header"><div class="card-title">Resumen 2026</div></div>
+          <div class="card-header"><div class="card-title">Resumen del año</div></div>
           <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;color:var(--muted);">Bodas confirmadas</span><span style="font-size:18px;font-weight:500;color:var(--night);">12</span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;color:var(--muted);">Fechas en revisión</span><span style="font-size:18px;font-weight:500;color:#B8922A;">2</span></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;color:var(--muted);">Fechas disponibles</span><span style="font-size:18px;font-weight:500;color:var(--laurel-d);">8</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;color:var(--muted);">Reservadas</span><span id="count-booked" style="font-size:18px;font-weight:500;color:#C4724A;">0</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;color:var(--muted);">En revisión</span><span id="count-hold" style="font-size:18px;font-weight:500;color:#B8922A;">0</span></div>
             <div style="height:0.5px;background:var(--cotton);"></div>
-            <div style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;">Tu temporada más alta es <strong style="color:var(--night);">octubre a diciembre</strong>. Te quedan <strong style="color:var(--night);">2 fechas libres</strong> en esos meses.</div>
+            <div style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;" id="avail-insight">Agrega fechas para ver tu resumen.</div>
+          </div>
+          <div style="margin-top:16px;padding-top:16px;border-top:0.5px solid var(--cotton);">
+            <div style="font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Visible en tu perfil público</div>
+            <div style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;">Las novias pueden ver qué fechas están bloqueadas, pero eres <strong style="color:var(--night);">tú quien confirma</strong> la reservación. Ellas no pueden bloquearte directamente.</div>
           </div>
         </div>
       </div>
@@ -586,22 +622,25 @@
   </div>
 </div>
 
-<!-- ADD DATE MODAL -->
+<!-- ADD / EDIT DATE MODAL -->
 <div class="modal-overlay" id="modal-date" onclick="closeModal('modal-date')">
   <div class="modal" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('modal-date')">×</button>
-    <h3>Agregar fecha</h3>
+    <h3 id="modal-date-title">Bloquear fecha</h3>
     <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Fecha</label>
-    <input type="date" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:13px;">
+    <input type="date" id="date-fecha" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:13px;">
     <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Estado</label>
-    <select style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:13px;">
-      <option>Reservada</option><option>En revisión</option><option>Disponible</option>
+    <select id="date-estado" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:13px;">
+      <option value="reservada">Reservada</option>
+      <option value="revision">En revisión</option>
     </select>
     <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Descripción (opcional)</label>
-    <input type="text" placeholder="Ej. Boda García-López · Monterrey" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:4px;">
+    <input type="text" id="date-desc" placeholder="Ej. Boda García-López · Monterrey" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:4px;">
+    <input type="hidden" id="date-edit-id">
     <div class="modal-btns">
+      <button class="modal-cancel" id="modal-date-delete" style="display:none;color:#C4724A;border-color:#C4724A;" onclick="deleteDate()">Eliminar</button>
       <button class="modal-cancel" onclick="closeModal('modal-date')">Cancelar</button>
-      <button class="modal-save" onclick="closeModal('modal-date');showSaved('Fecha agregada ✓')">Guardar</button>
+      <button class="modal-save" onclick="saveDate()">Guardar</button>
     </div>
   </div>
 </div>
@@ -627,37 +666,66 @@
 <!-- TOAST -->
 <div id="toast" style="display:none;position:fixed;bottom:28px;right:28px;background:var(--night);color:var(--white);font-size:13px;font-weight:400;padding:12px 20px;border-radius:var(--radius-md);z-index:300;box-shadow:0 4px 20px rgba(0,0,0,0.15);transition:opacity 0.3s;"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // NAV
-  function showPanel(name, el) {
+  // ── NAV ─────────────────────────────────────────────
+  function navTo(name) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById('panel-' + name).classList.add('active');
-    if (el) el.classList.add('active');
+    const panel   = document.getElementById('panel-' + name);
+    const navItem = document.getElementById('nav-' + name);
+    if (panel)   panel.classList.add('active');
+    if (navItem) navItem.classList.add('active');
     window.scrollTo({ top:0, behavior:'smooth' });
   }
+  function showPanel(name) { navTo(name); }
 
-  // CHART
+  function openAddDate() {
+    document.getElementById('modal-date-title').textContent = 'Bloquear fecha';
+    document.getElementById('modal-date-delete').style.display = 'none';
+    document.getElementById('date-fecha').value = '';
+    document.getElementById('date-estado').value = 'reservada';
+    document.getElementById('date-desc').value = '';
+    document.getElementById('date-edit-id').value = '';
+    document.getElementById('modal-date').classList.add('open');
+  }
+  function openEditDate(id, fecha, estado, desc) {
+    document.getElementById('modal-date-title').textContent = 'Editar fecha';
+    document.getElementById('modal-date-delete').style.display = 'inline-block';
+    document.getElementById('date-fecha').value  = fecha;
+    document.getElementById('date-estado').value = estado;
+    document.getElementById('date-desc').value   = desc || '';
+    document.getElementById('date-edit-id').value = id;
+    document.getElementById('modal-date').classList.add('open');
+  }
+  function openAddPackage() {
+    document.getElementById('modal-package-title').textContent = 'Agregar paquete';
+    document.getElementById('pkg-name').value=''; document.getElementById('pkg-desc').value=''; document.getElementById('pkg-price').value='';
+    document.getElementById('modal-package').classList.add('open');
+  }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  function showSaved(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg || '✓ Guardado';
+    t.style.display='block'; t.style.opacity='1';
+    setTimeout(() => { t.style.opacity='0'; setTimeout(() => t.style.display='none', 300); }, 2500);
+  }
+
+  // ── CHART (mock data for now) ─────────────────────────
   const visits = [32, 48, 41, 56, 38, 62, 47];
-  const days = ['L','M','Mi','J','V','S','D'];
-  const chart = document.getElementById('chart-bars');
-  const max = Math.max(...visits);
+  const days   = ['L','M','Mi','J','V','S','D'];
+  const chartEl = document.getElementById('chart-bars');
+  const maxV = Math.max(...visits);
   visits.forEach((v, i) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'bar-wrap';
-    const bar = document.createElement('div');
-    bar.className = 'bar';
-    bar.style.height = (v / max * 100) + '%';
+    const wrap = document.createElement('div'); wrap.className = 'bar-wrap';
+    const bar  = document.createElement('div'); bar.className = 'bar';
+    bar.style.height = (v / maxV * 100) + '%';
     if (i === 5 || i === 6) bar.style.background = 'var(--laurel-d)';
-    const label = document.createElement('div');
-    label.className = 'bar-label';
-    label.textContent = days[i];
-    wrap.appendChild(bar);
-    wrap.appendChild(label);
-    chart.appendChild(wrap);
+    const label = document.createElement('div'); label.className = 'bar-label'; label.textContent = days[i];
+    wrap.appendChild(bar); wrap.appendChild(label); chartEl.appendChild(wrap);
   });
 
-  // PROFILE LIVE PREVIEW
+  // ── PROFILE LIVE PREVIEW ─────────────────────────────
   function updatePreview() {
     const name = document.getElementById('p-name')?.value || '';
     const type = document.getElementById('p-type')?.value || '';
@@ -672,9 +740,7 @@
     const gn = document.getElementById('greeting-name'); if(gn) gn.textContent = name.split(' ')[0];
   }
 
-  function saveProfile() { updatePreview(); showSaved('Perfil actualizado ✓'); }
-
-  // INQUIRY MODAL
+  // ── INQUIRY MODAL ────────────────────────────────────
   function openInquiry(name, subject, body, date, status) {
     document.getElementById('modal-inquiry-name').textContent = name;
     document.getElementById('modal-inquiry-subject').textContent = subject;
@@ -684,34 +750,29 @@
     document.getElementById('modal-inquiry').classList.add('open');
   }
 
-  // PACKAGES
-  function addPackage() {
-    const name  = document.getElementById('pkg-name').value.trim();
-    const desc  = document.getElementById('pkg-desc').value.trim();
-    const price = document.getElementById('pkg-price').value;
-    if (!name) return;
-    const card = document.createElement('div');
-    card.className = 'package-card';
-    card.innerHTML = `<div style="flex:1;"><div class="package-name">${name}</div><div class="package-desc">${desc}</div><div class="package-price">Desde $${parseInt(price).toLocaleString('es-MX')} MXN</div></div><span class="package-edit" onclick="openEditPackage(this)">Editar</span>`;
-    document.getElementById('packages-list').appendChild(card);
-    document.getElementById('pkg-name').value=''; document.getElementById('pkg-desc').value=''; document.getElementById('pkg-price').value='';
-    closeModal('modal-package'); showSaved('Paquete agregado ✓');
-  }
-  function openEditPackage(el) { document.getElementById('modal-package-title').textContent = 'Editar paquete'; openAddPackage(); }
-  function openAddPackage() { document.getElementById('modal-package').classList.add('open'); }
-
-  // INQUIRY FILTER
+  // ── INQUIRY FILTER ───────────────────────────────────
   function filterInquiries(filter, btn) {
     document.querySelectorAll('#all-inquiries .inquiry-item').forEach(item => {
       item.style.display = filter === 'all' || item.dataset.status === filter ? 'flex' : 'none';
     });
   }
 
-  // MODALS
-  function openAddDate() { document.getElementById('modal-date').classList.add('open'); }
-  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  // ── PACKAGES ─────────────────────────────────────────
+  function addPackage() {
+    const name  = document.getElementById('pkg-name').value.trim();
+    const desc  = document.getElementById('pkg-desc').value.trim();
+    const price = parseInt(document.getElementById('pkg-price').value) || 0;
+    if (!name) return;
+    const card = document.createElement('div');
+    card.className = 'package-card';
+    card.innerHTML = `<div style="flex:1;"><div class="package-name">${name}</div><div class="package-desc">${desc}</div><div class="package-price">Desde $${price.toLocaleString('es-MX')} MXN</div></div><span class="package-edit" onclick="openEditPackage(this)">Editar</span>`;
+    document.getElementById('packages-list').appendChild(card);
+    document.getElementById('pkg-name').value=''; document.getElementById('pkg-desc').value=''; document.getElementById('pkg-price').value='';
+    closeModal('modal-package'); showSaved('Paquete agregado ✓');
+  }
+  function openEditPackage(el) { document.getElementById('modal-package-title').textContent = 'Editar paquete'; document.getElementById('modal-package').classList.add('open'); }
 
-  // ADD REGION
+  // ── ADD REGION ───────────────────────────────────────
   function addRegion() {
     const r = prompt('¿Qué ciudad o región quieres agregar?');
     if (!r) return;
@@ -721,12 +782,237 @@
     document.getElementById('regions').insertBefore(tag, document.getElementById('regions').lastElementChild);
   }
 
-  // TOAST
-  function showSaved(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg || '✓ Guardado';
-    t.style.display = 'block'; t.style.opacity = '1';
-    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.style.display='none', 300); }, 2500);
+  // ── SUPABASE ─────────────────────────────────────────
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://rlcqdxovvhyiszvfogjz.supabase.co',
+    'sb_publishable_OFE316zb9SoPJ87utEwFyg_g0qbw_Ri'
+  );
+  let currentUser = null;
+  let vendorCapacity = 1;
+
+  async function initDashboard() {
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) { window.location.href = 'login.html'; return; }
+      currentUser = session.user;
+      await loadVendorProfile();
+      await loadDisponibilidad().catch(e => console.warn('Disponibilidad:', e));
+    } catch(e) { console.error('Dashboard error:', e); }
+  }
+  initDashboard();
+
+  // ── LOAD VENDOR PROFILE ──────────────────────────────
+  async function loadVendorProfile() {
+    let { data, error } = await sb.from('vendor_profiles').select('*').eq('id', currentUser.id).single();
+    if (error && error.code === 'PGRST116') {
+      const { data: nd } = await sb.from('vendor_profiles').insert({ id: currentUser.id }).select().single();
+      data = nd;
+    }
+    if (!data) return;
+    if (data.nombre_negocio) {
+      document.getElementById('p-name').value = data.nombre_negocio;
+      const gn = document.getElementById('greeting-name'); if(gn) gn.textContent = data.nombre_negocio.split(' ')[0];
+      const sn = document.getElementById('sidebar-name');  if(sn) sn.textContent = data.nombre_negocio;
+      const initials = data.nombre_negocio.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+      ['preview-initials','preview-initials-2','sidebar-initials'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = initials; });
+      ['preview-name','preview-name-2'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = data.nombre_negocio; });
+    }
+    if (data.categoria)  { document.getElementById('p-type').value = data.categoria; }
+    if (data.ciudad)     { document.getElementById('p-city').value = data.ciudad; }
+    if (data.bio)        { document.getElementById('p-bio').value  = data.bio; }
+    if (data.telefono)   { const el = document.querySelector('input[type="tel"]'); if(el) el.value = data.telefono; }
+    if (data.instagram)  { const el = document.querySelector('input[value="@elenabodas"]'); if(el) el.value = data.instagram; }
+    if (data.capacidad_dia) {
+      vendorCapacity = data.capacidad_dia;
+      document.getElementById('capacity-num').textContent = vendorCapacity;
+    }
+    updatePreview();
+  }
+
+  // ── SAVE VENDOR PROFILE ──────────────────────────────
+  async function saveProfile() {
+    const profileData = {
+      id:             currentUser.id,
+      nombre_negocio: document.getElementById('p-name').value.trim(),
+      categoria:      document.getElementById('p-type').value,
+      ciudad:         document.getElementById('p-city').value.trim(),
+      bio:            document.getElementById('p-bio').value.trim(),
+    };
+    const { error } = await sb.from('vendor_profiles').upsert(profileData);
+    updatePreview();
+    showSaved(error ? '✗ Error al guardar' : 'Perfil actualizado ✓');
+  }
+
+  // ── CAPACITY ─────────────────────────────────────────
+  function changeCapacity(delta) {
+    vendorCapacity = Math.max(1, Math.min(20, vendorCapacity + delta));
+    document.getElementById('capacity-num').textContent = vendorCapacity;
+  }
+  async function saveCapacity() {
+    if (!currentUser) return;
+    const { error } = await sb.from('vendor_profiles').update({ capacidad_dia: vendorCapacity }).eq('id', currentUser.id);
+    showSaved(error ? '✗ Error' : `Capacidad guardada: ${vendorCapacity} evento${vendorCapacity !== 1 ? 's' : ''} por día ✓`);
+  }
+
+  // ── DISPONIBILIDAD ───────────────────────────────────
+  const STATUS_CONFIG = {
+    reservada: { dot: '#C4724A', css: 'status-booked', label: 'Reservada' },
+    revision:  { dot: '#B8922A', css: 'status-hold',   label: 'En revisión' },
+  };
+  const MESES_LARGO = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+  function renderDateItem(d) {
+    const cfg = STATUS_CONFIG[d.estado] || STATUS_CONFIG.reservada;
+    const dateObj = new Date(d.fecha + 'T00:00:00');
+    const dateStr = dateObj.getDate() + ' de ' + MESES_LARGO[dateObj.getMonth()] + ' ' + dateObj.getFullYear();
+    const item = document.createElement('div');
+    item.className = 'avail-item';
+    item.dataset.id    = d.id;
+    item.dataset.fecha = d.fecha;
+    item.dataset.estado = d.estado;
+    item.style.cursor = 'pointer';
+    item.onclick = () => openEditDate(d.id, d.fecha, d.estado, d.descripcion || '');
+    item.innerHTML = `
+      <div class="avail-dot" style="background:${cfg.dot};"></div>
+      <div class="avail-date">${dateStr}</div>
+      <div class="avail-label">${d.descripcion || ''}</div>
+      <span class="avail-status ${cfg.css}">${cfg.label}</span>`;
+    return item;
+  }
+
+  function updateAvailSummary(items) {
+    const booked = items.filter(i => i.dataset.estado === 'reservada').length;
+    const hold   = items.filter(i => i.dataset.estado === 'revision').length;
+    document.getElementById('count-booked').textContent = booked;
+    document.getElementById('count-hold').textContent   = hold;
+    document.getElementById('avail-summary').textContent = `${items.length} fecha${items.length !== 1 ? 's' : ''}`;
+    const insight = document.getElementById('avail-insight');
+    if (items.length > 0) {
+      insight.innerHTML = `Tienes <strong style="color:var(--night);">${booked} fecha${booked !== 1 ? 's' : ''} reservada${booked !== 1 ? 's' : ''}</strong> y <strong style="color:#B8922A;">${hold} en revisión</strong>.`;
+    } else {
+      insight.textContent = 'Agrega fechas para ver tu resumen.';
+    }
+  }
+
+  async function loadDisponibilidad() {
+    const { data, error } = await sb.from('disponibilidad').select('*').eq('vendor_id', currentUser.id).order('fecha', { ascending: true });
+    const list  = document.getElementById('availability-list');
+    const empty = document.getElementById('avail-empty');
+    if (error || !data || data.length === 0) { if(empty) empty.style.display='block'; return; }
+    if (empty) empty.style.display = 'none';
+    list.innerHTML = '';
+    list.appendChild(document.getElementById('avail-empty') || document.createElement('div'));
+    // Re-add empty but hidden
+    const emptyDiv = document.createElement('div');
+    emptyDiv.id = 'avail-empty';
+    emptyDiv.style.display = 'none';
+    list.appendChild(emptyDiv);
+    data.forEach(d => list.appendChild(renderDateItem(d)));
+    updateAvailSummary([...list.querySelectorAll('.avail-item')]);
+  }
+
+  async function saveDate() {
+    const fecha  = document.getElementById('date-fecha').value;
+    const estado = document.getElementById('date-estado').value;
+    const desc   = document.getElementById('date-desc').value.trim();
+    const editId = document.getElementById('date-edit-id').value;
+    if (!fecha) return;
+
+    if (editId) {
+      const { error } = await sb.from('disponibilidad').update({ fecha, estado, descripcion: desc }).eq('id', editId);
+      if (!error) {
+        const old = document.querySelector(`.avail-item[data-id="${editId}"]`);
+        if (old) old.replaceWith(renderDateItem({ id: editId, fecha, estado, descripcion: desc }));
+        updateAvailSummary([...document.querySelectorAll('.avail-item')]);
+        showSaved('Fecha actualizada ✓');
+      }
+    } else {
+      const { data, error } = await sb.from('disponibilidad').insert({
+        vendor_id: currentUser.id, fecha, estado, descripcion: desc,
+      }).select().single();
+      if (!error && data) {
+        const list  = document.getElementById('availability-list');
+        const empty = document.getElementById('avail-empty');
+        if (empty) empty.style.display = 'none';
+        // Insert sorted
+        const existing = [...list.querySelectorAll('.avail-item')];
+        const after = existing.find(el => el.dataset.fecha > fecha);
+        const newItem = renderDateItem(data);
+        if (after) list.insertBefore(newItem, after);
+        else list.appendChild(newItem);
+        updateAvailSummary([...list.querySelectorAll('.avail-item')]);
+        showSaved('Fecha bloqueada ✓');
+      }
+    }
+    closeModal('modal-date');
+  }
+
+  async function deleteDate() {
+    const editId = document.getElementById('date-edit-id').value;
+    if (!editId || !confirm('¿Eliminar esta fecha?')) return;
+    const { error } = await sb.from('disponibilidad').delete().eq('id', editId);
+    if (!error) {
+      const old = document.querySelector(`.avail-item[data-id="${editId}"]`);
+      if (old) old.remove();
+      const items = [...document.querySelectorAll('.avail-item')];
+      if (items.length === 0) { const e = document.getElementById('avail-empty'); if(e) e.style.display='block'; }
+      updateAvailSummary(items);
+      showSaved('Fecha eliminada ✓');
+    }
+    closeModal('modal-date');
+  }
+
+  // ── iCAL EXPORT ──────────────────────────────────────
+  function exportIcal() {
+    const items = [...document.querySelectorAll('.avail-item')];
+    if (items.length === 0) { showSaved('No tienes fechas bloqueadas aún'); return; }
+
+    let ical = 'BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//MiWeddingPlanner//ES
+CALSCALE:GREGORIAN
+';
+    items.forEach(item => {
+      const fecha  = item.dataset.fecha.replace(/-/g, '');
+      const estado = item.dataset.estado === 'reservada' ? 'Reservada' : 'En revisión';
+      const desc   = item.querySelector('.avail-label')?.textContent || '';
+      const uid    = item.dataset.id + '@miweddingplanner.com.mx';
+      ical += 'BEGIN:VEVENT
+';
+      ical += `UID:${uid}
+`;
+      ical += `DTSTART;VALUE=DATE:${fecha}
+`;
+      ical += `DTEND;VALUE=DATE:${fecha}
+`;
+      ical += `SUMMARY:${estado} · Mi Wedding Planner
+`;
+      ical += `DESCRIPTION:${desc}
+`;
+      ical += 'END:VEVENT
+';
+    });
+    ical += 'END:VCALENDAR';
+
+    const blob = new Blob([ical], { type: 'text/calendar' });
+    const url  = URL.createObjectURL(blob);
+
+    // Show hint with instructions
+    const hintBox = document.getElementById('ical-hint');
+    const urlInput = document.getElementById('ical-url');
+    hintBox.style.display = 'block';
+    urlInput.value = window.location.origin + '/disponibilidad/' + (currentUser?.id || 'tu-id') + '.ics';
+
+    // Also trigger download
+    const a = document.createElement('a');
+    a.href = url; a.download = 'disponibilidad-mwp.ics'; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function copyIcalUrl() {
+    const url = document.getElementById('ical-url').value;
+    navigator.clipboard.writeText(url).then(() => showSaved('Enlace copiado ✓'));
   }
 </script>
 </body>
