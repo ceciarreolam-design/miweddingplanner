@@ -815,40 +815,18 @@
 
   // ── INIT: check auth on load ─────────────────────────
   async function initDashboard() {
-    const debug = (msg) => {
-      console.log(msg);
-      const el = document.getElementById('debug-msg');
-      if (el) el.textContent = msg;
-    };
-
-    document.getElementById('panel-inicio').insertAdjacentHTML('afterbegin',
-      '<div id="debug-msg" style="background:#3E5766;color:white;padding:10px;font-size:12px;border-radius:8px;margin-bottom:12px;">Iniciando...</div>'
-    );
-
     try {
-      debug('Verificando sesión...');
-      const { data: { session }, error } = await sb.auth.getSession();
-      debug('Sesión: ' + (session ? '✓ activa' : '✗ no hay sesión'));
-
+      const { data: { session } } = await sb.auth.getSession();
       if (!session) {
-        debug('Sin sesión — redirigiendo a login en 2s...');
-        setTimeout(() => window.location.href = 'login.html', 2000);
+        setTimeout(() => window.location.href = 'login.html', 100);
         return;
       }
       currentUser = session.user;
-      debug('Usuario: ' + currentUser.email);
       await loadProfile();
-      debug('Perfil cargado ✓');
-      await loadChecklist().catch(e => debug('Checklist error: ' + e.message));
-      await loadBudget().catch(e => debug('Budget error: ' + e.message));
-      debug('Listo ✓');
-      setTimeout(() => {
-        const el = document.getElementById('debug-msg');
-        if (el) el.remove();
-      }, 3000);
+      await loadChecklist().catch(e => console.warn('Checklist:', e));
+      await loadBudget().catch(e => console.warn('Budget:', e));
     } catch(e) {
-      debug('ERROR: ' + e.message);
-      console.error(e);
+      console.error('Dashboard error:', e);
     }
   }
 
