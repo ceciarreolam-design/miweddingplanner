@@ -601,7 +601,8 @@
     window.scrollTo({ top:0, behavior:'smooth' });
   }
 
-  function showPanel(name, el) { navTo(name); }
+  function openEditProfile() { navTo('perfil'); }
+  function openEditBudget()  { navTo('presupuesto'); }
 
   // ── COUNTDOWN ────────────────────────────────────────
   function updateCountdown() {
@@ -955,30 +956,74 @@
       .eq('bride_id', currentUser.id)
       .order('created_at', { ascending: true });
 
-    if (error || !data || data.length === 0) return;
+    const fullList = document.getElementById('full-checklist');
+    const homeList = document.getElementById('home-checklist');
+    const empty = document.getElementById('checklist-empty');
 
-    // Clear default tasks and load from DB
-    document.getElementById('full-checklist').innerHTML = '';
-    document.getElementById('home-checklist').innerHTML = '';
+    if (error || !data || data.length === 0) {
+      if (homeList) homeList.innerHTML = '<div style="font-size:13px;color:var(--muted);font-weight:300;padding:16px 0;text-align:center;">Aún no tienes tareas.<br><span style="color:var(--pigeon);cursor:pointer;font-weight:400;" onclick="navTo(\'checklist\')">+ Agregar primera tarea →</span></div>';
+      return;
+    }
+
+    if (empty) empty.style.display = 'none';
+    fullList.innerHTML = '';
+    if (homeList) homeList.innerHTML = '';
 
     data.forEach((task, i) => {
       const status = task.completado ? 'done' : task.prioridad;
-      const html = `
-        <div class="check-item" data-id="${task.id}" data-status="${status}">
-          <div class="check-box ${task.completado ? 'done' : ''}" onclick="toggleCheck(this)">
-            <svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="check-text">
-            <div class="check-title ${task.completado ? 'done' : ''}">${task.titulo}</div>
-            <div class="check-month">${task.tiempo || ''}</div>
-          </div>
-          <span class="check-tag ${task.prioridad === 'urgent' ? 'urgent' : ''}">
-            ${task.completado ? 'Listo' : task.prioridad === 'urgent' ? 'Urgente' : 'Pendiente'}
-          </span>
-        </div>`;
-      document.getElementById('full-checklist').insertAdjacentHTML('beforeend', html);
-      if (i < 5) document.getElementById('home-checklist').insertAdjacentHTML('beforeend', html);
+      const item = document.createElement('div');
+      item.className = 'check-item';
+      item.dataset.id = task.id;
+      item.dataset.status = status;
+      item.innerHTML = `
+        <div class="check-box ${task.completado ? 'done' : ''}" onclick="toggleCheck(this)">
+          <svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="check-text">
+          <div class="check-title ${task.completado ? 'done' : ''}">${task.titulo}</div>
+          <div class="check-month">${task.tiempo || ''}</div>
+        </div>
+        <span class="check-tag ${task.prioridad === 'urgent' ? 'urgent' : ''}">
+          ${task.completado ? 'Listo' : task.prioridad === 'urgent' ? 'Urgente' : 'Pendiente'}
+        </span>
+        <span style="font-size:11px;color:var(--stone);cursor:pointer;margin-left:8px;" onclick="editTask(this)">✎</span>
+      `;
+      fullList.appendChild(item);
+      if (i < 5 && homeList) {
+        const clone = item.cloneNode(true);
+        clone.querySelector('[onclick*="editTask"]')?.remove();
+        homeList.appendChild(clone);
+      }
     });
+  }
+
+  function editTask(el) {
+    const item = el.closest('.check-item');
+    const titleEl = item.querySelector('.check-title');
+    const monthEl = item.querySelector('.check-month');
+    const tagEl = item.querySelector('.check-tag');
+    const id = item.dataset.id;
+    const currentTitle = titleEl.textContent;
+    const currentTime = monthEl.textContent;
+
+    // Replace with inline edit
+    titleEl.contentEditable = 'true';
+    titleEl.focus();
+    titleEl.style.outline = '1px solid var(--pigeon)';
+    titleEl.style.borderRadius = '4px';
+    titleEl.style.padding = '2px 4px';
+
+    async function saveEdit() {
+      const newTitle = titleEl.textContent.trim();
+      titleEl.contentEditable = 'false';
+      titleEl.style.outline = '';
+      titleEl.style.padding = '';
+      if (newTitle && newTitle !== currentTitle && currentUser) {
+        await sb.from('checklist').update({ titulo: newTitle }).eq('id', id);
+      }
+    }
+    titleEl.addEventListener('blur', saveEdit, { once: true });
+    titleEl.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); } });
   }
 
   // ── SAVE TASK ────────────────────────────────────────
@@ -1038,7 +1083,7 @@
 
     if (error || !data || data.length === 0) {
       const hbi = document.getElementById('home-budget-items');
-      if (hbi) hbi.textContent = 'Sin categorías aún — agrégalas en Presupuesto';
+      if (hbi) hbi.innerHTML = '<span style="color:var(--pigeon);cursor:pointer;" onclick="navTo(\'presupuesto\')">+ Agregar categorías →</span>';
       return;
     }
 
@@ -1047,19 +1092,11 @@
     if (homeItems) homeItems.innerHTML = '';
 
     data.forEach(item => {
-      const row = document.createElement('div');
-      row.className = 'budget-item editable';
-      row.dataset.allocated = item.monto_presupuestado;
-      row.dataset.spent = item.monto_gastado;
-      row.dataset.id = item.id;
-      row.innerHTML = `<div class="budget-dot" style="background:${item.color};"></div><div class="budget-item-label">${item.categoria}</div><div class="budget-item-amount">$${item.monto_presupuestado.toLocaleString('es-MX')}</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:${item.monto_gastado > 0 ? 'var(--night)' : 'var(--stone)'};">$${item.monto_gastado.toLocaleString('es-MX')}</div>`;
-      document.getElementById('budget-list').appendChild(row);
-
-      // Home preview — show first 3 items
+      appendBudgetRow(item);
       if (homeItems && homeItems.children.length < 3) {
         const mini = document.createElement('div');
         mini.className = 'budget-item';
-        mini.innerHTML = `<div class="budget-dot" style="background:${item.color};"></div><div class="budget-item-label">${item.categoria}</div><div class="budget-item-amount">$${item.monto_presupuestado.toLocaleString('es-MX')}</div>`;
+        mini.innerHTML = `<div class="budget-dot" style="background:${item.color};"></div><div class="budget-item-label">${item.categoria}</div><div class="budget-item-amount">$${parseInt(item.monto_presupuestado).toLocaleString('es-MX')}</div>`;
         homeItems.appendChild(mini);
       }
     });
@@ -1073,7 +1110,7 @@
     if (!cat) return;
 
     const colors = ['#A6B8C7','#BDC4A9','#667C90','#8FA8BC','#556878','#3E5766','#C9A96E'];
-    const color  = colors[document.querySelectorAll('.budget-item').length % colors.length];
+    const color  = colors[document.querySelectorAll('.budget-item.editable').length % colors.length];
 
     const { data, error } = await sb.from('presupuesto').insert({
       bride_id:            currentUser.id,
@@ -1084,19 +1121,58 @@
     }).select().single();
 
     if (!error && data) {
-      const item = document.createElement('div');
-      item.className = 'budget-item editable';
-      item.dataset.allocated = amount;
-      item.dataset.spent = 0;
-      item.dataset.id = data.id;
-      item.innerHTML = `<div class="budget-dot" style="background:${color};"></div><div class="budget-item-label">${cat}</div><div class="budget-item-amount">$${amount.toLocaleString('es-MX')}</div><div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:var(--stone);">$0</div>`;
-      document.getElementById('budget-list').appendChild(item);
+      appendBudgetRow(data);
       recalcBudget();
     }
 
     document.getElementById('new-budget-cat').value = '';
     document.getElementById('new-budget-amount').value = '';
     closeModal('modal-budget');
+  }
+
+  function appendBudgetRow(item) {
+    const empty = document.getElementById('budget-empty');
+    if (empty) empty.style.display = 'none';
+
+    const row = document.createElement('div');
+    row.className = 'budget-item editable';
+    row.dataset.allocated = item.monto_presupuestado;
+    row.dataset.spent = item.monto_gastado;
+    row.dataset.id = item.id;
+    row.innerHTML = `
+      <div class="budget-dot" style="background:${item.color};"></div>
+      <div class="budget-item-label">${item.categoria}</div>
+      <div class="budget-item-amount" onclick="editAllocated(this)" title="Clic para editar" style="cursor:pointer;border-bottom:1px dashed var(--stone);">$${parseInt(item.monto_presupuestado).toLocaleString('es-MX')}</div>
+      <div class="budget-item-spent" onclick="editSpent(this)" title="Clic para editar" style="color:${item.monto_gastado > 0 ? 'var(--night)' : 'var(--stone)'};">$${parseInt(item.monto_gastado).toLocaleString('es-MX')}</div>
+    `;
+    document.getElementById('budget-list').appendChild(row);
+  }
+
+  function editAllocated(el) {
+    const item = el.closest('.budget-item');
+    const current = parseInt(item.dataset.allocated) || 0;
+    el.style.display = 'none';
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.className = 'budget-inline-input';
+    input.value = current;
+    el.after(input);
+    input.focus(); input.select();
+
+    async function save() {
+      const val = parseInt(input.value) || 0;
+      item.dataset.allocated = val;
+      el.textContent = '$' + val.toLocaleString('es-MX');
+      el.style.display = '';
+      input.remove();
+      recalcBudget();
+      const id = item.dataset.id;
+      if (id && currentUser) {
+        await sb.from('presupuesto').update({ monto_presupuestado: val }).eq('id', id);
+      }
+    }
+    input.addEventListener('blur', save);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') { el.style.display = ''; input.remove(); } });
   }
 
   // ── SAVE SPENT AMOUNT ────────────────────────────────
