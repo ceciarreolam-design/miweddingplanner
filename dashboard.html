@@ -248,7 +248,7 @@
     <div class="panel active" id="panel-inicio">
       <div class="topbar">
         <div class="topbar-left">
-          <h1>¡Hola, <span id="greeting-name">...</span>! 🤍</h1>
+          <h1>¡Hola, <span id="greeting-name">...</span>!</h1>
           <p>Aquí está el resumen de tu boda</p>
         </div>
         <div class="topbar-right">
@@ -679,26 +679,55 @@
     });
   }
 
-  function addCita() {
+  async function addCita() {
     const title   = document.getElementById('new-cita-title').value.trim();
     const dateVal = document.getElementById('new-cita-date').value;
     const time    = document.getElementById('new-cita-time').value;
     const tag     = document.getElementById('new-cita-tag').value;
     if (!title || !dateVal) return;
 
-    // Add to agenda panel
-    const agendaList  = document.getElementById('agenda-list');
-    const agendaEmpty = document.getElementById('agenda-empty');
-    if (agendaEmpty) agendaEmpty.style.display = 'none';
-    insertSorted(agendaList, makeCitaItem(title, dateVal, time, tag));
+    // Save to Supabase
+    const { data, error } = await sb.from('citas').insert({
+      bride_id: currentUser.id,
+      titulo:   title,
+      fecha:    dateVal,
+      hora:     time || null,
+      etiqueta: tag,
+    }).select().single();
 
-    // Refresh home mini card
-    updateHomeAgenda();
+    if (!error && data) {
+      renderCitaItem(data);
+      updateHomeAgenda();
+    }
 
     document.getElementById('new-cita-title').value = '';
     document.getElementById('new-cita-date').value  = '';
     document.getElementById('new-cita-time').value  = '';
     closeModal('modal-cita');
+  }
+
+  function renderCitaItem(cita) {
+    const agendaList  = document.getElementById('agenda-list');
+    const agendaEmpty = document.getElementById('agenda-empty');
+    if (agendaEmpty) agendaEmpty.style.display = 'none';
+    insertSorted(agendaList, makeCitaItem(cita.titulo, cita.fecha, cita.hora || '', cita.etiqueta || ''));
+  }
+
+  // ── LOAD CITAS ───────────────────────────────────────
+  async function loadCitas() {
+    const { data, error } = await sb
+      .from('citas')
+      .select('*')
+      .eq('bride_id', currentUser.id)
+      .order('fecha', { ascending: true });
+
+    if (error || !data || data.length === 0) return;
+
+    const agendaEmpty = document.getElementById('agenda-empty');
+    if (agendaEmpty) agendaEmpty.style.display = 'none';
+
+    data.forEach(cita => renderCitaItem(cita));
+    updateHomeAgenda();
   }
 
   const { createClient } = supabase;
@@ -722,6 +751,7 @@
       await loadChecklist().catch(e => console.warn('Checklist:', e));
       await loadBudget().catch(e => console.warn('Budget:', e));
       await loadFavoritos().catch(e => console.warn('Favoritos:', e));
+      await loadCitas().catch(e => console.warn('Citas:', e));
     } catch(e) {
       console.error('Dashboard error:', e);
     }
