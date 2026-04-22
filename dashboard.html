@@ -575,22 +575,27 @@
 
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ── NAVIGATION ───────────────────────────────────────
+  // Navigation available immediately — before Supabase loads
   function navTo(name) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    const panel = document.getElementById('panel-' + name);
-    const navItem = document.getElementById('nav-' + name);
+    var panel = document.getElementById('panel-' + name);
+    var navItem = document.getElementById('nav-' + name);
     if (panel) panel.classList.add('active');
     if (navItem) navItem.classList.add('active');
     window.scrollTo({ top:0, behavior:'smooth' });
   }
-
+  function showPanel(name) { navTo(name); }
   function openEditProfile() { navTo('perfil'); }
   function openEditBudget()  { navTo('presupuesto'); }
-
+  function openAddTask()   { document.getElementById('modal-task').classList.add('open'); }
+  function openAddBudget() { document.getElementById('modal-budget').classList.add('open'); }
+  function openAddCita()   { document.getElementById('modal-cita').classList.add('open'); }
+  function closeModal(id)  { document.getElementById(id).classList.remove('open'); }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
   // ── COUNTDOWN ────────────────────────────────────────
   function updateCountdown() {
     const dateVal = document.getElementById('p-date')?.value || '';
@@ -798,13 +803,6 @@
     closeModal('modal-cita');
   }
 
-  // ── MODALS ───────────────────────────────────────────
-  function openAddTask()    { document.getElementById('modal-task').classList.add('open'); }
-  function openAddBudget()  { document.getElementById('modal-budget').classList.add('open'); }
-  function openAddCita()    { document.getElementById('modal-cita').classList.add('open'); }
-  function closeModal(id)   { document.getElementById(id).classList.remove('open'); }
-
-
   const { createClient } = supabase;
   const sb = createClient(
     'https://rlcqdxovvhyiszvfogjz.supabase.co',
@@ -818,7 +816,7 @@
     try {
       const { data: { session } } = await sb.auth.getSession();
       if (!session) {
-        setTimeout(() => window.location.href = 'login.html', 100);
+        window.location.href = 'login.html';
         return;
       }
       currentUser = session.user;
@@ -829,6 +827,8 @@
       console.error('Dashboard error:', e);
     }
   }
+
+  initDashboard();
 
   // ── LOAD PROFILE ─────────────────────────────────────
   async function loadProfile() {
@@ -1201,9 +1201,6 @@
     await sb.auth.signOut();
     window.location.href = 'login.html';
   }
-
-  // ── START ────────────────────────────────────────────
-  initDashboard();
 
 </script>
 </body>
