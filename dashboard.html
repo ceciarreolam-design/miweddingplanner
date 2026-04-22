@@ -573,6 +573,9 @@
 </div>
 
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // ── NAVIGATION ───────────────────────────────────────
   function navTo(name) {
@@ -800,11 +803,8 @@
   function openAddBudget()  { document.getElementById('modal-budget').classList.add('open'); }
   function openAddCita()    { document.getElementById('modal-cita').classList.add('open'); }
   function closeModal(id)   { document.getElementById(id).classList.remove('open'); }
-</script>
 
-<!-- SUPABASE -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
+
   const { createClient } = supabase;
   const sb = createClient(
     'https://rlcqdxovvhyiszvfogjz.supabase.co',
@@ -1201,6 +1201,7 @@
 
   // ── START ────────────────────────────────────────────
   initDashboard();
+
 </script>
 </body>
 </html>
