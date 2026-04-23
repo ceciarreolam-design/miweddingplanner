@@ -649,14 +649,18 @@
   async function deleteVendor(id, nombre) {
     if (!confirm(`¿Eliminar a "${nombre}" permanentemente? Esta acción no se puede deshacer.`)) return;
 
-    // Delete from vendor_profiles
-    const { error: profileErr } = await sb.from('vendor_profiles').delete().eq('id', id);
-    if (profileErr) {
-      // Try deleting from auth too (only works with service role, may fail — that's ok)
-      showToast('Perfil eliminado. La cuenta de auth puede requerir eliminación manual en Supabase.');
-    } else {
-      showToast('Proveedor eliminado ✓');
+    const { error } = await sb.from('vendor_profiles').delete().eq('id', id);
+
+    if (error) {
+      showToast('Error al eliminar: ' + error.message);
+      console.error('Delete error:', error);
+      return;
     }
+
+    showToast('Proveedor eliminado ✓');
+    // Note: deleting the auth user requires the Supabase service role key
+    // which can't be used from the browser. Go to Supabase → Auth → Users
+    // and delete the user manually if you also want to remove their login.
     await loadProveedores();
     renderResumen();
   }
