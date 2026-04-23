@@ -193,7 +193,7 @@
     <div class="sidebar-user">
       <div class="user-avatar" id="sidebar-initials">EB</div>
       <div>
-        <div class="user-name" id="sidebar-name">Elena Bodas & Eventos</div>
+        <div class="user-name" id="sidebar-name">Mi negocio</div>
         <div class="user-badge">✦ Proveedor Fundador</div>
       </div>
     </div>
@@ -249,7 +249,7 @@
     <div class="panel active" id="panel-inicio">
       <div class="topbar">
         <div class="topbar-left">
-          <h1>¡Hola, <span id="greeting-name">Elena</span>!</h1>
+          <h1>¡Hola, <span id="greeting-name">...</span>!</h1>
           <p>Aquí está el resumen de tu negocio esta semana</p>
         </div>
         <div class="topbar-right">
@@ -341,10 +341,10 @@
               <div class="profile-avatar" id="preview-initials">EB</div>
             </div>
             <div class="profile-body">
-              <div class="profile-name" id="preview-name">Elena Bodas & Eventos</div>
-              <div class="profile-type" id="preview-type">Wedding planner · CDMX</div>
+              <div class="profile-name" id="preview-name">Tu negocio</div>
+              <div class="profile-type" id="preview-type">Categoría · Ciudad</div>
               <div class="profile-founder">✦ Proveedor Fundador MWP</div>
-              <div class="profile-bio" id="preview-bio">Más de 8 años coordinando bodas en México. Especializada en bodas de lujo en haciendas y destinos.</div>
+              <div class="profile-bio" id="preview-bio">Tu descripción aparecerá aquí.</div>
               <div class="profile-stats">
                 <div class="pstat"><div class="pstat-num">8+</div><div class="pstat-label">Años</div></div>
                 <div class="pstat"><div class="pstat-num">120+</div><div class="pstat-label">Bodas</div></div>
@@ -517,23 +517,23 @@
       <div class="grid-2">
         <div class="card">
           <div class="card-header"><div class="card-title">Información del negocio</div></div>
-          <div class="form-field"><label class="form-label">Nombre del negocio</label><input class="form-input" id="p-name" value="Elena Bodas & Eventos" oninput="updatePreview()"></div>
+          <div class="form-field"><label class="form-label">Nombre del negocio</label><input class="form-input" id="p-name" value="" oninput="updatePreview()"></div>
           <div class="form-row">
             <div class="form-field"><label class="form-label">Categoría</label>
               <select class="form-input" id="p-type">
-                <option>Wedding planner</option><option>Fotografía & video</option><option>Sede & hacienda</option><option>Catering & banquetes</option><option>Florista</option><option>Peinado & maquillaje</option><option>DJ & música</option><option>Pre-boda & anillos</option><option>Luna de miel & viajes</option>
+                <option value="">Selecciona</option><option>Wedding planner</option><option>Fotografía & video</option><option>Sede & hacienda</option><option>Catering & banquetes</option><option>Florista</option><option>Peinado & maquillaje</option><option>DJ & música</option><option>Pre-boda & anillos</option><option>Luna de miel & viajes</option>
               </select>
             </div>
-            <div class="form-field"><label class="form-label">Ciudad principal</label><input class="form-input" id="p-city" value="CDMX" oninput="updatePreview()"></div>
+            <div class="form-field"><label class="form-label">Ciudad principal</label><input class="form-input" id="p-city" value="" oninput="updatePreview()"></div>
           </div>
-          <div class="form-field"><label class="form-label">Descripción breve (aparece en tu perfil)</label><textarea class="form-input" id="p-bio" oninput="updatePreview()">Más de 8 años coordinando bodas en México. Especializada en bodas de lujo en haciendas y destinos.</textarea></div>
+          <div class="form-field"><label class="form-label">Descripción breve (aparece en tu perfil)</label><textarea class="form-input" id="p-bio" oninput="updatePreview()" placeholder="Cuéntanos sobre tu negocio, tu estilo y lo que te hace único..."></textarea></div>
           <div class="form-row">
-            <div class="form-field"><label class="form-label">Años de experiencia</label><input class="form-input" type="number" value="8"></div>
-            <div class="form-field"><label class="form-label">Bodas coordinadas</label><input class="form-input" type="number" value="120"></div>
+            <div class="form-field"><label class="form-label">Años de experiencia</label><input class="form-input" id="p-experience" type="number" placeholder="Ej. 8"></div>
+            <div class="form-field"><label class="form-label">Bodas coordinadas</label><input class="form-input" id="p-bodas" type="number" placeholder="Ej. 120"></div>
           </div>
-          <div class="form-field"><label class="form-label">WhatsApp de contacto</label><input class="form-input" type="tel" value="+52 55 1234 5678"></div>
-          <div class="form-field"><label class="form-label">Instagram</label><input class="form-input" value="@elenabodas"></div>
-          <div class="form-field"><label class="form-label">Sitio web (opcional)</label><input class="form-input" type="url" placeholder="https://tuweb.com"></div>
+          <div class="form-field"><label class="form-label">WhatsApp de contacto</label><input class="form-input" id="p-telefono" type="tel" placeholder="+52 55 0000 0000"></div>
+          <div class="form-field"><label class="form-label">Instagram</label><input class="form-input" id="p-instagram" placeholder="@tunegocio"></div>
+          <div class="form-field"><label class="form-label">Sitio web (opcional)</label><input class="form-input" id="p-website" type="url" placeholder="https://tuweb.com"></div>
         </div>
         <div>
           <div class="card" style="margin-bottom:16px;">
@@ -542,20 +542,38 @@
               <div class="profile-banner"></div>
               <div style="position:relative;"><div class="profile-avatar" id="preview-initials-2">EB</div></div>
               <div class="profile-body">
-                <div class="profile-name" id="preview-name-2">Elena Bodas & Eventos</div>
-                <div class="profile-type" id="preview-type-2">Wedding planner · CDMX</div>
+                <div class="profile-name" id="preview-name-2">Tu negocio</div>
+                <div class="profile-type" id="preview-type-2">Categoría · Ciudad</div>
                 <div class="profile-founder">✦ Proveedor Fundador MWP</div>
-                <div class="profile-bio" id="preview-bio-2">Más de 8 años coordinando bodas en México. Especializada en bodas de lujo en haciendas y destinos.</div>
+                <div class="profile-bio" id="preview-bio-2">Tu descripción aparecerá aquí.</div>
               </div>
             </div>
           </div>
           <div class="card">
             <div class="card-header"><div class="card-title">Regiones donde trabajas</div></div>
             <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;" id="regions">
-              <span style="background:var(--laurel);color:var(--night);font-size:12px;padding:5px 12px;border-radius:99px;">CDMX</span>
-              <span style="background:var(--laurel);color:var(--night);font-size:12px;padding:5px 12px;border-radius:99px;">Guadalajara</span>
-              <span style="background:var(--laurel);color:var(--night);font-size:12px;padding:5px 12px;border-radius:99px;">San Miguel de Allende</span>
-              <span style="background:var(--cotton);color:var(--muted);font-size:12px;padding:5px 12px;border-radius:99px;cursor:pointer;" onclick="addRegion()">+ Agregar</span>
+              <span style="background:var(--cotton);color:var(--muted);font-size:12px;padding:5px 12px;border-radius:99px;cursor:pointer;" onclick="addRegion()">+ Agregar región</span>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px;">
+            <div class="card-header"><div class="card-title">Portafolio & fotos</div></div>
+            <div style="font-size:12px;color:var(--muted);font-weight:300;margin-bottom:14px;line-height:1.6;">
+              Agrega los links de tu portafolio. Las novias verán estos en tu perfil público. Puedes usar Instagram, tu sitio web, Google Drive o cualquier galería en línea.
+            </div>
+            <div class="form-field">
+              <label class="form-label">Instagram / portafolio principal</label>
+              <input class="form-input" id="p-portfolio-main" type="url" placeholder="https://instagram.com/tunegocio">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Galería adicional (opcional)</label>
+              <input class="form-input" id="p-portfolio-2" type="url" placeholder="https://tuwebsite.com/galeria">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Video de presentación (opcional)</label>
+              <input class="form-input" id="p-video" type="url" placeholder="https://youtube.com/... o https://vimeo.com/...">
+            </div>
+            <div style="background:#F0F4F7;border-radius:var(--radius-md);padding:12px 14px;font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;margin-top:4px;">
+              💡 <strong style="color:var(--night);">Tip:</strong> Las novias toman decisiones basadas en fotos. Asegúrate de que tus links lleven a tu mejor trabajo y estén actualizados.
             </div>
           </div>
         </div>
@@ -570,30 +588,10 @@
       </div>
       <div class="card">
         <div id="packages-list">
-          <div class="package-card">
-            <div style="flex:1;">
-              <div class="package-name">Coordinación día-de</div>
-              <div class="package-desc">Coordinación completa el día de la boda. Incluye cronograma detallado, coordinación de todos los proveedores y atención de imprevistos.</div>
-              <div class="package-price">Desde $15,000 MXN</div>
-            </div>
-            <span class="package-edit" onclick="openEditPackage(this)">Editar</span>
+          <div id="packages-empty" style="text-align:center;padding:32px 0;font-size:13px;color:var(--muted);font-weight:300;">
+            Aún no tienes paquetes. Agrega tu primer paquete para que las novias vean tus precios.
           </div>
-          <div class="package-card">
-            <div style="flex:1;">
-              <div class="package-name">Planeación parcial (3 meses)</div>
-              <div class="package-desc">Acompañamiento los últimos 3 meses antes de la boda. Revisión de contratos, creación de cronograma y coordinación día-de incluida.</div>
-              <div class="package-price">Desde $28,000 MXN</div>
-            </div>
-            <span class="package-edit" onclick="openEditPackage(this)">Editar</span>
-          </div>
-          <div class="package-card">
-            <div style="flex:1;">
-              <div class="package-name">Planeación completa</div>
-              <div class="package-desc">Desde el primer día hasta el último baile. Incluye búsqueda y negociación con proveedores, manejo de presupuesto y coordinación total.</div>
-              <div class="package-price">Desde $55,000 MXN</div>
-            </div>
-            <span class="package-edit" onclick="openEditPackage(this)">Editar</span>
-          </div>
+
         </div>
         <div style="margin-top:16px;padding-top:16px;border-top:0.5px solid var(--cotton);">
           <p style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;">Los precios que muestras son orientativos. Las novias pueden solicitar una cotización personalizada directamente desde tu perfil.</p>
@@ -810,38 +808,89 @@
       data = nd;
     }
     if (!data) return;
+
+    const set = (id, val) => { const el = document.getElementById(id); if(el && val) el.value = val; };
+
+    set('p-name',           data.nombre_negocio);
+    set('p-city',           data.ciudad);
+    set('p-bio',            data.bio);
+    set('p-telefono',       data.telefono);
+    set('p-instagram',      data.instagram);
+    set('p-website',        data.sitio_web);
+    set('p-experience',     data.anos_experiencia);
+    set('p-bodas',          data.bodas_coordinadas);
+    set('p-portfolio-main', data.portfolio_main);
+    set('p-portfolio-2',    data.portfolio_2);
+    set('p-video',          data.portfolio_video);
+
+    if (data.categoria) {
+      const sel = document.getElementById('p-type');
+      if (sel) {
+        // Try to match the stored value to an option
+        const opt = [...sel.options].find(o => o.value === data.categoria || o.text === data.categoria);
+        if (opt) sel.value = opt.value;
+      }
+    }
+
     if (data.nombre_negocio) {
-      document.getElementById('p-name').value = data.nombre_negocio;
       const gn = document.getElementById('greeting-name'); if(gn) gn.textContent = data.nombre_negocio.split(' ')[0];
       const sn = document.getElementById('sidebar-name');  if(sn) sn.textContent = data.nombre_negocio;
-      const initials = data.nombre_negocio.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+      const initials = data.nombre_negocio.split(' ').filter(w=>w).map(w=>w[0]).join('').substring(0,2).toUpperCase() || '??';
       ['preview-initials','preview-initials-2','sidebar-initials'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = initials; });
-      ['preview-name','preview-name-2'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = data.nombre_negocio; });
     }
-    if (data.categoria)  { document.getElementById('p-type').value = data.categoria; }
-    if (data.ciudad)     { document.getElementById('p-city').value = data.ciudad; }
-    if (data.bio)        { document.getElementById('p-bio').value  = data.bio; }
-    if (data.telefono)   { const el = document.querySelector('input[type="tel"]'); if(el) el.value = data.telefono; }
-    if (data.instagram)  { const el = document.querySelector('input[value="@elenabodas"]'); if(el) el.value = data.instagram; }
+
     if (data.capacidad_dia) {
       vendorCapacity = data.capacidad_dia;
       document.getElementById('capacity-num').textContent = vendorCapacity;
     }
+
+    // Load regions
+    if (data.regiones) {
+      try {
+        const regiones = JSON.parse(data.regiones);
+        const container = document.getElementById('regions');
+        const addBtn = container.querySelector('[onclick="addRegion()"]');
+        regiones.forEach(r => {
+          const tag = document.createElement('span');
+          tag.style.cssText = 'background:var(--laurel);color:var(--night);font-size:12px;padding:5px 12px;border-radius:99px;cursor:pointer;';
+          tag.textContent = r;
+          tag.onclick = () => { tag.remove(); };
+          container.insertBefore(tag, addBtn);
+        });
+      } catch(e) {}
+    }
+
+    // Show/hide founder badge based on plan
+    const founderBadge = document.querySelector('.profile-founder');
+    if (founderBadge) founderBadge.style.display = data.fundador ? 'inline-flex' : 'none';
+
     updatePreview();
   }
 
   // ── SAVE VENDOR PROFILE ──────────────────────────────
   async function saveProfile() {
+    // Collect regions
+    const regionTags = [...document.querySelectorAll('#regions span:not([onclick="addRegion()"])')].map(s => s.textContent.trim());
+
     const profileData = {
-      id:             currentUser.id,
-      nombre_negocio: document.getElementById('p-name').value.trim(),
-      categoria:      document.getElementById('p-type').value,
-      ciudad:         document.getElementById('p-city').value.trim(),
-      bio:            document.getElementById('p-bio').value.trim(),
+      id:               currentUser.id,
+      nombre_negocio:   document.getElementById('p-name').value.trim(),
+      categoria:        document.getElementById('p-type').value,
+      ciudad:           document.getElementById('p-city').value.trim(),
+      bio:              document.getElementById('p-bio').value.trim(),
+      telefono:         document.getElementById('p-telefono').value.trim(),
+      instagram:        document.getElementById('p-instagram').value.trim(),
+      sitio_web:        document.getElementById('p-website').value.trim(),
+      anos_experiencia: document.getElementById('p-experience').value,
+      bodas_coordinadas:document.getElementById('p-bodas').value,
+      regiones:         JSON.stringify(regionTags),
+      portfolio_main:   document.getElementById('p-portfolio-main').value.trim(),
+      portfolio_2:      document.getElementById('p-portfolio-2').value.trim(),
+      portfolio_video:  document.getElementById('p-video').value.trim(),
     };
     const { error } = await sb.from('vendor_profiles').upsert(profileData);
     updatePreview();
-    showSaved(error ? '✗ Error al guardar' : 'Perfil actualizado ✓');
+    showSaved(error ? '✗ Error al guardar: ' + error.message : 'Perfil actualizado ✓');
   }
 
   // ── CAPACITY ─────────────────────────────────────────
