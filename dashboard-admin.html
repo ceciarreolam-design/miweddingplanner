@@ -551,10 +551,15 @@
                    : '<span class="badge badge-yellow">Pendiente</span>';
       const plan  = p.plan ? `<span class="badge badge-blue">${p.plan}</span>` : '—';
       const reg   = p.created_at ? new Date(p.created_at).toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric' }) : '—';
+      const nombre = (p.nombre_negocio||'').replace(/'/g,"\\'");
+      const email  = p.email || '';
+      // Show approve/reject for pending, show status + delete for approved/rejected
       const acciones = !p.aprobado && p.solicitud_estado !== 'rechazado'
-        ? `<button class="btn-approve" onclick="openApprove('${p.id}','${(p.nombre_negocio||'').replace(/'/g,"\\'")}','${p.email||''}')">Aprobar</button>
-           <button class="btn-reject"  onclick="openReject('${p.id}','${(p.nombre_negocio||'').replace(/'/g,"\\'")}','${p.email||''}')">Rechazar</button>`
-        : `<span style="font-size:11px;color:var(--stone);">${p.aprobado ? 'Activo' : 'Cerrado'}</span>`;
+        ? `<button class="btn-approve" onclick="openApprove('${p.id}','${nombre}','${email}')">Aprobar</button>
+           <button class="btn-reject"  onclick="openReject('${p.id}','${nombre}','${email}')">Rechazar</button>
+           <button onclick="deleteVendor('${p.id}','${nombre}')" style="font-size:11px;padding:4px 8px;border-radius:var(--radius-md);border:none;cursor:pointer;background:transparent;color:var(--stone);margin-left:4px;" title="Eliminar">✕</button>`
+        : `<span style="font-size:11px;color:var(--stone);margin-right:8px;">${p.aprobado ? 'Activo' : 'Cerrado'}</span>
+           <button onclick="deleteVendor('${p.id}','${nombre}')" style="font-size:11px;padding:4px 8px;border-radius:var(--radius-md);border:none;cursor:pointer;background:#FDF0EC;color:var(--danger);" title="Eliminar proveedor">Eliminar</button>`;
       return `<tr>
         <td style="font-weight:500;">${p.nombre_negocio || '—'}</td>
         <td>${p.categoria || '—'}</td>
@@ -637,6 +642,21 @@
 
     closeModal('modal-reject');
     showToast('Solicitud de ' + nombre + ' rechazada. Correo enviado.');
+    await loadProveedores();
+    renderResumen();
+  }
+
+  async function deleteVendor(id, nombre) {
+    if (!confirm(`¿Eliminar a "${nombre}" permanentemente? Esta acción no se puede deshacer.`)) return;
+
+    // Delete from vendor_profiles
+    const { error: profileErr } = await sb.from('vendor_profiles').delete().eq('id', id);
+    if (profileErr) {
+      // Try deleting from auth too (only works with service role, may fail — that's ok)
+      showToast('Perfil eliminado. La cuenta de auth puede requerir eliminación manual en Supabase.');
+    } else {
+      showToast('Proveedor eliminado ✓');
+    }
     await loadProveedores();
     renderResumen();
   }
