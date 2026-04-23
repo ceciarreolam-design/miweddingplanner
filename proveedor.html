@@ -593,7 +593,16 @@
       // Avatar initials
       const initials = (data.nombre_negocio || '??').split(' ').filter(w=>w).map(w=>w[0]).join('').substring(0,2).toUpperCase();
       const avatarEl = document.querySelector('.avatar');
-      if (avatarEl) avatarEl.textContent = initials;
+      if (avatarEl) {
+        if (data.logo_url) {
+          avatarEl.style.backgroundImage    = `url('${data.logo_url}')`;
+          avatarEl.style.backgroundSize     = 'cover';
+          avatarEl.style.backgroundPosition = 'center';
+          avatarEl.textContent = '';
+        } else {
+          avatarEl.textContent = initials;
+        }
+      }
 
       // Name, type, city
       const nameEl = document.querySelector('.vendor-name');
@@ -628,12 +637,23 @@
       const contactTitle = document.querySelector('.sidebar-title');
       if (contactTitle) contactTitle.textContent = '¿Te interesa trabajar con ' + (data.nombre_negocio?.split(' ')[0] || 'este proveedor') + '?';
 
-      // Info sidebar
-      const infoVals = document.querySelectorAll('.info-val');
-      if (infoVals.length >= 1 && data.ciudad)     infoVals[0].textContent = data.ciudad;
-      if (infoVals.length >= 5 && data.created_at) {
-        const joined = new Date(data.created_at);
-        infoVals[5].textContent = joined.toLocaleDateString('es-MX', { month:'long', year:'numeric' });
+      // Info sidebar - rebuild with real data
+      const infoCard = document.querySelectorAll('.sidebar-title')[2]?.closest('.sidebar-card');
+      if (infoCard) {
+        // Parse idiomas
+        let idiomasText = 'Español';
+        if (data.idiomas) {
+          try { idiomasText = JSON.parse(data.idiomas).join(', ') || 'Español'; } catch(e) {}
+        }
+        const joined = data.created_at ? new Date(data.created_at).toLocaleDateString('es-MX', { month:'long', year:'numeric' }) : '—';
+        const joined2 = joined.charAt(0).toUpperCase() + joined.slice(1);
+        infoCard.innerHTML = `<div class="sidebar-title">Información</div>
+          ${data.ciudad          ? `<div class="info-row"><span class="info-label">Ciudad</span><span class="info-val">${data.ciudad}</span></div>` : ''}
+          ${data.regiones        ? `<div class="info-row"><span class="info-label">Cobertura</span><span class="info-val">${(() => { try { return JSON.parse(data.regiones).join(', '); } catch(e) { return 'México'; } })()}</span></div>` : ''}
+          <div class="info-row"><span class="info-label">Idiomas</span><span class="info-val">${idiomasText}</span></div>
+          ${data.capacidad_atencion ? `<div class="info-row"><span class="info-label">Capacidad</span><span class="info-val">${data.capacidad_atencion}</span></div>` : ''}
+          ${data.anticipo           ? `<div class="info-row"><span class="info-label">Anticipo</span><span class="info-val">${data.anticipo}</span></div>` : ''}
+          <div class="info-row"><span class="info-label">Miembro desde</span><span class="info-val">${joined2}</span></div>`;
       }
 
       // Cita modal title
@@ -707,53 +727,80 @@
           </div>`).join('');
     }
 
+    // Availability state
+    let availBlocked = new Set();
+    let calYear  = new Date().getFullYear();
+    let calMonth = new Date().getMonth();
+
     async function loadAvailability(vendorId) {
+      // Load ALL future dates at once
       const { data } = await sb.from('disponibilidad').select('fecha, estado')
         .eq('vendor_id', vendorId)
         .gte('fecha', new Date().toISOString().slice(0,10))
         .order('fecha', { ascending: true });
 
-      if (!data || data.length === 0) return;
+      availBlocked = new Set((data || []).filter(d => d.estado === 'reservada' || d.estado === 'revision').map(d => d.fecha));
+      renderCalendar();
+    }
 
-      // Build a set of blocked dates
-      const blocked = new Set(data.filter(d => d.estado === 'reservada' || d.estado === 'revision').map(d => d.fecha));
-
-      // Rebuild the calendar for current month
-      const now       = new Date();
-      const year      = now.getFullYear();
-      const month     = now.getMonth();
-      const monthName = now.toLocaleDateString('es-MX', { month:'long', year:'numeric' });
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const firstDay    = new Date(year, month, 1).getDay(); // 0=Sun
-      const startOffset = firstDay === 0 ? 6 : firstDay - 1; // Monday-first
-
+    function renderCalendar() {
       const availCard = document.querySelectorAll('.sidebar-title')[1]?.closest('.sidebar-card');
       if (!availCard) return;
 
-      let calHtml = `<div class="sidebar-title">Disponibilidad — ${monthName.charAt(0).toUpperCase() + monthName.slice(1)}</div>
+      const monthName   = new Date(calYear, calMonth, 1).toLocaleDateString('es-MX', { month:'long', year:'numeric' });
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+      const firstDay    = new Date(calYear, calMonth, 1).getDay();
+      const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+      const todayStr    = new Date().toISOString().slice(0,10);
+      const nowMonth    = new Date().getMonth();
+      const nowYear     = new Date().getFullYear();
+      const isCurrentMonth = calYear === nowYear && calMonth === nowMonth;
+
+      let calHtml = `
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <button onclick="changeMonth(-1)" ${isCurrentMonth ? 'disabled style="opacity:0.3;cursor:default;"' : ''} style="background:none;border:none;cursor:pointer;color:var(--pigeon);font-size:18px;padding:4px 8px;border-radius:6px;" title="Mes anterior">‹</button>
+          <div style="font-size:13px;font-weight:500;color:var(--night);">
+            ${monthName.charAt(0).toUpperCase() + monthName.slice(1)}
+          </div>
+          <button onclick="changeMonth(1)" style="background:none;border:none;cursor:pointer;color:var(--pigeon);font-size:18px;padding:4px 8px;border-radius:6px;" title="Mes siguiente">›</button>
+        </div>
         <div class="avail-grid">
           <div class="avail-day-label">L</div><div class="avail-day-label">M</div><div class="avail-day-label">X</div>
           <div class="avail-day-label">J</div><div class="avail-day-label">V</div><div class="avail-day-label">S</div>
           <div class="avail-day-label">D</div>`;
 
-      // Empty slots before first day
       for (let i = 0; i < startOffset; i++) calHtml += '<div class="avail-slot"></div>';
 
-      const todayStr = now.toISOString().slice(0,10);
       for (let d = 1; d <= daysInMonth; d++) {
-        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const dateStr   = \`\${calYear}-\${String(calMonth+1).padStart(2,'0')}-\${String(d).padStart(2,'0')}\`;
         const isToday   = dateStr === todayStr;
-        const isBlocked = blocked.has(dateStr);
+        const isBlocked = availBlocked.has(dateStr);
         const isPast    = dateStr < todayStr;
         let cls = 'avail-slot ';
-        if (isToday)        cls += 'avail-today';
+        if      (isToday)   cls += 'avail-today';
         else if (isPast)    cls += 'avail-busy';
         else if (isBlocked) cls += 'avail-busy';
         else                cls += 'avail-free';
-        calHtml += `<div class="${cls}">${d}</div>`;
+        calHtml += \`<div class="\${cls}" title="\${dateStr}">\${d}</div>\`;
       }
-      calHtml += '</div><p class="avail-note">Verde = disponible · Gris = ocupado · Toca una fecha para agendar</p>';
+      calHtml += \`</div><p class="avail-note" style="margin-top:10px;">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--pigeon);margin-right:4px;vertical-align:middle;"></span>Disponible &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#F0EFF1;margin-right:4px;vertical-align:middle;border:0.5px solid #C8C6CB;"></span>Ocupado
+      </p>\`;
+
       availCard.innerHTML = calHtml;
+    }
+
+    function changeMonth(delta) {
+      calMonth += delta;
+      if (calMonth > 11) { calMonth = 0;  calYear++; }
+      if (calMonth < 0)  { calMonth = 11; calYear--; }
+      // Don't go before current month
+      const now = new Date();
+      if (calYear < now.getFullYear() || (calYear === now.getFullYear() && calMonth < now.getMonth())) {
+        calMonth = now.getMonth(); calYear = now.getFullYear();
+      }
+      renderCalendar();
     }
 
     loadVendor();

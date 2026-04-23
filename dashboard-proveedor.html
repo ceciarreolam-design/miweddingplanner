@@ -460,6 +460,25 @@
       <div class="grid-2">
         <div class="card">
           <div class="card-header"><div class="card-title">Información del negocio</div></div>
+
+          <!-- LOGO UPLOAD -->
+          <div class="form-field">
+            <label class="form-label">Logo o foto de perfil</label>
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div id="logo-preview" style="width:64px;height:64px;border-radius:50%;background:var(--laurel-d);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;color:var(--white);flex-shrink:0;overflow:hidden;">
+                <span id="logo-initials">?</span>
+                <img id="logo-img" style="display:none;width:100%;height:100%;object-fit:cover;" src="">
+              </div>
+              <div style="flex:1;">
+                <label for="logo-upload" style="display:inline-block;font-size:12px;font-weight:500;padding:8px 16px;border:0.5px solid var(--cotton);border-radius:var(--radius-md);cursor:pointer;color:var(--pigeon);transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--stone)'" onmouseout="this.style.borderColor='var(--cotton)'">
+                  Subir foto
+                </label>
+                <input type="file" id="logo-upload" accept="image/*" style="display:none;" onchange="uploadLogo(this)">
+                <div style="font-size:11px;color:var(--muted);font-weight:300;margin-top:5px;">JPG o PNG · Máx 2MB · Recomendado: cuadrada</div>
+              </div>
+            </div>
+          </div>
+
           <div class="form-field"><label class="form-label">Nombre del negocio</label><input class="form-input" id="p-name" value="" oninput="updatePreview()"></div>
           <div class="form-row">
             <div class="form-field"><label class="form-label">Categoría</label>
@@ -472,11 +491,33 @@
           <div class="form-field"><label class="form-label">Descripción breve (aparece en tu perfil)</label><textarea class="form-input" id="p-bio" oninput="updatePreview()" placeholder="Cuéntanos sobre tu negocio, tu estilo y lo que te hace único..."></textarea></div>
           <div class="form-row">
             <div class="form-field"><label class="form-label">Años de experiencia</label><input class="form-input" id="p-experience" type="number" placeholder="Ej. 8"></div>
-            <div class="form-field"><label class="form-label">Bodas coordinadas</label><input class="form-input" id="p-bodas" type="number" placeholder="Ej. 120"></div>
+            <div class="form-field"><label class="form-label">Bodas realizadas</label><input class="form-input" id="p-bodas" type="number" placeholder="Ej. 120"></div>
           </div>
-          <div class="form-field"><label class="form-label">WhatsApp de contacto</label><input class="form-input" id="p-telefono" type="tel" placeholder="+52 55 0000 0000"></div>
-          <div class="form-field"><label class="form-label">Instagram</label><input class="form-input" id="p-instagram" placeholder="@tunegocio"></div>
+          <div class="form-row">
+            <div class="form-field"><label class="form-label">WhatsApp de contacto</label><input class="form-input" id="p-telefono" type="tel" placeholder="+52 55 0000 0000"></div>
+            <div class="form-field"><label class="form-label">Instagram</label><input class="form-input" id="p-instagram" placeholder="@tunegocio"></div>
+          </div>
           <div class="form-field"><label class="form-label">Sitio web (opcional)</label><input class="form-input" id="p-website" type="url" placeholder="https://tuweb.com"></div>
+
+          <div style="height:0.5px;background:var(--cotton);margin:16px 0;"></div>
+          <div class="card-header" style="margin-bottom:8px;"><div class="card-title" style="font-size:13px;">Información adicional del perfil público</div></div>
+
+          <div class="form-row">
+            <div class="form-field"><label class="form-label">Capacidad (invitados)</label><input class="form-input" id="p-capacidad" placeholder="Ej. 30 – 400 personas"></div>
+            <div class="form-field"><label class="form-label">Anticipo para reservar</label><input class="form-input" id="p-anticipo" placeholder="Ej. 30%"></div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Idiomas que hablas</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;" id="idiomas-wrap">
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;"><input type="checkbox" id="idioma-es" value="Español" style="accent-color:var(--pigeon);" checked> Español</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;"><input type="checkbox" id="idioma-en" value="Inglés" style="accent-color:var(--pigeon);"> Inglés</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;"><input type="checkbox" id="idioma-fr" value="Francés" style="accent-color:var(--pigeon);"> Francés</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;"><input type="checkbox" id="idioma-it" value="Italiano" style="accent-color:var(--pigeon);"> Italiano</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;"><input type="checkbox" id="idioma-pt" value="Portugués" style="accent-color:var(--pigeon);"> Portugués</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;"><input type="checkbox" id="idioma-de" value="Alemán" style="accent-color:var(--pigeon);"> Alemán</label>
+            </div>
+          </div>
         </div>
         <div>
           <div class="card" style="margin-bottom:16px;">
@@ -501,7 +542,7 @@
           <div class="card" style="margin-top:16px;">
             <div class="card-header"><div class="card-title">Portafolio & fotos</div></div>
             <div style="font-size:12px;color:var(--muted);font-weight:300;margin-bottom:14px;line-height:1.6;">
-              Agrega los links de tu portafolio. Las novias verán estos en tu perfil público. Puedes usar Instagram, tu sitio web, Google Drive o cualquier galería en línea.
+              Agrega los links de tu portafolio. Las novias verán estos en tu perfil público.
             </div>
             <div class="form-field">
               <label class="form-label">Instagram / portafolio principal</label>
@@ -516,7 +557,7 @@
               <input class="form-input" id="p-video" type="url" placeholder="https://youtube.com/... o https://vimeo.com/...">
             </div>
             <div style="background:#F0F4F7;border-radius:var(--radius-md);padding:12px 14px;font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;margin-top:4px;">
-              💡 <strong style="color:var(--night);">Tip:</strong> Las novias toman decisiones basadas en fotos. Asegúrate de que tus links lleven a tu mejor trabajo y estén actualizados.
+              <strong style="color:var(--night);">Tip:</strong> Las novias toman decisiones basadas en fotos. Asegúrate de que tus links lleven a tu mejor trabajo y estén actualizados.
             </div>
           </div>
         </div>
@@ -800,7 +841,47 @@
   function openEditPackage(el) { document.getElementById('modal-package-title').textContent = 'Editar paquete'; document.getElementById('modal-package').classList.add('open'); }
 
   // ── ADD REGION ───────────────────────────────────────
-  function addRegion() {
+  // ── LOGO UPLOAD ──────────────────────────────────────
+  async function uploadLogo(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { showSaved('La imagen debe ser menor a 2MB'); return; }
+
+    // Show local preview immediately
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img     = document.getElementById('logo-img');
+      const initEl  = document.getElementById('logo-initials');
+      const prev2   = document.getElementById('preview-initials-2');
+      const prev1   = document.getElementById('preview-initials');
+      const sidebar = document.getElementById('sidebar-initials');
+      if (img)     { img.src = e.target.result; img.style.display = 'block'; }
+      if (initEl)  initEl.style.display = 'none';
+      // Update all avatar previews
+      [prev2, prev1, sidebar].forEach(el => {
+        if (el) {
+          el.style.backgroundImage = `url('${e.target.result}')`;
+          el.style.backgroundSize  = 'cover';
+          el.style.backgroundPosition = 'center';
+          el.textContent = '';
+        }
+      });
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to Supabase Storage
+    showSaved('Subiendo foto...');
+    const ext      = file.name.split('.').pop();
+    const path     = `logos/${currentUser.id}.${ext}`;
+    const { error: upErr } = await sb.storage.from('vendor-assets').upload(path, file, { upsert: true });
+    if (upErr) { showSaved('Error al subir: ' + upErr.message); return; }
+
+    const { data: urlData } = sb.storage.from('vendor-assets').getPublicUrl(path);
+    const logoUrl = urlData.publicUrl;
+
+    await sb.from('vendor_profiles').update({ logo_url: logoUrl }).eq('id', currentUser.id);
+    showSaved('Foto de perfil actualizada ✓');
+  }
     const r = prompt('¿Qué ciudad o región quieres agregar?');
     if (!r) return;
     const tag = document.createElement('span');
@@ -914,6 +995,35 @@
     set('p-portfolio-main', data.portfolio_main);
     set('p-portfolio-2',    data.portfolio_2);
     set('p-video',          data.portfolio_video);
+    set('p-capacidad',      data.capacidad_atencion);
+    set('p-anticipo',       data.anticipo);
+
+    // Load idiomas checkboxes
+    if (data.idiomas) {
+      try {
+        const idiomas = JSON.parse(data.idiomas);
+        document.querySelectorAll('#idiomas-wrap input[type="checkbox"]').forEach(cb => {
+          cb.checked = idiomas.includes(cb.value);
+        });
+      } catch(e) {}
+    }
+
+    // Load logo if exists
+    if (data.logo_url) {
+      const img    = document.getElementById('logo-img');
+      const initEl = document.getElementById('logo-initials');
+      if (img)    { img.src = data.logo_url; img.style.display = 'block'; }
+      if (initEl)  initEl.style.display = 'none';
+      ['preview-initials-2','preview-initials','sidebar-initials'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.backgroundImage    = `url('${data.logo_url}')`;
+          el.style.backgroundSize     = 'cover';
+          el.style.backgroundPosition = 'center';
+          el.textContent = '';
+        }
+      });
+    }
 
     if (data.categoria) {
       const sel = document.getElementById('p-type');
@@ -995,8 +1105,8 @@
 
   // ── SAVE VENDOR PROFILE ──────────────────────────────
   async function saveProfile() {
-    // Collect regions
     const regionTags = [...document.querySelectorAll('#regions span:not([onclick="addRegion()"])')].map(s => s.textContent.trim());
+    const idiomas    = [...document.querySelectorAll('#idiomas-wrap input:checked')].map(i => i.value);
 
     const profileData = {
       id:               currentUser.id,
@@ -1013,10 +1123,13 @@
       portfolio_main:   document.getElementById('p-portfolio-main').value.trim(),
       portfolio_2:      document.getElementById('p-portfolio-2').value.trim(),
       portfolio_video:  document.getElementById('p-video').value.trim(),
+      capacidad_atencion: document.getElementById('p-capacidad').value.trim(),
+      anticipo:         document.getElementById('p-anticipo').value.trim(),
+      idiomas:          JSON.stringify(idiomas),
     };
     const { error } = await sb.from('vendor_profiles').upsert(profileData);
     updatePreview();
-    showSaved(error ? '✗ Error al guardar: ' + error.message : 'Perfil actualizado ✓');
+    showSaved(error ? '✗ Error: ' + error.message : 'Perfil actualizado ✓');
   }
 
   // ── CAPACITY ─────────────────────────────────────────
