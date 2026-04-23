@@ -882,12 +882,19 @@
     await sb.from('vendor_profiles').update({ logo_url: logoUrl }).eq('id', currentUser.id);
     showSaved('Foto de perfil actualizada ✓');
   }
+
+  function addRegion() {
     const r = prompt('¿Qué ciudad o región quieres agregar?');
     if (!r) return;
     const tag = document.createElement('span');
-    tag.style.cssText = 'background:var(--laurel);color:var(--night);font-size:12px;padding:5px 12px;border-radius:99px;';
+    tag.style.cssText = 'background:var(--laurel);color:var(--night);font-size:12px;padding:5px 12px;border-radius:99px;cursor:pointer;';
     tag.textContent = r;
+    tag.onclick = () => tag.remove();
     document.getElementById('regions').insertBefore(tag, document.getElementById('regions').lastElementChild);
+  }
+
+  function viewPublicProfile() {
+    window.open('proveedor.html?id=' + (currentUser?.id || ''), '_blank');
   }
 
   // ── SUPABASE ─────────────────────────────────────────
@@ -920,11 +927,6 @@
   }
   initDashboard();
 
-  function viewPublicProfile() {
-    // Pass vendor id as URL param so proveedor.html can load the right data
-    window.open('proveedor.html?id=' + (currentUser?.id || ''), '_blank');
-  }
-
   function loadPlanInfo() {
     // Will be dynamic when payment is connected — for now show plan from profile
     sb.from('vendor_profiles').select('plan, fundador, fundador_num').eq('id', currentUser.id).single()
@@ -953,34 +955,48 @@
 
   // ── LOAD VENDOR PROFILE ──────────────────────────────
   async function loadVendorProfile() {
-    // First try by user id (maybeSingle won't error if no row found)
-    let { data, error } = await sb.from('vendor_profiles').select('*').eq('id', currentUser.id).maybeSingle();
-    console.log('Load by id:', currentUser.id, '→ data:', data, 'error:', error);
+    // Try by user id first
+    let { data } = await sb.from('vendor_profiles').select('*').eq('id', currentUser.id).maybeSingle();
 
-    // Fallback: try by email
-    if (!data && currentUser.email) {
-      const { data: byEmail, error: emailErr } = await sb.from('vendor_profiles')
-        .select('*').eq('email', currentUser.email).maybeSingle();
-      console.log('Load by email:', currentUser.email, '→ data:', byEmail, 'error:', emailErr);
-      if (byEmail) {
-        data = byEmail;
-        // Link to real auth id for future loads
-        await sb.from('vendor_profiles').update({ id: currentUser.id }).eq('email', currentUser.email);
-        console.log('Linked profile to auth id');
+    // If found by id but it's mostly empty, check if there's a richer row by email
+    const isEmpty = !data?.nombre_negocio && !data?.bio && !data?.telefono;
+    if (isEmpty && currentUser.email) {
+      const { data: byEmail } = await sb.from('vendor_profiles')
+        .select('*').eq('email', currentUser.email)
+        .neq('id', currentUser.id) // different row
+        .maybeSingle();
+
+      if (byEmail && byEmail.nombre_negocio) {
+        // Merge: copy real data into the id-matched row, delete the orphan
+        const mergeData = { ...byEmail, id: currentUser.id };
+        delete mergeData.created_at;
+        await sb.from('vendor_profiles').upsert(mergeData);
+        // Delete the old orphan row
+        await sb.from('vendor_profiles').delete().eq('email', currentUser.email).neq('id', currentUser.id);
+        data = mergeData;
+        console.log('Merged orphan profile into auth row ✓');
       }
     }
 
-    // Still nothing — create blank profile
+    // Fallback: try by email (no id-matched row at all)
+    if (!data && currentUser.email) {
+      const { data: byEmail } = await sb.from('vendor_profiles')
+        .select('*').eq('email', currentUser.email).maybeSingle();
+      if (byEmail) {
+        data = byEmail;
+        await sb.from('vendor_profiles').update({ id: currentUser.id }).eq('email', currentUser.email);
+      }
+    }
+
+    // Last resort: create blank
     if (!data) {
-      console.log('Creating blank profile for', currentUser.id);
-      const { data: nd, error: insertErr } = await sb.from('vendor_profiles')
+      const { data: nd } = await sb.from('vendor_profiles')
         .insert({ id: currentUser.id, email: currentUser.email })
         .select().single();
-      console.log('Insert result:', nd, insertErr);
       data = nd;
     }
-    if (!data) { console.error('Could not load or create profile'); return; }
-    console.log('Final profile data:', data);
+    if (!data) { console.error('Could not load profile'); return; }
+    console.log('Profile loaded:', data?.nombre_negocio || '(empty)');
 
     const set = (id, val) => { const el = document.getElementById(id); if(el && val != null && val !== '') el.value = val; };
 
