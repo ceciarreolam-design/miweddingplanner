@@ -584,7 +584,7 @@
       const avatarEl = document.querySelector('.avatar');
       if (avatarEl) {
         if (data.logo_url) {
-          avatarEl.style.backgroundImage    = `url('${data.logo_url}')`;
+          avatarEl.style.backgroundImage    = "url('" + data.logo_url + "')";
           avatarEl.style.backgroundSize     = 'cover';
           avatarEl.style.backgroundPosition = 'center';
           avatarEl.textContent = '';
@@ -598,18 +598,18 @@
       if (nameEl) nameEl.textContent = data.nombre_negocio || '';
 
       const typeEl = document.querySelector('.vendor-type-pill');
-      if (typeEl) typeEl.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="4" r="2.5" stroke="#667C90" stroke-width="1"/><path d="M2 10c0-2.21 1.79-4 4-4s4 1.79 4 4" stroke="#667C90" stroke-width="1" stroke-linecap="round"/></svg> ${data.categoria || ''}${data.ciudad ? ' · ' + data.ciudad : ''}`;
+      if (typeEl) typeEl.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="4" r="2.5" stroke="#667C90" stroke-width="1"/><path d="M2 10c0-2.21 1.79-4 4-4s4 1.79 4 4" stroke="#667C90" stroke-width="1" stroke-linecap="round"/></svg> ' + (data.categoria || '') + (data.ciudad ? ' · ' + data.ciudad : '');
 
       // Stats row
       const statsRow = document.querySelector('.stats-row');
       if (statsRow) {
-        const exp   = data.anos_experiencia   ? String(data.anos_experiencia).replace(/[^0-9]/g,'')   : null;
-        const bodas = data.bodas_coordinadas  ? String(data.bodas_coordinadas).replace(/[^0-9]/g,'')  : null;
-        statsRow.innerHTML = `
-          <div><div class="stat-val">★ —</div><div class="stat-label">Reseñas</div></div>
-          ${bodas ? `<div><div class="stat-val">${bodas}+</div><div class="stat-label">Bodas realizadas</div></div>` : ''}
-          ${exp   ? `<div><div class="stat-val">${exp} años</div><div class="stat-label">De experiencia</div></div>` : ''}
-          <div><div class="stat-val">98%</div><div class="stat-label">Responde en 24h</div></div>`;
+        const exp   = data.anos_experiencia  ? String(data.anos_experiencia).replace(/[^0-9]/g,'')  : null;
+        const bodas = data.bodas_coordinadas ? String(data.bodas_coordinadas).replace(/[^0-9]/g,'') : null;
+        var statsHtml = '<div><div class="stat-val">★ —</div><div class="stat-label">Reseñas</div></div>';
+        if (bodas) statsHtml += '<div><div class="stat-val">' + bodas + '+</div><div class="stat-label">Bodas realizadas</div></div>';
+        if (exp)   statsHtml += '<div><div class="stat-val">' + exp + ' años</div><div class="stat-label">De experiencia</div></div>';
+        statsHtml += '<div><div class="stat-val">98%</div><div class="stat-label">Responde en 24h</div></div>';
+        statsRow.innerHTML = statsHtml;
       }
 
       // About section
@@ -618,42 +618,41 @@
       const descEls = document.querySelectorAll('.desc-text');
       if (descEls.length > 0 && data.bio) {
         descEls[0].textContent = data.bio;
-        // Hide extra mock paragraphs
-        for (let i = 1; i < descEls.length; i++) descEls[i].style.display = 'none';
+        for (var i = 1; i < descEls.length; i++) descEls[i].style.display = 'none';
       }
 
       // Contact card
       const contactTitle = document.querySelector('.sidebar-title');
-      if (contactTitle) contactTitle.textContent = '¿Te interesa trabajar con ' + (data.nombre_negocio?.split(' ')[0] || 'este proveedor') + '?';
+      if (contactTitle) contactTitle.textContent = '¿Te interesa trabajar con ' + ((data.nombre_negocio || '').split(' ')[0] || 'este proveedor') + '?';
 
       // Info sidebar - rebuild with real data
       const infoCard = document.querySelectorAll('.sidebar-title')[2]?.closest('.sidebar-card');
       if (infoCard) {
-        // Parse idiomas
-        let idiomasText = 'Español';
-        if (data.idiomas) {
-          try { idiomasText = JSON.parse(data.idiomas).join(', ') || 'Español'; } catch(e) {}
-        }
-        const joined = data.created_at ? new Date(data.created_at).toLocaleDateString('es-MX', { month:'long', year:'numeric' }) : '—';
+        var idiomasText = 'Español';
+        if (data.idiomas) { try { idiomasText = JSON.parse(data.idiomas).join(', ') || 'Español'; } catch(e) {} }
+        var cobertura = '';
+        if (data.regiones) { try { cobertura = JSON.parse(data.regiones).join(', '); } catch(e) { cobertura = 'México'; } }
+        const joined  = data.created_at ? new Date(data.created_at).toLocaleDateString('es-MX', { month:'long', year:'numeric' }) : '—';
         const joined2 = joined.charAt(0).toUpperCase() + joined.slice(1);
-        infoCard.innerHTML = `<div class="sidebar-title">Información</div>
-          ${data.ciudad          ? `<div class="info-row"><span class="info-label">Ciudad</span><span class="info-val">${data.ciudad}</span></div>` : ''}
-          ${data.regiones        ? `<div class="info-row"><span class="info-label">Cobertura</span><span class="info-val">${(() => { try { return JSON.parse(data.regiones).join(', '); } catch(e) { return 'México'; } })()}</span></div>` : ''}
-          <div class="info-row"><span class="info-label">Idiomas</span><span class="info-val">${idiomasText}</span></div>
-          ${data.capacidad_atencion ? `<div class="info-row"><span class="info-label">Capacidad</span><span class="info-val">${data.capacidad_atencion}</span></div>` : ''}
-          ${data.anticipo           ? `<div class="info-row"><span class="info-label">Anticipo</span><span class="info-val">${data.anticipo}</span></div>` : ''}
-          <div class="info-row"><span class="info-label">Miembro desde</span><span class="info-val">${joined2}</span></div>`;
+        var infoHtml = '<div class="sidebar-title">Información</div>';
+        if (data.ciudad)           infoHtml += '<div class="info-row"><span class="info-label">Ciudad</span><span class="info-val">' + data.ciudad + '</span></div>';
+        if (cobertura)             infoHtml += '<div class="info-row"><span class="info-label">Cobertura</span><span class="info-val">' + cobertura + '</span></div>';
+        infoHtml += '<div class="info-row"><span class="info-label">Idiomas</span><span class="info-val">' + idiomasText + '</span></div>';
+        if (data.capacidad_atencion) infoHtml += '<div class="info-row"><span class="info-label">Capacidad</span><span class="info-val">' + data.capacidad_atencion + '</span></div>';
+        if (data.anticipo)           infoHtml += '<div class="info-row"><span class="info-label">Anticipo</span><span class="info-val">' + data.anticipo + '</span></div>';
+        infoHtml += '<div class="info-row"><span class="info-label">Miembro desde</span><span class="info-val">' + joined2 + '</span></div>';
+        infoCard.innerHTML = infoHtml;
       }
 
       // Cita modal title
       const citaTitle = document.querySelector('#modal-cita .modal-title');
-      if (citaTitle) citaTitle.textContent = 'Agendar cita con ' + (data.nombre_negocio?.split(' ')[0] || 'el proveedor');
+      if (citaTitle) citaTitle.textContent = 'Agendar cita con ' + ((data.nombre_negocio || '').split(' ')[0] || 'el proveedor');
 
       // Contact modal title
       const contactModalTitle = document.querySelector('#modal .modal-title');
-      if (contactModalTitle) contactModalTitle.textContent = 'Contactar a ' + (data.nombre_negocio?.split(' ')[0] || 'este proveedor');
+      if (contactModalTitle) contactModalTitle.textContent = 'Contactar a ' + ((data.nombre_negocio || '').split(' ')[0] || 'este proveedor');
 
-      // Portfolio — show links if available
+      // Portfolio
       const portfolioSection = document.getElementById('portfolio-section');
       if (portfolioSection) {
         if (data.portfolio_main || data.portfolio_2 || data.portfolio_video) {
@@ -667,16 +666,16 @@
         }
       }
 
-      // Regions / specialties
+      // Regions / specialties tags
       if (data.regiones) {
         try {
           const regiones = JSON.parse(data.regiones);
           const specCard = document.querySelectorAll('.sidebar-title')[3]?.closest('.sidebar-card');
           if (specCard && regiones.length) {
-            specCard.querySelector('.tags-wrap').innerHTML = regiones.map(r => `<span class="tag-pill">${r}</span>`).join('');
+            var tagsHtml = '';
+            regiones.forEach(function(r) { tagsHtml += '<span class="tag-pill">' + r + '</span>'; });
+            specCard.querySelector('.tags-wrap').innerHTML = tagsHtml;
           }
-          // Also update cobertura in info card
-          if (infoVals.length >= 2) infoVals[1].textContent = regiones.join(', ') || 'Todo México';
         } catch(e) {}
       }
 
@@ -703,19 +702,16 @@
 
     async function loadPaquetes(vendorId, nombreNegocio) {
       const { data } = await sb.from('paquetes').select('*').eq('vendor_id', vendorId);
-      if (!data || data.length === 0) return; // Keep mock packages if none saved
+      if (!data || data.length === 0) return;
 
-      const pkgCard = document.querySelectorAll('.card')[1]; // packages card
+      const pkgCard = document.querySelectorAll('.card')[1];
       if (!pkgCard) return;
-      pkgCard.innerHTML = '<div class="card-title">Paquetes y precios</div>' +
-        data.map(p => `
-          <div class="pkg">
-            <div class="pkg-top">
-              <span class="pkg-name">${p.nombre}</span>
-              <span class="pkg-price">${p.precio_desde ? 'Desde $' + parseInt(p.precio_desde).toLocaleString('es-MX') + ' MXN' : ''}</span>
-            </div>
-            <p class="pkg-desc">${p.descripcion || ''}</p>
-          </div>`).join('');
+      var pkgHtml = '<div class="card-title">Paquetes y precios</div>';
+      data.forEach(function(p) {
+        var precio = p.precio_desde ? 'Desde $' + parseInt(p.precio_desde).toLocaleString('es-MX') + ' MXN' : '';
+        pkgHtml += '<div class="pkg"><div class="pkg-top"><span class="pkg-name">' + (p.nombre || '') + '</span><span class="pkg-price">' + precio + '</span></div><p class="pkg-desc">' + (p.descripcion || '') + '</p></div>';
+      });
+      pkgCard.innerHTML = pkgHtml;
     }
 
     // Availability state
