@@ -225,13 +225,13 @@
         <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="6" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 6V4a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         Paquetes & precios
       </div>
-      <div class="nav-item" onclick="window.location.href='precios.html'">
+      <div class="nav-item" id="nav-suscripcion" onclick="navTo('suscripcion')">
         <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 5v6M6 7h3a1 1 0 010 2H6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         Mi suscripción
       </div>
     </nav>
     <div class="sidebar-bottom">
-      <div class="sidebar-bottom-link" onclick="window.location.href='proveedor.html'">
+      <div class="sidebar-bottom-link" onclick="viewPublicProfile()">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1C4.2 1 2 3.2 2 6c0 3.5 5 9 5 9s5-5.5 5-9c0-2.8-2.2-5-5-5z" stroke="currentColor" stroke-width="1"/></svg>
         Ver mi perfil público
       </div>
@@ -259,7 +259,7 @@
       </div>
 
       <!-- FOUNDER BANNER -->
-      <div class="founder-banner">
+      <div class="founder-banner" id="founder-banner" style="display:none;">
         <div class="founder-left">
           <div class="founder-icon">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2l1.5 4.5H15l-3.8 2.8 1.5 4.5L9 11l-3.7 2.8 1.5-4.5L3 6.5h4.5z" stroke="#C9A96E" stroke-width="1.2" stroke-linejoin="round"/></svg>
@@ -269,30 +269,30 @@
             <div class="founder-sub">Precio bloqueado para siempre · Badge permanente en tu perfil · Posición prioritaria</div>
           </div>
         </div>
-        <div class="founder-tag">✦ Fundador #12</div>
+        <div class="founder-tag" id="founder-num">✦ Fundador</div>
       </div>
 
       <!-- STATS -->
       <div class="stats-row">
         <div class="stat-card">
-          <div class="stat-num">284</div>
+          <div class="stat-num" id="stat-visitas">—</div>
           <div class="stat-label">Visitas a tu perfil</div>
-          <div class="stat-trend">↑ 18% esta semana</div>
+          <div class="stat-trend" id="stat-visitas-sub">Disponible próximamente</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num">47</div>
-          <div class="stat-label">Guardados por novias</div>
-          <div class="stat-trend">↑ 5 esta semana</div>
+          <div class="stat-num" id="stat-guardados">—</div>
+          <div class="stat-label">Guardadas por novias</div>
+          <div class="stat-trend" id="stat-guardados-sub">Disponible próximamente</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num" id="stat-inquiries">3</div>
+          <div class="stat-num" id="stat-inquiries">0</div>
           <div class="stat-label">Solicitudes nuevas</div>
-          <div class="stat-trend">Sin responder</div>
+          <div class="stat-trend" id="stat-inquiries-sub">Sin responder</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num">12</div>
-          <div class="stat-label">Bodas confirmadas</div>
-          <div class="stat-trend">2026 · En agenda</div>
+          <div class="stat-num" id="stat-bodas-conf">0</div>
+          <div class="stat-label">Fechas reservadas</div>
+          <div class="stat-trend" id="stat-bodas-sub">En tu agenda</div>
         </div>
       </div>
 
@@ -303,32 +303,11 @@
             <div class="card-title">Solicitudes recientes</div>
             <span class="card-link" onclick="navTo('solicitudes')">Ver todas →</span>
           </div>
-          <div class="inquiry-item" onclick="openInquiry('Sofía Castro','Wedding planner para noviembre 2026','Hola, vi tu perfil en Mi Wedding Planner y me encantó tu trabajo. Estamos planeando nuestra boda para el 15 de noviembre en Guadalajara, aproximadamente 150 invitados. ¿Tienes disponibilidad y podrías compartirnos tus paquetes?','28 Abr','new')">
-            <div class="inquiry-avatar">SC</div>
-            <div class="inquiry-info">
-              <div class="inquiry-name">Sofía Castro</div>
-              <div class="inquiry-preview">Hola, vi tu perfil y me encantó tu trabajo...</div>
-              <div class="inquiry-meta"><span class="inquiry-date">28 Abr</span><span class="inquiry-tag tag-new">Nueva</span></div>
+          <div id="home-solicitudes">
+            <div style="text-align:center;padding:32px 0;font-size:13px;color:var(--muted);font-weight:300;">
+              Aún no tienes solicitudes.<br>
+              <span style="font-size:12px;">Las novias te contactarán desde tu perfil público.</span>
             </div>
-            <div class="inquiry-unread"></div>
-          </div>
-          <div class="inquiry-item" onclick="openInquiry('Mariana López','Consulta para boda destino en Oaxaca','Buenos días, buscamos una wedding planner con experiencia en bodas de destino. La boda sería en Oaxaca en agosto 2026 para 80 personas. ¿Trabajan fuera de CDMX?','26 Abr','new')">
-            <div class="inquiry-avatar">ML</div>
-            <div class="inquiry-info">
-              <div class="inquiry-name">Mariana López</div>
-              <div class="inquiry-preview">Buscamos wedding planner para boda en Oaxaca...</div>
-              <div class="inquiry-meta"><span class="inquiry-date">26 Abr</span><span class="inquiry-tag tag-new">Nueva</span></div>
-            </div>
-            <div class="inquiry-unread"></div>
-          </div>
-          <div class="inquiry-item" onclick="openInquiry('Valeria Ruiz','Información sobre paquetes y precios','Hola, estamos comenzando a planear nuestra boda para diciembre 2026. ¿Podrían enviarnos información sobre sus paquetes y un estimado de precios? Somos aproximadamente 200 personas.','24 Abr','new')">
-            <div class="inquiry-avatar">VR</div>
-            <div class="inquiry-info">
-              <div class="inquiry-name">Valeria Ruiz</div>
-              <div class="inquiry-preview">¿Podrían enviarnos info sobre sus paquetes?</div>
-              <div class="inquiry-meta"><span class="inquiry-date">24 Abr</span><span class="inquiry-tag tag-new">Nueva</span></div>
-            </div>
-            <div class="inquiry-unread"></div>
           </div>
         </div>
 
@@ -346,9 +325,9 @@
               <div class="profile-founder">✦ Proveedor Fundador MWP</div>
               <div class="profile-bio" id="preview-bio">Tu descripción aparecerá aquí.</div>
               <div class="profile-stats">
-                <div class="pstat"><div class="pstat-num">8+</div><div class="pstat-label">Años</div></div>
-                <div class="pstat"><div class="pstat-num">120+</div><div class="pstat-label">Bodas</div></div>
-                <div class="pstat"><div class="pstat-num">4.9</div><div class="pstat-label">Rating</div></div>
+                <div class="pstat"><div class="pstat-num" id="preview-exp">—</div><div class="pstat-label">Años</div></div>
+                <div class="pstat"><div class="pstat-num" id="preview-bodas">—</div><div class="pstat-label">Bodas</div></div>
+                <div class="pstat"><div class="pstat-num" id="preview-rating">★</div><div class="pstat-label">Rating</div></div>
               </div>
               <button class="profile-edit-btn" onclick="navTo('perfil')">Editar perfil →</button>
             </div>
@@ -599,6 +578,56 @@
       </div>
     </div>
 
+    <!-- ── SUSCRIPCIÓN ── -->
+    <div class="panel" id="panel-suscripcion">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Mi suscripción</h1><p>Tu plan actual en Mi Wedding Planner</p></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Plan actual</div></div>
+          <div style="margin-bottom:20px;">
+            <div style="font-size:22px;font-weight:500;color:var(--night);margin-bottom:4px;" id="plan-nombre">—</div>
+            <div style="font-size:13px;color:var(--muted);font-weight:300;" id="plan-precio">Cargando información de tu plan...</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;" id="plan-features">
+          </div>
+          <div style="height:0.5px;background:var(--cotton);margin-bottom:16px;"></div>
+          <div style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;">
+            Para cambiar tu plan o cancelar tu suscripción, contáctanos directamente a
+            <a href="mailto:holamiweddingplanner@gmail.com" style="color:var(--pigeon);">holamiweddingplanner@gmail.com</a>.
+            Estamos aquí para ayudarte.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Comparar planes</div></div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div style="border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:16px;">
+              <div style="font-size:14px;font-weight:500;color:var(--night);margin-bottom:4px;">Básico</div>
+              <div style="font-size:20px;font-weight:500;color:var(--pigeon);margin-bottom:8px;">$499 <span style="font-size:12px;color:var(--muted);font-weight:300;">MXN / mes</span></div>
+              <div style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;">Perfil público · Solicitudes ilimitadas · Disponibilidad básica</div>
+            </div>
+            <div style="border:1.5px solid var(--pigeon);border-radius:var(--radius-md);padding:16px;background:#F4F7F9;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                <div style="font-size:14px;font-weight:500;color:var(--night);">Profesional</div>
+                <span style="font-size:10px;background:var(--laurel);color:var(--night);border-radius:99px;padding:2px 8px;font-weight:500;">Más popular</span>
+              </div>
+              <div style="font-size:20px;font-weight:500;color:var(--pigeon);margin-bottom:8px;">$799 <span style="font-size:12px;color:var(--muted);font-weight:300;">MXN / mes</span></div>
+              <div style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;">Todo lo de Básico · Posición destacada · Estadísticas avanzadas · Galería extendida</div>
+            </div>
+            <div style="border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:16px;">
+              <div style="font-size:14px;font-weight:500;color:var(--night);margin-bottom:4px;">Elite</div>
+              <div style="font-size:20px;font-weight:500;color:var(--pigeon);margin-bottom:8px;">$1,499 <span style="font-size:12px;color:var(--muted);font-weight:300;">MXN / mes</span></div>
+              <div style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;">Todo lo de Profesional · Posición #1 en su categoría · Badge Elite · Soporte prioritario</div>
+            </div>
+          </div>
+          <div style="margin-top:14px;font-size:12px;color:var(--muted);text-align:center;">
+            Para cambiar de plan escríbenos a <a href="mailto:holamiweddingplanner@gmail.com" style="color:var(--pigeon);">holamiweddingplanner@gmail.com</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -796,20 +825,67 @@
       currentUser = session.user;
       await loadVendorProfile();
       await loadDisponibilidad().catch(e => console.warn('Disponibilidad:', e));
+      loadPlanInfo();
     } catch(e) { console.error('Dashboard error:', e); }
   }
   initDashboard();
 
+  function viewPublicProfile() {
+    // Pass vendor id as URL param so proveedor.html can load the right data
+    window.open('proveedor.html?id=' + (currentUser?.id || ''), '_blank');
+  }
+
+  function loadPlanInfo() {
+    // Will be dynamic when payment is connected — for now show plan from profile
+    sb.from('vendor_profiles').select('plan, fundador, fundador_num').eq('id', currentUser.id).single()
+      .then(({ data }) => {
+        if (!data) return;
+        const planMap = {
+          basico:       { nombre: 'Plan Básico',       precio: '$499 MXN / mes' },
+          profesional:  { nombre: 'Plan Profesional',  precio: '$799 MXN / mes' },
+          elite:        { nombre: 'Plan Elite',         precio: '$1,499 MXN / mes' },
+        };
+        const p = planMap[data.plan] || { nombre: 'Plan ' + (data.plan || 'Básico'), precio: 'Contacta para más info' };
+        const nameEl = document.getElementById('plan-nombre');
+        const precioEl = document.getElementById('plan-precio');
+        if (nameEl) nameEl.textContent = p.nombre;
+        if (precioEl) precioEl.textContent = p.precio;
+
+        // Founder banner
+        if (data.fundador) {
+          const banner = document.getElementById('founder-banner');
+          const numEl  = document.getElementById('founder-num');
+          if (banner) banner.style.display = 'flex';
+          if (numEl && data.fundador_num) numEl.textContent = '✦ Fundador #' + data.fundador_num;
+        }
+      });
+  }
+
   // ── LOAD VENDOR PROFILE ──────────────────────────────
   async function loadVendorProfile() {
+    // First try by user id
     let { data, error } = await sb.from('vendor_profiles').select('*').eq('id', currentUser.id).single();
-    if (error && error.code === 'PGRST116') {
-      const { data: nd } = await sb.from('vendor_profiles').insert({ id: currentUser.id }).select().single();
+
+    // Fallback: if no row found by id, try by email (handles broken trigger case)
+    if ((error || !data) && currentUser.email) {
+      const { data: byEmail } = await sb.from('vendor_profiles').select('*').eq('email', currentUser.email).maybeSingle();
+      if (byEmail) {
+        data = byEmail;
+        // Link the profile to the real auth id
+        await sb.from('vendor_profiles').update({ id: currentUser.id }).eq('email', currentUser.email);
+      }
+    }
+
+    // If still nothing, create a blank profile
+    if (!data) {
+      const { data: nd } = await sb.from('vendor_profiles').insert({
+        id: currentUser.id, email: currentUser.email
+      }).select().single();
       data = nd;
     }
     if (!data) return;
 
-    const set = (id, val) => { const el = document.getElementById(id); if(el && val) el.value = val; };
+    const set = (id, val) => { const el = document.getElementById(id); if(el && val != null && val !== '') el.value = val; };
 
     set('p-name',           data.nombre_negocio);
     set('p-city',           data.ciudad);
@@ -826,7 +902,6 @@
     if (data.categoria) {
       const sel = document.getElementById('p-type');
       if (sel) {
-        // Try to match the stored value to an option
         const opt = [...sel.options].find(o => o.value === data.categoria || o.text === data.categoria);
         if (opt) sel.value = opt.value;
       }
@@ -841,28 +916,50 @@
 
     if (data.capacidad_dia) {
       vendorCapacity = data.capacidad_dia;
-      document.getElementById('capacity-num').textContent = vendorCapacity;
+      const capEl = document.getElementById('capacity-num');
+      if (capEl) capEl.textContent = vendorCapacity;
     }
+
+    // Update preview stats
+    const expEl   = document.getElementById('preview-exp');
+    const bodasEl = document.getElementById('preview-bodas');
+    if (expEl)   expEl.textContent   = data.anos_experiencia ? data.anos_experiencia + '+' : '—';
+    if (bodasEl) bodasEl.textContent = data.bodas_coordinadas ? data.bodas_coordinadas + '+' : '—';
 
     // Load regions
     if (data.regiones) {
       try {
         const regiones = JSON.parse(data.regiones);
         const container = document.getElementById('regions');
-        const addBtn = container.querySelector('[onclick="addRegion()"]');
-        regiones.forEach(r => {
-          const tag = document.createElement('span');
-          tag.style.cssText = 'background:var(--laurel);color:var(--night);font-size:12px;padding:5px 12px;border-radius:99px;cursor:pointer;';
-          tag.textContent = r;
-          tag.onclick = () => { tag.remove(); };
-          container.insertBefore(tag, addBtn);
-        });
+        if (container) {
+          const addBtn = container.querySelector('[onclick="addRegion()"]');
+          regiones.forEach(r => {
+            const tag = document.createElement('span');
+            tag.style.cssText = 'background:var(--laurel);color:var(--night);font-size:12px;padding:5px 12px;border-radius:99px;cursor:pointer;';
+            tag.textContent = r;
+            tag.onclick = () => tag.remove();
+            if (addBtn) container.insertBefore(tag, addBtn);
+            else container.appendChild(tag);
+          });
+        }
       } catch(e) {}
     }
 
-    // Show/hide founder badge based on plan
-    const founderBadge = document.querySelector('.profile-founder');
-    if (founderBadge) founderBadge.style.display = data.fundador ? 'inline-flex' : 'none';
+    // Load real solicitudes count from Supabase
+    const { count: solicitudesCount } = await sb.from('solicitudes')
+      .select('*', { count: 'exact', head: true })
+      .eq('vendor_id', currentUser.id)
+      .eq('estado', 'nueva');
+    const siEl = document.getElementById('stat-inquiries');
+    if (siEl) siEl.textContent = solicitudesCount || 0;
+
+    // Load real bodas count from disponibilidad
+    const { count: bodasCount } = await sb.from('disponibilidad')
+      .select('*', { count: 'exact', head: true })
+      .eq('vendor_id', currentUser.id)
+      .eq('estado', 'reservada');
+    const sbEl = document.getElementById('stat-bodas-conf');
+    if (sbEl) sbEl.textContent = bodasCount || 0;
 
     updatePreview();
   }
