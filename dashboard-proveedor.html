@@ -893,10 +893,6 @@
     document.getElementById('regions').insertBefore(tag, document.getElementById('regions').lastElementChild);
   }
 
-  function viewPublicProfile() {
-    window.open('proveedor.html?id=' + (currentUser?.id || ''), '_blank');
-  }
-
   // ── SUPABASE ─────────────────────────────────────────
   const { createClient } = supabase;
   const sb = createClient(
@@ -926,6 +922,18 @@
     }
   }
   initDashboard();
+
+  function viewPublicProfile() {
+    if (!currentUser?.id) {
+      // currentUser not ready yet — try getting from session
+      sb.auth.getSession().then(({ data: { session } }) => {
+        const id = session?.user?.id || '';
+        window.open('proveedor.html?id=' + id, '_blank');
+      });
+    } else {
+      window.open('proveedor.html?id=' + currentUser.id, '_blank');
+    }
+  }
 
   function loadPlanInfo() {
     // Will be dynamic when payment is connected — for now show plan from profile

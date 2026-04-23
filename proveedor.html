@@ -770,7 +770,7 @@
       for (let i = 0; i < startOffset; i++) calHtml += '<div class="avail-slot"></div>';
 
       for (let d = 1; d <= daysInMonth; d++) {
-        const dateStr   = \`\${calYear}-\${String(calMonth+1).padStart(2,'0')}-\${String(d).padStart(2,'0')}\`;
+        const dateStr   = `\${calYear}-\${String(calMonth+1).padStart(2,'0')}-\${String(d).padStart(2,'0')}`;
         const isToday   = dateStr === todayStr;
         const isBlocked = availBlocked.has(dateStr);
         const isPast    = dateStr < todayStr;
@@ -779,12 +779,12 @@
         else if (isPast)    cls += 'avail-busy';
         else if (isBlocked) cls += 'avail-busy';
         else                cls += 'avail-free';
-        calHtml += \`<div class="\${cls}" title="\${dateStr}">\${d}</div>\`;
+        calHtml += `<div class="\${cls}" title="\${dateStr}">\${d}</div>`;
       }
-      calHtml += \`</div><p class="avail-note" style="margin-top:10px;">
+      calHtml += `</div><p class="avail-note" style="margin-top:10px;">
         <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--pigeon);margin-right:4px;vertical-align:middle;"></span>Disponible &nbsp;
         <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#F0EFF1;margin-right:4px;vertical-align:middle;border:0.5px solid #C8C6CB;"></span>Ocupado
-      </p>\`;
+      </p>`;
 
       availCard.innerHTML = calHtml;
     }
