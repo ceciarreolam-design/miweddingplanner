@@ -501,7 +501,7 @@
       <textarea placeholder="Cuéntale brevemente sobre tu boda para que Elena pueda prepararse mejor..." style="min-height:70px;"></textarea>
 
       <div style="background:var(--cotton);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;">
-        📅 Elena confirmará tu cita por correo en menos de 24 horas. Si el horario no está disponible, te sugerirá una alternativa.
+        El proveedor confirmará tu cita por correo en menos de 24 horas. Si el horario no está disponible, te sugerirá una alternativa.
       </div>
 
       <div class="modal-btns">
@@ -531,9 +531,11 @@
     .time-slot.disabled { background:#F5F4F6; color:var(--cotton); cursor:not-allowed; }
   </style>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    // ── MODAL HELPERS ─────────────────────────────────
     function openModal() { document.getElementById('modal').classList.add('open'); }
-    function openCita() { document.getElementById('modal-cita').classList.add('open'); }
+    function openCita()  { document.getElementById('modal-cita').classList.add('open'); }
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
     function closeModalOutside(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
 
@@ -542,25 +544,219 @@
       btn.textContent = btn.textContent === '♡' ? '♥' : '♡';
       btn.style.color = btn.textContent === '♥' ? '#667C90' : '';
     }
-
     function selectTime(el) {
       document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
       el.classList.add('selected');
     }
-
     function selectMode(val) {
-      document.getElementById('mode-video').style.borderColor = val === 'video' ? 'var(--pigeon)' : 'var(--cotton)';
+      document.getElementById('mode-video').style.borderColor      = val === 'video'      ? 'var(--pigeon)' : 'var(--cotton)';
       document.getElementById('mode-presencial').style.borderColor = val === 'presencial' ? 'var(--pigeon)' : 'var(--cotton)';
     }
-
     function sendCita() {
       closeModal('modal-cita');
       setTimeout(() => document.getElementById('modal-confirm').classList.add('open'), 200);
     }
-
-    // Set min date to today
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('cita-date').min = today;
+
+    // ── SUPABASE LOAD ─────────────────────────────────
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://rlcqdxovvhyiszvfogjz.supabase.co',
+      'sb_publishable_OFE316zb9SoPJ87utEwFyg_g0qbw_Ri'
+    );
+
+    async function loadVendor() {
+      // Get vendor id from URL: proveedor.html?id=UUID
+      const params   = new URLSearchParams(window.location.search);
+      const vendorId = params.get('id');
+      if (!vendorId) return; // No id = show default mockup
+
+      const { data, error } = await sb
+        .from('vendor_profiles')
+        .select('*')
+        .eq('id', vendorId)
+        .eq('aprobado', true)
+        .single();
+
+      if (error || !data) {
+        console.warn('Vendor not found or not approved:', error);
+        return;
+      }
+
+      // ── Populate page ──────────────────────────────
+
+      // Title & meta
+      const pageName = data.nombre_negocio || 'Proveedor';
+      document.title = pageName + ' — Mi Wedding Planner';
+
+      // Avatar initials
+      const initials = (data.nombre_negocio || '??').split(' ').filter(w=>w).map(w=>w[0]).join('').substring(0,2).toUpperCase();
+      const avatarEl = document.querySelector('.avatar');
+      if (avatarEl) avatarEl.textContent = initials;
+
+      // Name, type, city
+      const nameEl = document.querySelector('.vendor-name');
+      if (nameEl) nameEl.textContent = data.nombre_negocio || '';
+
+      const typeEl = document.querySelector('.vendor-type-pill');
+      if (typeEl) typeEl.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="4" r="2.5" stroke="#667C90" stroke-width="1"/><path d="M2 10c0-2.21 1.79-4 4-4s4 1.79 4 4" stroke="#667C90" stroke-width="1" stroke-linecap="round"/></svg> ${data.categoria || ''}${data.ciudad ? ' · ' + data.ciudad : ''}`;
+
+      // Stats row
+      const statsRow = document.querySelector('.stats-row');
+      if (statsRow) {
+        const exp   = data.anos_experiencia   ? String(data.anos_experiencia).replace(/[^0-9]/g,'')   : null;
+        const bodas = data.bodas_coordinadas  ? String(data.bodas_coordinadas).replace(/[^0-9]/g,'')  : null;
+        statsRow.innerHTML = `
+          <div><div class="stat-val">★ —</div><div class="stat-label">Reseñas</div></div>
+          ${bodas ? `<div><div class="stat-val">${bodas}+</div><div class="stat-label">Bodas realizadas</div></div>` : ''}
+          ${exp   ? `<div><div class="stat-val">${exp} años</div><div class="stat-label">De experiencia</div></div>` : ''}
+          <div><div class="stat-val">98%</div><div class="stat-label">Responde en 24h</div></div>`;
+      }
+
+      // About section
+      const aboutTitle = document.querySelector('.card-title');
+      if (aboutTitle) aboutTitle.textContent = 'Sobre ' + (data.nombre_negocio || 'este proveedor');
+      const descEls = document.querySelectorAll('.desc-text');
+      if (descEls.length > 0 && data.bio) {
+        descEls[0].textContent = data.bio;
+        // Hide extra mock paragraphs
+        for (let i = 1; i < descEls.length; i++) descEls[i].style.display = 'none';
+      }
+
+      // Contact card
+      const contactTitle = document.querySelector('.sidebar-title');
+      if (contactTitle) contactTitle.textContent = '¿Te interesa trabajar con ' + (data.nombre_negocio?.split(' ')[0] || 'este proveedor') + '?';
+
+      // Info sidebar
+      const infoVals = document.querySelectorAll('.info-val');
+      if (infoVals.length >= 1 && data.ciudad)     infoVals[0].textContent = data.ciudad;
+      if (infoVals.length >= 5 && data.created_at) {
+        const joined = new Date(data.created_at);
+        infoVals[5].textContent = joined.toLocaleDateString('es-MX', { month:'long', year:'numeric' });
+      }
+
+      // Cita modal title
+      const citaTitle = document.querySelector('#modal-cita .modal-title');
+      if (citaTitle) citaTitle.textContent = 'Agendar cita con ' + (data.nombre_negocio?.split(' ')[0] || 'el proveedor');
+
+      // Contact modal title
+      const contactModalTitle = document.querySelector('#modal .modal-title');
+      if (contactModalTitle) contactModalTitle.textContent = 'Contactar a ' + (data.nombre_negocio?.split(' ')[0] || 'este proveedor');
+
+      // Portfolio — show links if available
+      const galleryCard = document.querySelector('.gallery')?.closest('.card');
+      if (galleryCard && (data.portfolio_main || data.portfolio_2 || data.portfolio_video)) {
+        const links = [];
+        if (data.portfolio_main)  links.push(`<a href="${data.portfolio_main}"  target="_blank" class="btn-secondary" style="display:inline-block;margin:4px;">Ver portafolio →</a>`);
+        if (data.portfolio_2)     links.push(`<a href="${data.portfolio_2}"     target="_blank" class="btn-secondary" style="display:inline-block;margin:4px;">Ver galería →</a>`);
+        if (data.portfolio_video) links.push(`<a href="${data.portfolio_video}" target="_blank" class="btn-secondary" style="display:inline-block;margin:4px;">Ver video →</a>`);
+        galleryCard.innerHTML = `<div class="card-title">Portafolio</div>
+          <p style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px;">Visita el portafolio de ${data.nombre_negocio || 'este proveedor'} para ver su trabajo.</p>
+          <div>${links.join('')}</div>`;
+      }
+
+      // Regions / specialties
+      if (data.regiones) {
+        try {
+          const regiones = JSON.parse(data.regiones);
+          const specCard = document.querySelectorAll('.sidebar-title')[3]?.closest('.sidebar-card');
+          if (specCard && regiones.length) {
+            specCard.querySelector('.tags-wrap').innerHTML = regiones.map(r => `<span class="tag-pill">${r}</span>`).join('');
+          }
+          // Also update cobertura in info card
+          if (infoVals.length >= 2) infoVals[1].textContent = regiones.join(', ') || 'Todo México';
+        } catch(e) {}
+      }
+
+      // Packages — show real ones from paquetes table
+      await loadPaquetes(vendorId, data.nombre_negocio);
+
+      // Availability calendar
+      await loadAvailability(vendorId);
+
+      // "Back" button to vendor dashboard if they're the owner
+      const session = await sb.auth.getSession();
+      if (session?.data?.session?.user?.id === vendorId) {
+        const nav = document.querySelector('.nav');
+        if (nav) {
+          const editBtn = document.createElement('button');
+          editBtn.className = 'nav-cta';
+          editBtn.style.background = 'var(--laurel-d)';
+          editBtn.textContent = '← Volver a mi panel';
+          editBtn.onclick = () => window.location.href = 'dashboard-proveedor.html';
+          nav.appendChild(editBtn);
+        }
+      }
+    }
+
+    async function loadPaquetes(vendorId, nombreNegocio) {
+      const { data } = await sb.from('paquetes').select('*').eq('vendor_id', vendorId);
+      if (!data || data.length === 0) return; // Keep mock packages if none saved
+
+      const pkgCard = document.querySelectorAll('.card')[1]; // packages card
+      if (!pkgCard) return;
+      pkgCard.innerHTML = '<div class="card-title">Paquetes y precios</div>' +
+        data.map(p => `
+          <div class="pkg">
+            <div class="pkg-top">
+              <span class="pkg-name">${p.nombre}</span>
+              <span class="pkg-price">${p.precio_desde ? 'Desde $' + parseInt(p.precio_desde).toLocaleString('es-MX') + ' MXN' : ''}</span>
+            </div>
+            <p class="pkg-desc">${p.descripcion || ''}</p>
+          </div>`).join('');
+    }
+
+    async function loadAvailability(vendorId) {
+      const { data } = await sb.from('disponibilidad').select('fecha, estado')
+        .eq('vendor_id', vendorId)
+        .gte('fecha', new Date().toISOString().slice(0,10))
+        .order('fecha', { ascending: true });
+
+      if (!data || data.length === 0) return;
+
+      // Build a set of blocked dates
+      const blocked = new Set(data.filter(d => d.estado === 'reservada' || d.estado === 'revision').map(d => d.fecha));
+
+      // Rebuild the calendar for current month
+      const now       = new Date();
+      const year      = now.getFullYear();
+      const month     = now.getMonth();
+      const monthName = now.toLocaleDateString('es-MX', { month:'long', year:'numeric' });
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDay    = new Date(year, month, 1).getDay(); // 0=Sun
+      const startOffset = firstDay === 0 ? 6 : firstDay - 1; // Monday-first
+
+      const availCard = document.querySelectorAll('.sidebar-title')[1]?.closest('.sidebar-card');
+      if (!availCard) return;
+
+      let calHtml = `<div class="sidebar-title">Disponibilidad — ${monthName.charAt(0).toUpperCase() + monthName.slice(1)}</div>
+        <div class="avail-grid">
+          <div class="avail-day-label">L</div><div class="avail-day-label">M</div><div class="avail-day-label">X</div>
+          <div class="avail-day-label">J</div><div class="avail-day-label">V</div><div class="avail-day-label">S</div>
+          <div class="avail-day-label">D</div>`;
+
+      // Empty slots before first day
+      for (let i = 0; i < startOffset; i++) calHtml += '<div class="avail-slot"></div>';
+
+      const todayStr = now.toISOString().slice(0,10);
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const isToday   = dateStr === todayStr;
+        const isBlocked = blocked.has(dateStr);
+        const isPast    = dateStr < todayStr;
+        let cls = 'avail-slot ';
+        if (isToday)        cls += 'avail-today';
+        else if (isPast)    cls += 'avail-busy';
+        else if (isBlocked) cls += 'avail-busy';
+        else                cls += 'avail-free';
+        calHtml += `<div class="${cls}">${d}</div>`;
+      }
+      calHtml += '</div><p class="avail-note">Verde = disponible · Gris = ocupado · Toca una fecha para agendar</p>';
+      availCard.innerHTML = calHtml;
+    }
+
+    loadVendor();
   </script>
 
 </body>
