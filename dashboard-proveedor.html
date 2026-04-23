@@ -349,37 +349,14 @@
       </div>
       <div class="card">
         <div style="display:flex;gap:8px;margin-bottom:16px;background:var(--cotton);padding:4px;border-radius:var(--radius-md);">
-          <button class="btn-sm" style="flex:1;text-align:center;background:var(--white);color:var(--night);font-size:12px;padding:7px;" onclick="filterInquiries('all',this)">Todas (6)</button>
-          <button class="btn-sm" style="flex:1;text-align:center;background:transparent;color:var(--muted);font-size:12px;padding:7px;border:none;" onclick="filterInquiries('new',this)">Nuevas (3)</button>
-          <button class="btn-sm" style="flex:1;text-align:center;background:transparent;color:var(--muted);font-size:12px;padding:7px;border:none;" onclick="filterInquiries('replied',this)">Respondidas (3)</button>
+          <button class="btn-sm" id="filter-all"   style="flex:1;text-align:center;background:var(--white);color:var(--night);font-size:12px;padding:7px;" onclick="filterInquiries('all',this)">Todas</button>
+          <button class="btn-sm" id="filter-new"   style="flex:1;text-align:center;background:transparent;color:var(--muted);font-size:12px;padding:7px;border:none;" onclick="filterInquiries('nueva',this)">Nuevas</button>
+          <button class="btn-sm" id="filter-replied" style="flex:1;text-align:center;background:transparent;color:var(--muted);font-size:12px;padding:7px;border:none;" onclick="filterInquiries('respondida',this)">Respondidas</button>
         </div>
         <div id="all-inquiries">
-          <div class="inquiry-item" data-status="new" onclick="openInquiry('Sofía Castro','Wedding planner para noviembre 2026','Hola, vi tu perfil en Mi Wedding Planner y me encantó tu trabajo. Estamos planeando nuestra boda para el 15 de noviembre en Guadalajara, aproximadamente 150 invitados. ¿Tienes disponibilidad y podrías compartirnos tus paquetes?','28 Abr','new')">
-            <div class="inquiry-avatar">SC</div>
-            <div class="inquiry-info"><div class="inquiry-name">Sofía Castro</div><div class="inquiry-preview">Hola, vi tu perfil en Mi Wedding Planner y me encantó tu trabajo. Estamos planeando nuestra boda para el 15 de noviembre...</div><div class="inquiry-meta"><span class="inquiry-date">28 Abr · Boda nov 2026 · 150 invitados</span><span class="inquiry-tag tag-new">Nueva</span></div></div>
-            <div class="inquiry-unread"></div>
-          </div>
-          <div class="inquiry-item" data-status="new" onclick="openInquiry('Mariana López','Consulta para boda destino en Oaxaca','Buenos días, buscamos una wedding planner con experiencia en bodas de destino. La boda sería en Oaxaca en agosto 2026 para 80 personas. ¿Trabajan fuera de CDMX?','26 Abr','new')">
-            <div class="inquiry-avatar">ML</div>
-            <div class="inquiry-info"><div class="inquiry-name">Mariana López</div><div class="inquiry-preview">Buscamos una wedding planner con experiencia en bodas de destino. La boda sería en Oaxaca en agosto 2026...</div><div class="inquiry-meta"><span class="inquiry-date">26 Abr · Boda ago 2026 · 80 invitados</span><span class="inquiry-tag tag-new">Nueva</span></div></div>
-            <div class="inquiry-unread"></div>
-          </div>
-          <div class="inquiry-item" data-status="new" onclick="openInquiry('Valeria Ruiz','Información sobre paquetes y precios','Hola, estamos comenzando a planear nuestra boda para diciembre 2026. ¿Podrían enviarnos información sobre sus paquetes y un estimado de precios? Somos aproximadamente 200 personas.','24 Abr','new')">
-            <div class="inquiry-avatar">VR</div>
-            <div class="inquiry-info"><div class="inquiry-name">Valeria Ruiz</div><div class="inquiry-preview">Estamos comenzando a planear nuestra boda para diciembre 2026. ¿Podrían enviarnos información sobre sus paquetes?</div><div class="inquiry-meta"><span class="inquiry-date">24 Abr · Boda dic 2026 · 200 invitados</span><span class="inquiry-tag tag-new">Nueva</span></div></div>
-            <div class="inquiry-unread"></div>
-          </div>
-          <div class="inquiry-item" data-status="replied" onclick="openInquiry('Andrea Méndez','Boda en hacienda en San Miguel','Hola, buscamos wedding planner para boda en hacienda en San Miguel de Allende, junio 2026, 120 personas.','20 Abr','replied')">
-            <div class="inquiry-avatar" style="background:#D4DCE4;">AM</div>
-            <div class="inquiry-info"><div class="inquiry-name">Andrea Méndez</div><div class="inquiry-preview">Boda en hacienda en San Miguel de Allende, junio 2026...</div><div class="inquiry-meta"><span class="inquiry-date">20 Abr · Boda jun 2026 · 120 invitados</span><span class="inquiry-tag tag-replied">Respondida</span></div></div>
-          </div>
-          <div class="inquiry-item" data-status="replied" onclick="openInquiry('Claudia Torres','Consulta coordinación día-de','Necesitamos solo coordinación para el día de la boda, mayo 2026 en CDMX, 90 personas.','18 Abr','replied')">
-            <div class="inquiry-avatar" style="background:#C4CEB8;">CT</div>
-            <div class="inquiry-info"><div class="inquiry-name">Claudia Torres</div><div class="inquiry-preview">Necesitamos solo coordinación para el día de la boda, mayo 2026...</div><div class="inquiry-meta"><span class="inquiry-date">18 Abr · Boda may 2026 · 90 invitados</span><span class="inquiry-tag tag-replied">Respondida</span></div></div>
-          </div>
-          <div class="inquiry-item" data-status="replied" onclick="openInquiry('Isabella Vargas','Boda íntima en jardín','Planeamos una boda pequeña de 40 personas en un jardín privado en Cuernavaca, septiembre 2026.','15 Abr','replied')">
-            <div class="inquiry-avatar" style="background:#BDC4A9;">IV</div>
-            <div class="inquiry-info"><div class="inquiry-name">Isabella Vargas</div><div class="inquiry-preview">Boda íntima de 40 personas en jardín privado, Cuernavaca...</div><div class="inquiry-meta"><span class="inquiry-date">15 Abr · Boda sep 2026 · 40 invitados</span><span class="inquiry-tag tag-replied">Respondida</span></div></div>
+          <div id="solicitudes-empty" style="text-align:center;padding:48px 0;font-size:13px;color:var(--muted);font-weight:300;">
+            Aún no tienes solicitudes.<br>
+            <span style="font-size:12px;">Cuando las novias te contacten desde tu perfil, aparecerán aquí.</span>
           </div>
         </div>
       </div>
@@ -388,43 +365,30 @@
     <!-- ── ESTADÍSTICAS ── -->
     <div class="panel" id="panel-estadisticas">
       <div class="topbar">
-        <div class="topbar-left"><h1>Estadísticas</h1><p>Cómo está funcionando tu perfil este mes</p></div>
+        <div class="topbar-left"><h1>Estadísticas</h1><p>Rendimiento de tu perfil en la plataforma</p></div>
       </div>
-      <div class="stats-row">
-        <div class="stat-card"><div class="stat-num">1,248</div><div class="stat-label">Visitas al perfil</div><div class="stat-trend">↑ 32% vs mes anterior</div></div>
-        <div class="stat-card"><div class="stat-num">186</div><div class="stat-label">Veces guardado</div><div class="stat-trend">↑ 14% vs mes anterior</div></div>
-        <div class="stat-card"><div class="stat-num">24</div><div class="stat-label">Solicitudes recibidas</div><div class="stat-trend">↑ 8 vs mes anterior</div></div>
-        <div class="stat-card"><div class="stat-num">4.9</div><div class="stat-label">Rating promedio</div><div class="stat-trend">18 reseñas verificadas</div></div>
-      </div>
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-header"><div class="card-title">Visitas por semana</div></div>
-          <div style="display:flex;align-items:flex-end;gap:8px;height:120px;margin:16px 0;">
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;background:var(--laurel);border-radius:4px 4px 0 0;height:45%;"></div><div style="font-size:9px;color:var(--muted);">S1</div></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;background:var(--laurel);border-radius:4px 4px 0 0;height:60%;"></div><div style="font-size:9px;color:var(--muted);">S2</div></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;background:var(--laurel);border-radius:4px 4px 0 0;height:75%;"></div><div style="font-size:9px;color:var(--muted);">S3</div></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;background:var(--laurel-d);border-radius:4px 4px 0 0;height:95%;"></div><div style="font-size:9px;color:var(--muted);font-weight:500;">S4</div></div>
-          </div>
-          <div style="font-size:12px;color:var(--muted);font-weight:300;">Mejor semana: Semana 4 · 342 visitas</div>
+      <div style="text-align:center;padding:60px 20px;">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--cotton);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="17" width="5" height="8" rx="1" stroke="var(--pigeon)" stroke-width="1.5"/><rect x="11.5" y="10" width="5" height="15" rx="1" stroke="var(--pigeon)" stroke-width="1.5"/><rect x="20" y="3" width="5" height="22" rx="1" stroke="var(--pigeon)" stroke-width="1.5"/></svg>
         </div>
-        <div class="card">
-          <div class="card-header"><div class="card-title">De dónde vienen</div></div>
-          <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
-            <div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;"><span>Búsqueda en MWP</span><span style="color:var(--night);font-weight:500;">58%</span></div><div style="height:6px;background:var(--cotton);border-radius:99px;"><div style="height:100%;width:58%;background:var(--laurel);border-radius:99px;"></div></div></div>
-            <div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;"><span>Búsqueda directa</span><span style="color:var(--night);font-weight:500;">24%</span></div><div style="height:6px;background:var(--cotton);border-radius:99px;"><div style="height:100%;width:24%;background:var(--laurel);border-radius:99px;"></div></div></div>
-            <div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;"><span>Artículo del blog</span><span style="color:var(--night);font-weight:500;">12%</span></div><div style="height:6px;background:var(--cotton);border-radius:99px;"><div style="height:100%;width:12%;background:var(--laurel);border-radius:99px;"></div></div></div>
-            <div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;"><span>Referido por otra novia</span><span style="color:var(--night);font-weight:500;">6%</span></div><div style="height:6px;background:var(--cotton);border-radius:99px;"><div style="height:100%;width:6%;background:var(--laurel);border-radius:99px;"></div></div></div>
-          </div>
+        <div style="font-family:var(--serif);font-size:22px;color:var(--night);margin-bottom:10px;font-weight:400;">Estadísticas en camino</div>
+        <div style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.8;max-width:420px;margin:0 auto 24px;">
+          Estamos construyendo tu panel de estadísticas. Pronto podrás ver visitas a tu perfil, cuántas novias te guardaron, de dónde vienen y mucho más.<br><br>
+          Te avisaremos por correo cuando esté listo.
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:var(--cotton);border-radius:99px;padding:8px 18px;font-size:12px;color:var(--muted);">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3.5L10 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Próximamente
         </div>
       </div>
     </div>
 
-    <!-- ── DISPONIBILIDAD ── -->
+        <!-- ── DISPONIBILIDAD ── -->
     <div class="panel" id="panel-disponibilidad">
       <div class="topbar">
         <div class="topbar-left"><h1>Disponibilidad</h1><p>Solo tú puedes bloquear fechas — las novias las ven en tu perfil público</p></div>
         <div class="topbar-right">
-          <button class="btn-sm btn-outline" onclick="exportIcal()" title="Exportar a Google Calendar / Outlook">📅 Exportar a mi calendario</button>
+          <button class="btn-sm btn-outline" onclick="exportIcal()" title="Exportar a Google Calendar / Outlook"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 7h12M5 2v2M11 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Exportar a mi calendario</button>
           <button class="btn-sm btn-primary" onclick="openAddDate()">+ Bloquear fecha</button>
         </div>
       </div>
@@ -872,27 +836,34 @@
 
   // ── LOAD VENDOR PROFILE ──────────────────────────────
   async function loadVendorProfile() {
-    // First try by user id
-    let { data, error } = await sb.from('vendor_profiles').select('*').eq('id', currentUser.id).single();
+    // First try by user id (maybeSingle won't error if no row found)
+    let { data, error } = await sb.from('vendor_profiles').select('*').eq('id', currentUser.id).maybeSingle();
+    console.log('Load by id:', currentUser.id, '→ data:', data, 'error:', error);
 
-    // Fallback: if no row found by id, try by email (handles broken trigger case)
-    if ((error || !data) && currentUser.email) {
-      const { data: byEmail } = await sb.from('vendor_profiles').select('*').eq('email', currentUser.email).maybeSingle();
+    // Fallback: try by email
+    if (!data && currentUser.email) {
+      const { data: byEmail, error: emailErr } = await sb.from('vendor_profiles')
+        .select('*').eq('email', currentUser.email).maybeSingle();
+      console.log('Load by email:', currentUser.email, '→ data:', byEmail, 'error:', emailErr);
       if (byEmail) {
         data = byEmail;
-        // Link the profile to the real auth id
+        // Link to real auth id for future loads
         await sb.from('vendor_profiles').update({ id: currentUser.id }).eq('email', currentUser.email);
+        console.log('Linked profile to auth id');
       }
     }
 
-    // If still nothing, create a blank profile
+    // Still nothing — create blank profile
     if (!data) {
-      const { data: nd } = await sb.from('vendor_profiles').insert({
-        id: currentUser.id, email: currentUser.email
-      }).select().single();
+      console.log('Creating blank profile for', currentUser.id);
+      const { data: nd, error: insertErr } = await sb.from('vendor_profiles')
+        .insert({ id: currentUser.id, email: currentUser.email })
+        .select().single();
+      console.log('Insert result:', nd, insertErr);
       data = nd;
     }
-    if (!data) return;
+    if (!data) { console.error('Could not load or create profile'); return; }
+    console.log('Final profile data:', data);
 
     const set = (id, val) => { const el = document.getElementById(id); if(el && val != null && val !== '') el.value = val; };
 
