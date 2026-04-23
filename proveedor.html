@@ -567,17 +567,18 @@
       // Get vendor id from URL: proveedor.html?id=UUID
       const params   = new URLSearchParams(window.location.search);
       const vendorId = params.get('id');
-      if (!vendorId) return; // No id = show default mockup
+      console.log('Vendor ID from URL:', vendorId);
+      if (!vendorId) return;
 
       const { data, error } = await sb
         .from('vendor_profiles')
         .select('*')
         .eq('id', vendorId)
-        .eq('aprobado', true)
-        .single();
+        .maybeSingle();
 
+      console.log('Vendor data:', data, 'Error:', error);
       if (error || !data) {
-        console.warn('Vendor not found or not approved:', error);
+        console.warn('Vendor not found:', error);
         return;
       }
 
