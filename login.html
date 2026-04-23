@@ -98,7 +98,7 @@
       <p class="left-sub">Tu boda te está esperando. Retoma tu planeación justo donde la dejaste — tu checklist, presupuesto y proveedores favoritos están todos aquí.</p>
       <div class="left-testimonial">
         <p class="left-quote">"Mi Wedding Planner me ayudó a estar organizada y disfrutar todo el proceso. Sin estrés, sin sorpresas."</p>
-        <div class="left-author">— Una novia feliz 🤍</div>
+        <div class="left-author">— Una novia feliz</div>
       </div>
     </div>
     <div class="left-footer">© 2026 Mi Wedding Planner · México</div>
@@ -169,10 +169,28 @@
     'sb_publishable_OFE316zb9SoPJ87utEwFyg_g0qbw_Ri'
   );
 
-  // Check if already logged in — redirect to dashboard
-  sb.auth.getSession().then(({ data: { session } }) => {
-    if (session) window.location.href = 'dashboard.html';
+  // Check if already logged in — redirect to correct dashboard
+  sb.auth.getSession().then(async ({ data: { session } }) => {
+    if (!session) return;
+    await redirectByRole(session.user);
   });
+
+  async function redirectByRole(user) {
+    // Check metadata first (fastest)
+    const role = user?.user_metadata?.role;
+    if (role === 'vendor') { window.location.href = 'dashboard-proveedor.html'; return; }
+
+    // Check admin
+    const { data: bride } = await sb.from('bride_profiles').select('is_admin').eq('id', user.id).maybeSingle();
+    if (bride?.is_admin) { window.location.href = 'dashboard-admin.html'; return; }
+
+    // Check vendor_profiles table (catches vendors whose metadata wasn't set correctly)
+    const { data: vendor } = await sb.from('vendor_profiles').select('id').eq('id', user.id).maybeSingle();
+    if (vendor) { window.location.href = 'dashboard-proveedor.html'; return; }
+
+    // Default: bride dashboard
+    window.location.href = 'dashboard.html';
+  }
 
   function switchTab(name, btn) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -218,12 +236,7 @@
     }
 
     // Check user role and redirect accordingly
-    const role = data.user?.user_metadata?.role;
-    if (role === 'vendor') {
-      window.location.href = 'dashboard-proveedor.html';
-    } else {
-      window.location.href = 'dashboard.html';
-    }
+    await redirectByRole(data.user);
   }
 
   async function doReset() {
