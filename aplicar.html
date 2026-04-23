@@ -809,7 +809,7 @@
       const plan          = document.querySelector('input[name="plan"]:checked')?.value || 'basico';
       const password      = document.getElementById('vendor-password')?.value || '';
 
-      // 1. Create Supabase auth account
+      // 1. Try to create Supabase auth account
       let userId = null;
       if (emailVal && password && password.length >= 8) {
         const { data: authData, error: authError } = await sb.auth.signUp({
@@ -817,33 +817,46 @@
           password,
           options: { data: { role: 'vendor', nombre_negocio: nombreNegocio } }
         });
-        if (authError && !authError.message.includes('already registered')) {
+        if (authError) {
           console.warn('Auth error:', authError.message);
+        } else {
+          userId = authData?.user?.id;
         }
-        userId = authData?.user?.id;
       }
 
-      // 2. Save to vendor_profiles in Supabase
+      // 2. Save to vendor_profiles
+      // If auth worked, use the real userId
+      // If auth failed (trigger bug), insert with a generated id so data is never lost
+      const profileData = {
+        nombre_negocio:     nombreNegocio,
+        contacto_nombre:    contactoNombre,
+        categoria,
+        ciudad,
+        bio:                descripcion,
+        telefono,
+        instagram,
+        sitio_web:          website,
+        anos_experiencia:   experiencia,
+        bodas_coordinadas:  eventos,
+        capacidad_atencion: capacidad,
+        rango_precio:       precio,
+        plan,
+        email:              emailVal,
+        aprobado:           false,
+        solicitud_estado:   'pendiente',
+      };
+
       if (userId) {
+        // Auth succeeded — upsert with real user id
         const { error: profileError } = await sb.from('vendor_profiles').upsert({
-          id:                 userId,
-          nombre_negocio:     nombreNegocio,
-          contacto_nombre:    contactoNombre,
-          categoria,
-          ciudad,
-          bio:                descripcion,
-          telefono,
-          instagram,
-          sitio_web:          website,
-          anos_experiencia:   experiencia,
-          bodas_coordinadas:  eventos,
-          capacidad_atencion: capacidad,
-          rango_precio:       precio,
-          plan,
-          aprobado:           false,
-          solicitud_estado:   'pendiente',
+          id: userId, ...profileData
         });
         if (profileError) console.warn('Profile save error:', profileError.message);
+      } else {
+        // Auth trigger failed — insert without id (Supabase will generate one)
+        // This preserves all their data so you can approve them later
+        const { error: profileError } = await sb.from('vendor_profiles').insert(profileData);
+        if (profileError) console.warn('Profile insert error:', profileError.message);
       }
 
       // 3. Also send to Formspree so you get the email notification
