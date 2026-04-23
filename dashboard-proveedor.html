@@ -206,7 +206,7 @@
       <div class="nav-item" id="nav-solicitudes" onclick="navTo('solicitudes')">
         <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         Solicitudes
-        <span class="nav-badge" id="badge-count">3</span>
+        <span class="nav-badge" id="badge-count" style="display:none;">0</span>
       </div>
       <div class="nav-item" id="nav-estadisticas" onclick="navTo('estadisticas')">
         <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="10" width="3" height="4" stroke="currentColor" stroke-width="1.2"/><rect x="6.5" y="6" width="3" height="8" stroke="currentColor" stroke-width="1.2"/><rect x="11" y="2" width="3" height="12" stroke="currentColor" stroke-width="1.2"/></svg>
@@ -618,8 +618,19 @@
   <div class="modal" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('modal-date')">×</button>
     <h3 id="modal-date-title">Bloquear fecha</h3>
-    <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Fecha</label>
-    <input type="date" id="date-fecha" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:13px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:13px;" id="date-range-row">
+      <div>
+        <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Fecha inicio</label>
+        <input type="date" id="date-fecha" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;">
+      </div>
+      <div>
+        <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Fecha fin <span style="text-transform:none;font-weight:300;color:var(--stone);">(opcional)</span></label>
+        <input type="date" id="date-fecha-fin" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;">
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);font-weight:300;margin-bottom:13px;" id="date-range-hint">
+      Si seleccionas fecha fin, se bloquearán todos los días entre las dos fechas.
+    </div>
     <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Estado</label>
     <select id="date-estado" style="width:100%;border:0.5px solid var(--cotton);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;color:var(--ink);outline:none;margin-bottom:13px;">
       <option value="reservada">Reservada</option>
@@ -675,18 +686,30 @@
     document.getElementById('modal-date-title').textContent = 'Bloquear fecha';
     document.getElementById('modal-date-delete').style.display = 'none';
     document.getElementById('date-fecha').value = '';
+    document.getElementById('date-fecha-fin').value = '';
     document.getElementById('date-estado').value = 'reservada';
     document.getElementById('date-desc').value = '';
     document.getElementById('date-edit-id').value = '';
+    // Show date range row for new dates
+    const rangeRow = document.getElementById('date-range-row');
+    const hint     = document.getElementById('date-range-hint');
+    if (rangeRow) rangeRow.style.gridTemplateColumns = '1fr 1fr';
+    if (hint) hint.style.display = 'block';
     document.getElementById('modal-date').classList.add('open');
   }
   function openEditDate(id, fecha, estado, desc) {
     document.getElementById('modal-date-title').textContent = 'Editar fecha';
     document.getElementById('modal-date-delete').style.display = 'inline-block';
     document.getElementById('date-fecha').value  = fecha;
+    document.getElementById('date-fecha-fin').value = '';
     document.getElementById('date-estado').value = estado;
     document.getElementById('date-desc').value   = desc || '';
     document.getElementById('date-edit-id').value = id;
+    // Hide date-fin for editing (edit one date at a time)
+    const rangeRow = document.getElementById('date-range-row');
+    const hint     = document.getElementById('date-range-hint');
+    if (rangeRow) rangeRow.style.gridTemplateColumns = '1fr';
+    if (hint) hint.style.display = 'none';
     document.getElementById('modal-date').classList.add('open');
   }
   function openAddPackage() {
@@ -743,7 +766,20 @@
 
   // ── INQUIRY FILTER ───────────────────────────────────
   function filterInquiries(filter, btn) {
-    document.querySelectorAll('#all-inquiries .inquiry-item').forEach(item => {
+    // Update button styles
+    document.querySelectorAll('#panel-solicitudes .btn-sm').forEach(b => {
+      b.style.background = 'transparent';
+      b.style.color = 'var(--muted)';
+      b.style.border = 'none';
+    });
+    if (btn) {
+      btn.style.background = 'var(--white)';
+      btn.style.color = 'var(--night)';
+    }
+    // Filter items
+    const items = document.querySelectorAll('#all-inquiries .inquiry-item');
+    if (items.length === 0) return;
+    items.forEach(item => {
       item.style.display = filter === 'all' || item.dataset.status === filter ? 'flex' : 'none';
     });
   }
@@ -900,11 +936,19 @@
       if (capEl) capEl.textContent = vendorCapacity;
     }
 
-    // Update preview stats
+    // Update preview stats — strip non-numeric chars for display
     const expEl   = document.getElementById('preview-exp');
     const bodasEl = document.getElementById('preview-bodas');
-    if (expEl)   expEl.textContent   = data.anos_experiencia ? data.anos_experiencia + '+' : '—';
-    if (bodasEl) bodasEl.textContent = data.bodas_coordinadas ? data.bodas_coordinadas + '+' : '—';
+    const expVal  = data.anos_experiencia ? String(data.anos_experiencia).replace(/[^0-9]/g, '') : '';
+    const bodVal  = data.bodas_coordinadas ? String(data.bodas_coordinadas).replace(/[^0-9]/g, '') : '';
+    if (expEl)   expEl.textContent   = expVal   ? expVal   + '+' : '—';
+    if (bodasEl) bodasEl.textContent = bodVal ? bodVal + '+' : '—';
+
+    // Also update the form fields p-experience and p-bodas with clean values
+    const pExp  = document.getElementById('p-experience');
+    const pBod  = document.getElementById('p-bodas');
+    if (pExp && data.anos_experiencia)   pExp.value   = expVal || data.anos_experiencia;
+    if (pBod && data.bodas_coordinadas)  pBod.value   = bodVal || data.bodas_coordinadas;
 
     // Load regions
     if (data.regiones) {
@@ -928,10 +972,15 @@
     // Load real solicitudes count from Supabase
     const { count: solicitudesCount } = await sb.from('solicitudes')
       .select('*', { count: 'exact', head: true })
-      .eq('vendor_id', currentUser.id)
-      .eq('estado', 'nueva');
-    const siEl = document.getElementById('stat-inquiries');
-    if (siEl) siEl.textContent = solicitudesCount || 0;
+      .eq('vendor_id', currentUser.id);
+    const siEl    = document.getElementById('stat-inquiries');
+    const badgeEl = document.getElementById('badge-count');
+    const newCount = solicitudesCount || 0;
+    if (siEl) siEl.textContent = newCount;
+    if (badgeEl) {
+      badgeEl.textContent = newCount;
+      badgeEl.style.display = newCount > 0 ? 'inline-block' : 'none';
+    }
 
     // Load real bodas count from disponibilidad
     const { count: bodasCount } = await sb.from('disponibilidad')
@@ -1039,37 +1088,54 @@
   }
 
   async function saveDate() {
-    const fecha  = document.getElementById('date-fecha').value;
-    const estado = document.getElementById('date-estado').value;
-    const desc   = document.getElementById('date-desc').value.trim();
-    const editId = document.getElementById('date-edit-id').value;
-    if (!fecha) return;
+    const fechaInicio = document.getElementById('date-fecha').value;
+    const fechaFin    = document.getElementById('date-fecha-fin')?.value || '';
+    const estado      = document.getElementById('date-estado').value;
+    const desc        = document.getElementById('date-desc').value.trim();
+    const editId      = document.getElementById('date-edit-id').value;
+    if (!fechaInicio) return;
 
     if (editId) {
-      const { error } = await sb.from('disponibilidad').update({ fecha, estado, descripcion: desc }).eq('id', editId);
+      // Editing a single existing date
+      const { error } = await sb.from('disponibilidad').update({ fecha: fechaInicio, estado, descripcion: desc }).eq('id', editId);
       if (!error) {
         const old = document.querySelector(`.avail-item[data-id="${editId}"]`);
-        if (old) old.replaceWith(renderDateItem({ id: editId, fecha, estado, descripcion: desc }));
+        if (old) old.replaceWith(renderDateItem({ id: editId, fecha: fechaInicio, estado, descripcion: desc }));
         updateAvailSummary([...document.querySelectorAll('.avail-item')]);
         showSaved('Fecha actualizada ✓');
-      }
+      } else { showSaved('Error: ' + error.message); }
     } else {
-      const { data, error } = await sb.from('disponibilidad').insert({
-        vendor_id: currentUser.id, fecha, estado, descripcion: desc,
-      }).select().single();
+      // Build list of dates to insert
+      const fechas = [];
+      if (fechaFin && fechaFin > fechaInicio) {
+        // Generate all dates in range
+        const start = new Date(fechaInicio + 'T00:00:00');
+        const end   = new Date(fechaFin   + 'T00:00:00');
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+          fechas.push(d.toISOString().slice(0, 10));
+        }
+      } else {
+        fechas.push(fechaInicio);
+      }
+
+      // Insert all dates
+      const rows = fechas.map(f => ({ vendor_id: currentUser.id, fecha: f, estado, descripcion: desc }));
+      const { data, error } = await sb.from('disponibilidad').insert(rows).select();
+
       if (!error && data) {
         const list  = document.getElementById('availability-list');
         const empty = document.getElementById('avail-empty');
         if (empty) empty.style.display = 'none';
-        // Insert sorted
-        const existing = [...list.querySelectorAll('.avail-item')];
-        const after = existing.find(el => el.dataset.fecha > fecha);
-        const newItem = renderDateItem(data);
-        if (after) list.insertBefore(newItem, after);
-        else list.appendChild(newItem);
-        updateAvailSummary([...list.querySelectorAll('.avail-item')]);
-        showSaved('Fecha bloqueada ✓');
-      }
+        data.forEach(d => {
+          const existing = [...list.querySelectorAll('.avail-item')];
+          const after    = existing.find(el => el.dataset.fecha > d.fecha);
+          const newItem  = renderDateItem(d);
+          if (after) list.insertBefore(newItem, after);
+          else list.appendChild(newItem);
+        });
+        updateAvailSummary([...document.querySelectorAll('.avail-item')]);
+        showSaved(data.length > 1 ? `${data.length} fechas bloqueadas ✓` : 'Fecha bloqueada ✓');
+      } else if (error) { showSaved('Error: ' + error.message); }
     }
     closeModal('modal-date');
   }
