@@ -823,10 +823,19 @@
       const { data: { session } } = await sb.auth.getSession();
       if (!session) { window.location.href = 'login.html'; return; }
       currentUser = session.user;
+      console.log('Session OK, user:', currentUser.email, currentUser.id);
       await loadVendorProfile();
       await loadDisponibilidad().catch(e => console.warn('Disponibilidad:', e));
       loadPlanInfo();
-    } catch(e) { console.error('Dashboard error:', e); }
+    } catch(e) {
+      console.error('Dashboard error:', e);
+      // Show visible error so we can debug
+      const main = document.querySelector('.main');
+      if (main) main.insertAdjacentHTML('afterbegin',
+        `<div style="background:#FDF0EC;color:#C4724A;padding:14px 18px;border-radius:10px;margin-bottom:16px;font-size:13px;">
+          Error al cargar: ${e.message}. Revisa la consola del navegador.
+        </div>`);
+    }
   }
   initDashboard();
 
@@ -1114,30 +1123,20 @@
     const items = [...document.querySelectorAll('.avail-item')];
     if (items.length === 0) { showSaved('No tienes fechas bloqueadas aún'); return; }
 
-    let ical = 'BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//MiWeddingPlanner//ES
-CALSCALE:GREGORIAN
-';
+    const CRLF = '\r\n';
+    let ical = 'BEGIN:VCALENDAR' + CRLF + 'VERSION:2.0' + CRLF + 'PRODID:-//MiWeddingPlanner//ES' + CRLF + 'CALSCALE:GREGORIAN' + CRLF;
     items.forEach(item => {
       const fecha  = item.dataset.fecha.replace(/-/g, '');
       const estado = item.dataset.estado === 'reservada' ? 'Reservada' : 'En revisión';
       const desc   = item.querySelector('.avail-label')?.textContent || '';
       const uid    = item.dataset.id + '@miweddingplanner.com.mx';
-      ical += 'BEGIN:VEVENT
-';
-      ical += `UID:${uid}
-`;
-      ical += `DTSTART;VALUE=DATE:${fecha}
-`;
-      ical += `DTEND;VALUE=DATE:${fecha}
-`;
-      ical += `SUMMARY:${estado} · Mi Wedding Planner
-`;
-      ical += `DESCRIPTION:${desc}
-`;
-      ical += 'END:VEVENT
-';
+      ical += 'BEGIN:VEVENT' + CRLF;
+      ical += 'UID:' + uid + CRLF;
+      ical += 'DTSTART;VALUE=DATE:' + fecha + CRLF;
+      ical += 'DTEND;VALUE=DATE:' + fecha + CRLF;
+      ical += 'SUMMARY:' + estado + ' · Mi Wedding Planner' + CRLF;
+      ical += 'DESCRIPTION:' + desc + CRLF;
+      ical += 'END:VEVENT' + CRLF;
     });
     ical += 'END:VCALENDAR';
 
