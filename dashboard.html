@@ -827,19 +827,34 @@
 
   // ── LOAD PROFILE ─────────────────────────────────────
   async function loadProfile() {
-    let { data, error } = await sb
+    let { data } = await sb
       .from('bride_profiles')
       .select('*')
       .eq('id', currentUser.id)
-      .single();
+      .maybeSingle();
 
-    // If no profile exists yet, create an empty one
-    if (error && error.code === 'PGRST116') {
+    // If row is empty (trigger created blank row), try finding by email
+    const isEmpty = !data?.nombre && !data?.fecha_boda;
+    if (isEmpty && currentUser.email) {
+      const { data: byEmail } = await sb.from('bride_profiles')
+        .select('*').eq('email', currentUser.email)
+        .neq('id', currentUser.id).maybeSingle();
+      if (byEmail?.nombre) {
+        // Merge: copy real data into the auth id row
+        const merged = { ...byEmail, id: currentUser.id };
+        delete merged.created_at;
+        await sb.from('bride_profiles').upsert(merged);
+        await sb.from('bride_profiles').delete().eq('email', currentUser.email).neq('id', currentUser.id);
+        data = merged;
+      }
+    }
+
+    // If still nothing, create blank
+    if (!data) {
       const { data: newData } = await sb
         .from('bride_profiles')
-        .insert({ id: currentUser.id })
-        .select()
-        .single();
+        .insert({ id: currentUser.id, email: currentUser.email })
+        .select().single();
       data = newData;
     }
 

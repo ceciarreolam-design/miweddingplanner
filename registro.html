@@ -373,17 +373,35 @@
     }
 
     // 2. Save all wedding details to bride_profiles
-    if (data?.user) {
-      await sb.from('bride_profiles').upsert({
-        id:          data.user.id,
+    // Try with user id first, fall back to email lookup if session not active yet
+    const userId = data?.user?.id;
+    if (userId) {
+      const profileData = {
+        id:          userId,
+        email:       email,
         nombre,
         apellido,
         fecha_boda:  fechaBoda,
         ciudad_boda: ciudad,
-        invitados:   invitados,
-        presupuesto: presupuesto,
+        invitados:   invitados ? parseInt(invitados) : null,
+        presupuesto: presupuesto ? parseInt(presupuesto) : null,
         plan:        plan,
-      });
+      };
+
+      // First attempt: upsert with authenticated session
+      const { error: upsertErr } = await sb.from('bride_profiles').upsert(profileData);
+
+      if (upsertErr) {
+        console.warn('Upsert failed (session may not be active):', upsertErr.message);
+        // Second attempt: update by email in case trigger already created the row
+        const { error: updateErr } = await sb.from('bride_profiles')
+          .update({ nombre, apellido, fecha_boda: fechaBoda, ciudad_boda: ciudad,
+                    invitados: invitados ? parseInt(invitados) : null,
+                    presupuesto: presupuesto ? parseInt(presupuesto) : null,
+                    plan, email })
+          .eq('id', userId);
+        if (updateErr) console.warn('Update also failed:', updateErr.message);
+      }
     }
 
     goStep(4);

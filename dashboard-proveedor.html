@@ -540,24 +540,31 @@
             </div>
           </div>
           <div class="card" style="margin-top:16px;">
-            <div class="card-header"><div class="card-title">Portafolio & fotos</div></div>
-            <div style="font-size:12px;color:var(--muted);font-weight:300;margin-bottom:14px;line-height:1.6;">
-              Agrega los links de tu portafolio. Las novias verán estos en tu perfil público.
+            <div class="card-header">
+              <div class="card-title">Portafolio & fotos</div>
+              <label for="photo-upload-input" style="font-size:12px;font-weight:500;color:var(--pigeon);cursor:pointer;padding:6px 12px;border:0.5px solid var(--cotton);border-radius:var(--radius-md);">+ Agregar foto</label>
+              <input type="file" id="photo-upload-input" accept="image/*" multiple style="display:none;" onchange="uploadPhotos(this)">
             </div>
+            <div style="font-size:12px;color:var(--muted);font-weight:300;margin-bottom:14px;line-height:1.6;">
+              Sube hasta 12 fotos de tu trabajo. Aparecerán en tu perfil público. JPG o PNG · Máx 5MB por foto.
+            </div>
+            <!-- Photo grid -->
+            <div id="photo-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;"></div>
+            <div id="photo-empty" style="text-align:center;padding:32px 0;font-size:13px;color:var(--muted);font-weight:300;border:1.5px dashed var(--cotton);border-radius:var(--radius-md);">
+              <div style="margin-bottom:8px;">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="opacity:0.4;"><rect x="2" y="4" width="24" height="20" rx="3" stroke="var(--pigeon)" stroke-width="1.5"/><circle cx="14" cy="14" r="4" stroke="var(--pigeon)" stroke-width="1.5"/><path d="M10 4l2-3h4l2 3" stroke="var(--pigeon)" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              </div>
+              Aún no tienes fotos. Haz clic en "+ Agregar foto" para subir tu trabajo.
+            </div>
+            <div style="height:0.5px;background:var(--cotton);margin:14px 0;"></div>
+            <div style="font-size:12px;color:var(--muted);font-weight:300;margin-bottom:10px;">También puedes agregar links externos:</div>
             <div class="form-field">
               <label class="form-label">Instagram / portafolio principal</label>
               <input class="form-input" id="p-portfolio-main" type="url" placeholder="https://instagram.com/tunegocio">
             </div>
             <div class="form-field">
-              <label class="form-label">Galería adicional (opcional)</label>
-              <input class="form-input" id="p-portfolio-2" type="url" placeholder="https://tuwebsite.com/galeria">
-            </div>
-            <div class="form-field">
               <label class="form-label">Video de presentación (opcional)</label>
               <input class="form-input" id="p-video" type="url" placeholder="https://youtube.com/... o https://vimeo.com/...">
-            </div>
-            <div style="background:#F0F4F7;border-radius:var(--radius-md);padding:12px 14px;font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;margin-top:4px;">
-              <strong style="color:var(--night);">Tip:</strong> Las novias toman decisiones basadas en fotos. Asegúrate de que tus links lleven a tu mejor trabajo y estén actualizados.
             </div>
           </div>
         </div>
@@ -883,6 +890,73 @@
     showSaved('Foto de perfil actualizada ✓');
   }
 
+  // ── PHOTO PORTFOLIO UPLOAD ────────────────────────────
+  let vendorPhotos = []; // array of {url, path}
+
+  async function loadPhotos() {
+    // Load existing photos from vendor_profiles.fotos column
+    const { data } = await sb.from('vendor_profiles').select('fotos').eq('id', currentUser.id).single();
+    if (data?.fotos) {
+      try { vendorPhotos = JSON.parse(data.fotos); } catch(e) { vendorPhotos = []; }
+    }
+    renderPhotoGrid();
+  }
+
+  function renderPhotoGrid() {
+    const grid  = document.getElementById('photo-grid');
+    const empty = document.getElementById('photo-empty');
+    if (!grid) return;
+    if (vendorPhotos.length === 0) {
+      grid.innerHTML = '';
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+    if (empty) empty.style.display = 'none';
+    grid.innerHTML = vendorPhotos.map((p, i) =>
+      '<div style="position:relative;aspect-ratio:4/3;border-radius:8px;overflow:hidden;background:var(--cotton);">' +
+        '<img src="' + p.url + '" style="width:100%;height:100%;object-fit:cover;">' +
+        '<button onclick="deletePhoto(' + i + ')" style="position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,0.5);border:none;cursor:pointer;color:white;font-size:12px;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>' +
+      '</div>'
+    ).join('');
+  }
+
+  async function uploadPhotos(input) {
+    const files = [...input.files];
+    if (!files.length) return;
+    if (vendorPhotos.length + files.length > 12) {
+      showSaved('Máximo 12 fotos. Elimina algunas para agregar más.'); return;
+    }
+    showSaved('Subiendo ' + files.length + ' foto' + (files.length > 1 ? 's' : '') + '...');
+    for (const file of files) {
+      if (file.size > 5 * 1024 * 1024) { showSaved('Una foto supera 5MB, se omitió.'); continue; }
+      const ext  = file.name.split('.').pop();
+      const name = 'fotos/' + currentUser.id + '/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.' + ext;
+      const { error } = await sb.storage.from('vendor-assets').upload(name, file);
+      if (error) { showSaved('Error: ' + error.message); continue; }
+      const { data: urlData } = sb.storage.from('vendor-assets').getPublicUrl(name);
+      vendorPhotos.push({ url: urlData.publicUrl, path: name });
+    }
+    await savePhotos();
+    renderPhotoGrid();
+    input.value = '';
+    showSaved('Fotos actualizadas ✓');
+  }
+
+  async function deletePhoto(index) {
+    if (!confirm('¿Eliminar esta foto?')) return;
+    const photo = vendorPhotos[index];
+    // Delete from storage
+    await sb.storage.from('vendor-assets').remove([photo.path]);
+    vendorPhotos.splice(index, 1);
+    await savePhotos();
+    renderPhotoGrid();
+    showSaved('Foto eliminada ✓');
+  }
+
+  async function savePhotos() {
+    await sb.from('vendor_profiles').update({ fotos: JSON.stringify(vendorPhotos) }).eq('id', currentUser.id);
+  }
+
   function addRegion() {
     const r = prompt('¿Qué ciudad o región quieres agregar?');
     if (!r) return;
@@ -910,6 +984,7 @@
       console.log('Session OK, user:', currentUser.email, currentUser.id);
       await loadVendorProfile();
       await loadDisponibilidad().catch(e => console.warn('Disponibilidad:', e));
+      await loadPhotos().catch(e => console.warn('Photos:', e));
       loadPlanInfo();
     } catch(e) {
       console.error('Dashboard error:', e);
@@ -1123,6 +1198,15 @@
       .eq('estado', 'reservada');
     const sbEl = document.getElementById('stat-bodas-conf');
     if (sbEl) sbEl.textContent = bodasCount || 0;
+
+    // Favoritos count — how many brides saved this vendor
+    const { count: favCount } = await sb.from('favoritos')
+      .select('*', { count: 'exact', head: true })
+      .eq('vendor_id', currentUser.id);
+    const favEl    = document.getElementById('stat-guardados');
+    const favSubEl = document.getElementById('stat-guardados-sub');
+    if (favEl)    favEl.textContent    = favCount || 0;
+    if (favSubEl) favSubEl.textContent = favCount === 1 ? 'novia te guardó' : 'novias te guardaron';
 
     updatePreview();
   }
