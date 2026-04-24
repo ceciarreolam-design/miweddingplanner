@@ -192,59 +192,22 @@
 
       <!-- STEP 2: WEDDING DETAILS -->
       <div class="step-panel" id="step-2">
-        <div class="form-title">Cuéntanos más</div>
-        <div class="form-sub">Personaliza tu experiencia según tu boda.</div>
-
+        <div class="form-title">¿Por dónde empezamos?</div>
+        <div class="form-sub">Cuéntanos qué es lo más urgente para personalizar tu experiencia.</div>
         <div class="field">
-          <label>Ciudad de la boda</label>
-          <select>
-            <option value="">Selecciona</option>
-            <option>Ciudad de México</option>
-            <option>Guadalajara</option>
-            <option>Monterrey</option>
-            <option>Cancún / Riviera Maya</option>
-            <option>Oaxaca</option>
-            <option>San Miguel de Allende</option>
-            <option>Valle de Bravo</option>
-            <option>Puebla</option>
-            <option>Cuernavaca</option>
-            <option>Otro</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Número de invitados estimado</label>
-          <select id="reg-invitados">
-            <option value="">Selecciona</option>
-            <option>Menos de 50 (íntima)</option>
-            <option>50 – 100</option>
-            <option>100 – 200</option>
-            <option>200 – 300</option>
-            <option>Más de 300</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Presupuesto aproximado</label>
-          <select id="reg-presupuesto">
-            <option value="">Selecciona</option>
-            <option>Menos de $100,000 MXN</option>
-            <option>$100,000 – $250,000 MXN</option>
-            <option>$250,000 – $500,000 MXN</option>
-            <option>$500,000 – $1,000,000 MXN</option>
-            <option>Más de $1,000,000 MXN</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>¿Qué necesitas contratar?</label>
+          <label>¿Qué es lo primero que necesitas contratar?</label>
           <select id="reg-necesita">
-            <option value="">Lo más urgente</option>
+            <option value="">Selecciona</option>
             <option>Sede / hacienda</option>
             <option>Wedding planner</option>
             <option>Fotógrafo / videógrafo</option>
             <option>Catering</option>
-            <option>Todo (apenas empiezo)</option>
+            <option>Todo — apenas estoy empezando</option>
           </select>
         </div>
-
+        <div style="background:var(--cotton);border-radius:var(--radius-md);padding:14px 16px;font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;margin-top:8px;">
+          Podrás agregar la fecha, ciudad, invitados y presupuesto de tu boda en tu perfil una vez que hayas iniciado sesión.
+        </div>
         <button class="btn-main" onclick="goStep(3)">Continuar →</button>
         <button class="btn-back" onclick="goStep(1)">← Regresar</button>
       </div>
@@ -273,7 +236,7 @@
         </div>
 
         <div style="background:var(--cotton);border-radius:var(--radius-md);padding:14px 16px;margin:16px 0;font-size:12px;color:var(--muted);font-weight:300;line-height:1.7;">
-          🔒 Pago seguro. Puedes cancelar en cualquier momento desde tu perfil. No se realizarán cargos hasta confirmar tu cuenta.
+          Pago seguro. Puedes cancelar en cualquier momento desde tu perfil. No se realizarán cargos hasta confirmar tu cuenta.
         </div>
 
         <button class="btn-main" id="btn-crear" onclick="createAccount()">Crear mi cuenta →</button>
@@ -287,8 +250,17 @@
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M6 16l7 7 13-13" stroke="#667C90" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <div class="success-title">¡Bienvenida a Mi Wedding Planner!</div>
-          <div class="success-sub">Tu cuenta fue creada exitosamente. Revisa tu correo para confirmar tu dirección — después podrás acceder a tu panel completo.</div>
-          <button class="success-btn" onclick="window.location.href='dashboard.html'">Ir a mi panel →</button>
+          <div class="success-sub">¡Tu cuenta fue creada! Antes de continuar, revisa tu correo y haz clic en el enlace de confirmación que te enviamos.</div>
+          <div style="background:var(--cotton);border-radius:var(--radius-md);padding:16px;margin:20px 0;text-align:left;">
+            <div style="font-size:13px;font-weight:500;color:var(--night);margin-bottom:8px;">¿Cómo entrar a tu panel?</div>
+            <div style="font-size:12px;color:var(--muted);font-weight:300;line-height:1.9;">
+              1. Abre tu correo<br>
+              2. Busca un mensaje de Mi Wedding Planner<br>
+              3. Haz clic en "Confirmar correo"<br>
+              4. Regresa aquí e inicia sesión
+            </div>
+          </div>
+          <button class="success-btn" onclick="window.location.href='login.html'">Ir a iniciar sesión →</button>
         </div>
       </div>
 
@@ -346,10 +318,10 @@
     const apellido  = document.getElementById('reg-apellido').value.trim();
     const email     = document.getElementById('reg-email').value.trim();
     const password  = document.getElementById('reg-password').value;
-    const fechaBoda = document.getElementById('reg-fecha').value || null;
-    const ciudad    = document.getElementById('reg-ciudad')?.value || '';
-    const invitados = document.getElementById('reg-invitados')?.value || '';
-    const presupuesto = document.getElementById('reg-presupuesto')?.value || '';
+    const fechaBoda = null; // Date added later in profile
+    const ciudad    = '';
+    const invitados = '';
+    const presupuesto = '';
     const plan      = document.querySelector('input[name="plan"]:checked')?.value || 'monthly';
 
     if (!nombre || !email || !password) { showError('Por favor completa todos los campos obligatorios.'); goStep(1); return; }

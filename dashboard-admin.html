@@ -185,6 +185,10 @@
         Tickets
         <span class="nav-badge" id="badge-tickets">0</span>
       </div>
+      <div class="nav-item" id="nav-resenas" onclick="navTo('resenas')">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 2l1.5 3 3.5.5-2.5 2.5.5 3.5L8 10l-3 1.5.5-3.5L3 5.5l3.5-.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        Reseñas
+      </div>
     </nav>
     <div class="sidebar-bottom">
       <div class="logout-btn" onclick="adminLogout()">
@@ -260,7 +264,7 @@
           <table class="tbl">
             <thead><tr>
               <th>Nombre</th><th>Correo</th><th>Plan</th>
-              <th>Fecha de boda</th><th>Ciudad</th><th>Registro</th>
+              <th>Fecha de boda</th><th>Ciudad</th><th>Registro</th><th>Acciones</th>
             </tr></thead>
             <tbody id="novias-tbody"><tr><td colspan="6" class="loading">Cargando...</td></tr></tbody>
           </table>
@@ -317,6 +321,27 @@
           <button class="btn-sm btn-primary" onclick="openNewTicket()">+ Nuevo ticket</button>
         </div>
         <div id="tickets-list"><div class="loading">Cargando...</div></div>
+      </div>
+    </div>
+
+    <!-- ── RESEÑAS ── -->
+    <div class="panel" id="panel-resenas">
+      <div class="section-header">
+        <h1>Reseñas</h1>
+        <button class="btn-sm btn-primary" onclick="openNewResena()">+ Agregar reseña</button>
+      </div>
+
+      <!-- Vendor selector -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header"><div class="card-title">Filtrar por proveedor</div></div>
+        <select id="resena-vendor-filter" class="filter-select" style="width:100%;" onchange="loadResenas(this.value)">
+          <option value="">— Todos los proveedores —</option>
+        </select>
+      </div>
+
+      <!-- Reviews list -->
+      <div id="resenas-list">
+        <div class="loading">Selecciona un proveedor para ver sus reseñas</div>
       </div>
     </div>
 
@@ -502,20 +527,22 @@
   function renderNovias(list) {
     const tbody = document.getElementById('novias-tbody');
     document.getElementById('novias-count').textContent = list.length + ' novias';
-    if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No hay novias registradas aún.</td></tr>'; return; }
+    if (list.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No hay novias registradas aún.</td></tr>'; return; }
     tbody.innerHTML = list.map(n => {
       const plan = n.plan === 'monthly' ? '<span class="badge badge-blue">Premium mensual</span>'
                  : n.plan === 'onetime' ? '<span class="badge badge-green">Pago único</span>'
                  : '<span class="badge badge-gray">Gratuito</span>';
       const fecha = n.fecha_boda ? new Date(n.fecha_boda + 'T00:00:00').toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric' }) : '—';
       const reg   = n.created_at ? new Date(n.created_at).toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric' }) : '—';
+      const nombre = ((n.nombre || '') + ' ' + (n.apellido || '')).trim() || '—';
       return `<tr>
-        <td style="font-weight:500;">${(n.nombre || '') + ' ' + (n.apellido || '') || '—'}</td>
+        <td style="font-weight:500;">${nombre}</td>
         <td style="color:var(--muted);">${n.email || '—'}</td>
         <td>${plan}</td>
         <td>${fecha}</td>
         <td>${n.ciudad_boda || '—'}</td>
         <td style="color:var(--stone);">${reg}</td>
+        <td><button onclick="deleteBride('${n.id}','${nombre.replace(/'/g,"\\'")}') " style="font-size:11px;padding:4px 10px;border-radius:var(--radius-md);border:none;cursor:pointer;background:#FDF0EC;color:var(--danger);">Eliminar</button></td>
       </tr>`;
     }).join('');
   }
@@ -647,22 +674,112 @@
   }
 
   async function deleteVendor(id, nombre) {
-    if (!confirm(`¿Eliminar a "${nombre}" permanentemente? Esta acción no se puede deshacer.`)) return;
-
+    if (!confirm('¿Eliminar a "' + nombre + '" permanentemente? Esta acción no se puede deshacer.')) return;
     const { error } = await sb.from('vendor_profiles').delete().eq('id', id);
-
-    if (error) {
-      showToast('Error al eliminar: ' + error.message);
-      console.error('Delete error:', error);
-      return;
-    }
-
+    if (error) { showToast('Error al eliminar: ' + error.message); return; }
     showToast('Proveedor eliminado ✓');
-    // Note: deleting the auth user requires the Supabase service role key
-    // which can't be used from the browser. Go to Supabase → Auth → Users
-    // and delete the user manually if you also want to remove their login.
     await loadProveedores();
     renderResumen();
+  }
+
+  async function deleteBride(id, nombre) {
+    if (!confirm('¿Eliminar a "' + nombre + '" permanentemente? Sus reseñas a proveedores se conservarán.')) return;
+    const { error } = await sb.from('bride_profiles').delete().eq('id', id);
+    if (error) { showToast('Error al eliminar: ' + error.message); return; }
+    showToast('Novia eliminada ✓');
+    await loadNovias();
+    renderResumen();
+  }
+
+  // ── RESEÑAS ──────────────────────────────────────────
+  async function initResenas() {
+    // Populate vendor dropdowns
+    const { data } = await sb.from('vendor_profiles')
+      .select('id, nombre_negocio').eq('aprobado', true).order('nombre_negocio');
+    const opts = (data || []).map(v =>
+      '<option value="' + v.id + '">' + (v.nombre_negocio || 'Sin nombre') + '</option>'
+    ).join('');
+    const filter = document.getElementById('resena-vendor-filter');
+    const modal  = document.getElementById('resena-vendor-id');
+    if (filter) filter.innerHTML = '<option value="">— Todos los proveedores —</option>' + opts;
+    if (modal)  modal.innerHTML  = '<option value="">Selecciona proveedor</option>' + opts;
+  }
+
+  async function loadResenas(vendorId) {
+    const list = document.getElementById('resenas-list');
+    if (!list) return;
+    if (!vendorId) {
+      list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">Selecciona un proveedor para ver sus reseñas.</div>';
+      return;
+    }
+    list.innerHTML = '<div class="loading">Cargando reseñas...</div>';
+    const { data, error } = await sb.from('resenas')
+      .select('*').eq('vendor_id', vendorId).order('created_at', { ascending: false });
+    if (error) { list.innerHTML = '<div class="loading">Error: ' + error.message + '</div>'; return; }
+    if (!data || data.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">Este proveedor aún no tiene reseñas. Agrega la primera.</div>';
+      return;
+    }
+    list.innerHTML = data.map(r => {
+      const stars = '★'.repeat(r.calificacion || 5) + '☆'.repeat(5 - (r.calificacion || 5));
+      const fecha = r.fecha_boda ? new Date(r.fecha_boda + 'T00:00:00').toLocaleDateString('es-MX', { month:'long', year:'numeric' }) : '';
+      return '<div class="card" style="margin-bottom:12px;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">' +
+          '<div>' +
+            '<div style="font-weight:500;font-size:14px;color:var(--night);">' + (r.nombre_novia || 'Novia anónima') + '</div>' +
+            (fecha ? '<div style="font-size:12px;color:var(--muted);font-weight:300;">Boda: ' + fecha + '</div>' : '') +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:12px;">' +
+            '<span style="color:#C4A35A;font-size:14px;">' + stars + '</span>' +
+            '<button onclick="deleteResena(\'' + r.id + '\')" style="font-size:11px;padding:4px 10px;border-radius:var(--radius-md);border:none;cursor:pointer;background:#FDF0EC;color:var(--danger);">Eliminar</button>' +
+          '</div>' +
+        '</div>' +
+        '<p style="font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin:0;">' + (r.texto || '') + '</p>' +
+        (r.fuente === 'admin' ? '<div style="font-size:10px;color:var(--stone);margin-top:6px;font-style:italic;">Agregada por admin</div>' : '') +
+      '</div>';
+    }).join('');
+  }
+
+  function openNewResena() {
+    initResenas();
+    document.getElementById('resena-nombre').value = '';
+    document.getElementById('resena-texto').value = '';
+    document.getElementById('resena-fecha').value = '';
+    document.querySelector('input[name="resena-rating"][value="5"]').checked = true;
+    document.getElementById('modal-resena').classList.add('open');
+  }
+
+  async function saveResena() {
+    const vendorId = document.getElementById('resena-vendor-id').value;
+    const nombre   = document.getElementById('resena-nombre').value.trim();
+    const texto    = document.getElementById('resena-texto').value.trim();
+    const rating   = document.querySelector('input[name="resena-rating"]:checked')?.value || 5;
+    const fecha    = document.getElementById('resena-fecha').value || null;
+    if (!vendorId || !nombre || !texto) { showToast('Completa todos los campos requeridos.'); return; }
+    const { error } = await sb.from('resenas').insert({
+      vendor_id:     vendorId,
+      nombre_novia:  nombre,
+      calificacion:  parseInt(rating),
+      texto,
+      fecha_boda:    fecha,
+      fuente:        'admin',
+      preservar:     true,  // never delete when bride account closes
+    });
+    if (error) { showToast('Error: ' + error.message); return; }
+    closeModal('modal-resena');
+    showToast('Reseña guardada ✓');
+    // Reload if currently viewing that vendor
+    const filter = document.getElementById('resena-vendor-filter');
+    if (filter) { filter.value = vendorId; loadResenas(vendorId); }
+  }
+
+  async function deleteResena(id) {
+    if (!confirm('¿Eliminar esta reseña permanentemente?')) return;
+    const { error } = await sb.from('resenas').delete().eq('id', id);
+    if (error) { showToast('Error: ' + error.message); return; }
+    showToast('Reseña eliminada ✓');
+    const filter = document.getElementById('resena-vendor-filter');
+    if (filter?.value) loadResenas(filter.value);
   }
 
   async function sendVendorEmail(email, nombre, type, reason) {
@@ -832,5 +949,40 @@
   // ── INIT ─────────────────────────────────────────────
   checkSession();
 </script>
+
+<!-- ADD REVIEW MODAL -->
+<div class="modal-overlay" id="modal-resena" onclick="closeModalOutside(event,'modal-resena')">
+  <div class="modal-box">
+    <div class="modal-title">Agregar reseña</div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Proveedor</label>
+      <select id="resena-vendor-id" class="filter-select" style="width:100%;"></select>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Nombre de la novia</label>
+      <input type="text" id="resena-nombre" class="search-input" style="width:100%;" placeholder="Ej. Sofía García">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Calificación</label>
+      <div style="display:flex;gap:8px;">
+        <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="radio" name="resena-rating" value="5" checked style="accent-color:var(--pigeon);"> ★★★★★</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="radio" name="resena-rating" value="4" style="accent-color:var(--pigeon);"> ★★★★</label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="radio" name="resena-rating" value="3" style="accent-color:var(--pigeon);"> ★★★</label>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Reseña</label>
+      <textarea id="resena-texto" style="width:100%;border:0.5px solid var(--border);border-radius:var(--radius-md);padding:10px 13px;font-size:13px;font-family:var(--sans);min-height:90px;resize:vertical;outline:none;" placeholder="Escribe la reseña de la novia..."></textarea>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Fecha de la boda (opcional)</label>
+      <input type="date" id="resena-fecha" class="search-input" style="width:100%;">
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal('modal-resena')">Cancelar</button>
+      <button class="modal-save" onclick="saveResena()">Guardar reseña</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

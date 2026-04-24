@@ -522,7 +522,7 @@
     <label>Categoría</label>
     <input type="text" id="new-budget-cat" placeholder="Ej. Música & DJ">
     <label>Monto (MXN)</label>
-    <input type="number" id="new-budget-amount" placeholder="Ej. 25000">
+    <input type="text" id="new-budget-amount" placeholder="Ej. 25,000" oninput="formatBudgetInput(this)">
     <div class="modal-btns">
       <button class="modal-cancel" onclick="closeModal('modal-budget')">Cancelar</button>
       <button class="modal-save" onclick="addBudgetItem()">Agregar</button>
@@ -966,7 +966,8 @@
     const empty = document.getElementById('checklist-empty');
 
     if (error || !data || data.length === 0) {
-      if (homeList) homeList.innerHTML = '<div style="font-size:13px;color:var(--muted);font-weight:300;padding:16px 0;text-align:center;">Aún no tienes tareas.<br><span style="color:var(--pigeon);cursor:pointer;font-weight:400;" onclick="navTo(\'checklist\')">+ Agregar primera tarea →</span></div>';
+      // Seed with generic wedding tasks
+      await seedGenericChecklist();
       return;
     }
 
@@ -1047,6 +1048,35 @@
   }
 
   // ── SAVE TASK ────────────────────────────────────────
+  async function seedGenericChecklist() {
+    const TASKS = [
+      { titulo: 'Definir fecha y lugar de la boda',          tiempo: '12-18 meses antes', prioridad: 'urgent' },
+      { titulo: 'Establecer presupuesto total',               tiempo: '12-18 meses antes', prioridad: 'urgent' },
+      { titulo: 'Hacer lista de invitados',                   tiempo: '12-18 meses antes', prioridad: 'urgent' },
+      { titulo: 'Contratar wedding planner',                  tiempo: '12-18 meses antes', prioridad: 'urgent' },
+      { titulo: 'Reservar sede o hacienda',                   tiempo: '10-12 meses antes', prioridad: 'urgent' },
+      { titulo: 'Contratar fotógrafo y videógrafo',           tiempo: '10-12 meses antes', prioridad: 'medium' },
+      { titulo: 'Elegir y reservar catering',                 tiempo: '9-12 meses antes',  prioridad: 'medium' },
+      { titulo: 'Elegir vestido de novia',                    tiempo: '9-12 meses antes',  prioridad: 'medium' },
+      { titulo: 'Enviar invitaciones formales',               tiempo: '6-8 meses antes',   prioridad: 'medium' },
+      { titulo: 'Contratar DJ o grupo musical',               tiempo: '6-9 meses antes',   prioridad: 'medium' },
+      { titulo: 'Reservar floristería',                       tiempo: '6-9 meses antes',   prioridad: 'medium' },
+      { titulo: 'Elegir pastel de bodas',                     tiempo: '4-6 meses antes',   prioridad: 'medium' },
+      { titulo: 'Cita de prueba de maquillaje y peinado',     tiempo: '4-6 meses antes',   prioridad: 'medium' },
+      { titulo: 'Confirmar asistencia de invitados',          tiempo: '1-2 meses antes',   prioridad: 'medium' },
+      { titulo: 'Preparar seating chart (acomodo de mesas)',  tiempo: '2-4 semanas antes', prioridad: 'medium' },
+      { titulo: 'Recoger vestido y hacer prueba final',       tiempo: '1-2 semanas antes', prioridad: 'medium' },
+      { titulo: 'Confirmar horarios con todos los proveedores', tiempo: '1 semana antes',  prioridad: 'medium' },
+      { titulo: 'Preparar lista de música y momentos clave',  tiempo: '1 semana antes',    prioridad: 'medium' },
+      { titulo: 'Preparar sobres de propinas para proveedores', tiempo: '1-2 días antes',  prioridad: 'medium' },
+      { titulo: 'Disfrutar tu boda',                          tiempo: 'El gran día',        prioridad: 'urgent' },
+    ];
+    const rows = TASKS.map(t => ({ bride_id: currentUser.id, ...t, completado: false }));
+    await sb.from('checklist').insert(rows);
+    // Reload after seeding
+    await loadChecklist();
+  }
+
   async function addTask() {
     const titulo    = document.getElementById('new-task').value.trim();
     const tiempo    = document.getElementById('new-task-time').value.trim();
