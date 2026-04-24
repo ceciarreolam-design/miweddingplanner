@@ -175,14 +175,30 @@
 
     @media (max-width:900px) {
       .layout { grid-template-columns:1fr; }
-      .sidebar { display:none; }
-      .main { padding:20px; }
+      .sidebar { position:fixed;top:0;left:-260px;height:100vh;z-index:300;transition:left 0.25s ease;box-shadow:4px 0 20px rgba(0,0,0,0.15); }
+      .sidebar.open { left:0; }
+      .main { padding:16px; }
       .stats-row { grid-template-columns:repeat(2,1fr); }
       .grid-2, .grid-3 { grid-template-columns:1fr; }
+      .mobile-header { display:flex !important; }
+      #mobile-back { display:block !important; }
     }
+    .mobile-header { display:none;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--night);color:var(--white);font-family:var(--serif);font-size:16px;position:sticky;top:0;z-index:100; }
+    .mobile-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200; }
+    .mobile-overlay.open { display:block; }
   </style>
 </head>
 <body>
+
+<!-- MOBILE HEADER -->
+<div class="mobile-header">
+  <button onclick="toggleSidebar()" style="background:none;border:none;cursor:pointer;color:white;padding:4px;">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </button>
+  <span>Mi Wedding <span style="color:var(--stone);">Planner</span></span>
+  <div style="width:28px;"></div>
+</div>
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleSidebar()"></div>
 <div class="layout">
 
   <!-- SIDEBAR -->
@@ -534,9 +550,9 @@
             </div>
           </div>
           <div class="card">
-            <div class="card-header"><div class="card-title">Regiones donde trabajas</div></div>
+            <div class="card-header"><div class="card-title">Regiones & especialidades</div><span style="font-size:11px;color:var(--muted);font-weight:300;">Haz clic en una etiqueta para eliminarla</span></div>
             <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;" id="regions">
-              <span style="background:var(--cotton);color:var(--muted);font-size:12px;padding:5px 12px;border-radius:99px;cursor:pointer;" onclick="addRegion()">+ Agregar región</span>
+              <span style="background:var(--cotton);color:var(--muted);font-size:12px;padding:5px 12px;border-radius:99px;cursor:pointer;" onclick="addRegion()">+ Agregar</span>
             </div>
           </div>
           <div class="card" style="margin-top:16px;">
@@ -640,6 +656,13 @@
       </div>
     </div>
 
+  <!-- MOBILE BACK BUTTON -->
+  <div id="mobile-back" style="display:none;position:fixed;bottom:20px;right:20px;z-index:200;">
+    <button onclick="navTo('inicio')" style="background:var(--night);color:var(--white);border:none;border-radius:50px;padding:12px 20px;font-size:13px;font-family:var(--sans);cursor:pointer;box-shadow:0 4px 16px rgba(62,87,102,0.3);display:flex;align-items:center;gap:8px;">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7l4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Inicio
+    </button>
+  </div>
   </main>
 </div>
 
@@ -718,7 +741,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ── NAV ─────────────────────────────────────────────
+  // ── MOBILE SIDEBAR ───────────────────────────────────
+  function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.getElementById('mobile-overlay').classList.toggle('open');
+  }
+
+  // Close sidebar when a nav item is clicked on mobile
+  const origNavTo = window.navTo;
   function navTo(name) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -726,6 +756,9 @@
     const navItem = document.getElementById('nav-' + name);
     if (panel)   panel.classList.add('active');
     if (navItem) navItem.classList.add('active');
+    // Close mobile sidebar
+    document.querySelector('.sidebar')?.classList.remove('open');
+    document.getElementById('mobile-overlay')?.classList.remove('open');
     window.scrollTo({ top:0, behavior:'smooth' });
   }
   function showPanel(name) { navTo(name); }
@@ -1216,8 +1249,10 @@
     const regionTags = [...document.querySelectorAll('#regions span:not([onclick="addRegion()"])')].map(s => s.textContent.trim());
     const idiomas    = [...document.querySelectorAll('#idiomas-wrap input:checked')].map(i => i.value);
 
+    const btn = document.querySelector('[onclick="saveProfile()"]');
+    if (btn) { btn.textContent = 'Guardando...'; btn.disabled = true; }
+
     const profileData = {
-      id:               currentUser.id,
       nombre_negocio:   document.getElementById('p-name').value.trim(),
       categoria:        document.getElementById('p-type').value,
       ciudad:           document.getElementById('p-city').value.trim(),
@@ -1228,16 +1263,20 @@
       anos_experiencia: document.getElementById('p-experience').value,
       bodas_coordinadas:document.getElementById('p-bodas').value,
       regiones:         JSON.stringify(regionTags),
-      portfolio_main:   document.getElementById('p-portfolio-main').value.trim(),
-      portfolio_2:      document.getElementById('p-portfolio-2').value.trim(),
-      portfolio_video:  document.getElementById('p-video').value.trim(),
+      portfolio_main:   document.getElementById('p-portfolio-main')?.value.trim() || '',
+      portfolio_video:  document.getElementById('p-video')?.value.trim() || '',
       capacidad_atencion: document.getElementById('p-capacidad').value.trim(),
       anticipo:         document.getElementById('p-anticipo').value.trim(),
       idiomas:          JSON.stringify(idiomas),
+      // Note: fotos is saved separately by uploadPhotos/deletePhoto — do NOT include here
     };
-    const { error } = await sb.from('vendor_profiles').upsert(profileData);
+
+    // Use update (not upsert) so we never accidentally overwrite fotos or logo_url
+    const { error } = await sb.from('vendor_profiles').update(profileData).eq('id', currentUser.id);
+
+    if (btn) { btn.textContent = 'Guardar cambios'; btn.disabled = false; }
     updatePreview();
-    showSaved(error ? '✗ Error: ' + error.message : 'Perfil actualizado ✓');
+    showSaved(error ? '✗ Error: ' + error.message : '✓ Perfil actualizado');
   }
 
   // ── CAPACITY ─────────────────────────────────────────

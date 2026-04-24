@@ -177,7 +177,8 @@
         </div>
         <div class="field">
           <label>Contraseña</label>
-          <input type="password" id="reg-password" placeholder="Mínimo 8 caracteres">
+          <div style="position:relative;"><input type="password" id="reg-password" placeholder="Mínimo 8 caracteres" style="padding-right:42px;">
+          <button type="button" onclick="togglePw('reg-password',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/></svg></button></div>
         </div>
         <div class="field">
           <label>¿Cuándo es tu boda?</label>
@@ -315,6 +316,11 @@
       else if (i === n) dot.classList.add('active');
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function togglePw(id, btn) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'text' ? 'password' : 'text';
   }
 
   function selectPlan(el) {
